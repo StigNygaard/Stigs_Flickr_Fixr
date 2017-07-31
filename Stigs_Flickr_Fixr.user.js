@@ -8,7 +8,7 @@
 // @icon        http://www.rockland.dk/img/fixr32.png
 // @icon64      http://www.rockland.dk/img/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2017.07.30.0
+// @version     2017.07.31.0
 // @grant       none
 // @run-at      document-start
 // @noframes
@@ -16,13 +16,11 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.08.04.0', description: '"Scale icon" now in color to signal if down-scale necessary to align with size of notes-area. If Orange, click it to downscale/align image.'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
-    {version: '2016.06.12.0', description: 'Fixing replace with original had stopped working in some situations.'},
     {version: '2016.06.07.1', description: 'Quickly disabling the script\'s notes-feature, because OFFICIAL NATIVE NOTES-SUPPORT IS BACK ON FLICKR !!! :-) :-)'},
-    {version: '2016.03.21.1', description: 'Improving the robustness of the tag-links feature.'},
     {version: '2016.03.11.1', description: 'A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
-    {version: '2016.02.14.1', description: 'Fixing a couple of issues related to scale/replace photos (Including avoid using original if photo has been rotated after upload).'},
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page (To the right for now, but might move it to top-menu later?).'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
     {version: '2016.02.05.1', description: 'Adding a little "bling" to the album-column.'},
@@ -34,9 +32,7 @@ var changelog = [
     {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-feature.'}
 ];
 
-// todo: advanced downscale-button, pre-cache images, original video options, customizable ???
-
-var DEBUG = true;
+var DEBUG = false;
 function log(s) {
     if (DEBUG && window.console) {
         window.console.log(s);
@@ -405,6 +401,14 @@ function updateMapLink() {
             if (maplink.getAttribute('href') && (maplink.getAttribute('href').indexOf('map/?') > 0) && (maplink.getAttribute('href').indexOf('&photo=') === -1)) {
                 maplink.setAttribute('href', maplink.getAttribute('href') + '&photo=' + fixr.context.photoId);
                 log('link is updated by updateMapLink() at readystate=' + document.readyState);
+                try {
+                    var lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
+                    var lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Open location on Google Maps</a></div>');
+                }
+                catch (e) {
+                    log('Failed creating Google Maps link: ' + e);
+                }
             } else {
                 log('link NOT updated by updateMapLink(). Invalid element or already updated. readystate=' + document.readyState);
             }
@@ -1088,10 +1092,9 @@ function shootingSpaceballs() {
     }
 }
 
-if (window.location.href.indexOf('flickr.com\/services\/api\/explore\/flickr.photos.notes.')>-1) {
-    // We are on Flickr API Explorer for note handling and outside "normal" flickr page flow. fixr wont do here...
-    // window.addEventListener('load', apiExplorePreburner, false);
+if (window.location.href.indexOf('flickr.com\/services\/api\/explore\/')>-1) {
+    // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
     // FIXR fixr.init([onPageHandlers], [onResizeHandlers], [onFocusHandlers])
-    fixr.init([scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [/*notes.initNotes*/]);
+    fixr.init([scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
 }
