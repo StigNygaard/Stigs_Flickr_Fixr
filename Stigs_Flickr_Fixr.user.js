@@ -8,7 +8,7 @@
 // @icon        http://www.rockland.dk/img/fixr32.png
 // @icon64      http://www.rockland.dk/img/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2017.07.31.0
+// @version     2017.07.31.1
 // @grant       none
 // @run-at      document-start
 // @noframes
@@ -404,7 +404,7 @@ function updateMapLink() {
                 try {
                     var lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     var lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Open location on Google Maps</a></div>');
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
                 }
                 catch (e) {
                     log('Failed creating Google Maps link: ' + e);
