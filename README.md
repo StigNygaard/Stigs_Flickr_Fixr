@@ -14,10 +14,15 @@ Most detailed feature description can currently be found in the Flickr Hacks for
 The script was originally published in August 2015 and maintained in a GitHub Gist until it was moved to this repository in end of July 2017. The older script versions can still be found via revisions in the old Gist: https://gist.github.com/StigNygaard/268c676687c5ff53130c .
 
 ![Screenshot1](https://farm6.staticflickr.com/5648/20735266759_048a63c8e7_z.jpg)
+ 
 ![Screenshot2](https://farm6.staticflickr.com/5831/20952174156_224096cb38_z.jpg)
+ 
 ![Screenshot3](https://farm1.staticflickr.com/647/20735265579_4b5438534d_z.jpg)
+ 
 ![Screenshot4](https://c2.staticflickr.com/6/5792/23292293241_0ac027074b_z.jpg)
+ 
 ![Screenshot5](https://c2.staticflickr.com/2/1464/24542608253_4668534b77_z.jpg)
+ 
 ![Screenshot6](https://c1.staticflickr.com/5/4323/35889673300_b36f445f4b_z.jpg)
-
+ 
 Find me on Flickr at: https://www.flickr.com/photos/stignygaard/
