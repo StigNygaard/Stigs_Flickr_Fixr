@@ -8,14 +8,15 @@
 // @icon        http://www.rockland.dk/img/fixr32.png
 // @icon64      http://www.rockland.dk/img/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2017.07.31.1
-// @grant       none
+// @version     2017.10.28.1
 // @run-at      document-start
+// @grant       dummy
 // @noframes
 // ==/UserScript==
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2017.10.28.0', description: 'Workarounds for a couple of shortcomings in early versions of new/upcoming Greasemonkey 4 WebExtension.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.08.04.0', description: '"Scale icon" now in color to signal if down-scale necessary to align with size of notes-area. If Orange, click it to downscale/align image.'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
@@ -371,6 +372,9 @@ var fixr = fixr || {
     },
     init: function (onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray) {
         // General page-change observer setup:
+        if (document.readyState === 'interactive') { // already late?
+            fixr.setupObserver();
+        }
         window.addEventListener('DOMContentLoaded', fixr.setupObserver, false); // Page on DOMContentLoaded
         window.addEventListener('load', fixr.runDelayedPageActionsIfMissed, false); // Page on load
         window.addEventListener('resize', fixr.resizeActionsDelayed, false); // også på resize
