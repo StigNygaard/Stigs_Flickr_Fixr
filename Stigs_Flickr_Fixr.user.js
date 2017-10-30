@@ -8,23 +8,22 @@
 // @icon        http://www.rockland.dk/img/fixr32.png
 // @icon64      http://www.rockland.dk/img/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2017.10.28.1
+// @version     2017.10.30.0
 // @run-at      document-start
-// @grant       dummy
+// @grant       none
 // @noframes
 // ==/UserScript==
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2017.10.30.0', description: 'Revert one of two Greasemonkey 4 workarounds. A "@grant none" issue seems to be fixed from GM version 4.0alpha11 ...'},
     {version: '2017.10.28.0', description: 'Workarounds for a couple of shortcomings in early versions of new/upcoming Greasemonkey 4 WebExtension.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
-    {version: '2016.08.04.0', description: '"Scale icon" now in color to signal if down-scale necessary to align with size of notes-area. If Orange, click it to downscale/align image.'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
     {version: '2016.06.07.1', description: 'Quickly disabling the script\'s notes-feature, because OFFICIAL NATIVE NOTES-SUPPORT IS BACK ON FLICKR !!! :-) :-)'},
     {version: '2016.03.11.1', description: 'A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page (To the right for now, but might move it to top-menu later?).'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
-    {version: '2016.02.05.1', description: 'Adding a little "bling" to the album-column.'},
     {version: '2016.01.30.0', description: 'Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
     {version: '2015.12.05.2', description: 'Photo-notes support now includes displaying formatting and active links.'},
@@ -370,7 +369,7 @@ var fixr = fixr || {
         observer.observe(fixr.content, config);
         log('fixr.setupObserve INITIALIZATION DONE');
     },
-    init: function (onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray) {
+    init: function (runNow, onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray) {
         // General page-change observer setup:
         if (document.readyState === 'interactive') { // already late?
             fixr.setupObserver();
@@ -387,6 +386,13 @@ var fixr = fixr || {
         }
         if (onFocusHandlerArray && onFocusHandlerArray !== null && onFocusHandlerArray.length) {
             fixr.onFocusHandlers = onFocusHandlerArray;
+        }
+
+        if (runNow && runNow.length) {
+            log('We have ' + runNow.length + ' early running methods starting now at document.readyState = ' + document.readyState);
+            for (var f = 0; f < runNow.length; f++) {
+                runNow[f]();
+            }
         }
     }
 };
@@ -1096,9 +1102,14 @@ function shootingSpaceballs() {
     }
 }
 
+function runEarly() {
+    localStorage.setItem('filterFeedEvents', 'people'); // Make people feed default.
+}
+
+
 if (window.location.href.indexOf('flickr.com\/services\/api\/explore\/')>-1) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
-    // FIXR fixr.init([onPageHandlers], [onResizeHandlers], [onFocusHandlers])
-    fixr.init([scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
+    // FIXR fixr.init([runNow],[onPageHandlers], [onResizeHandlers], [onFocusHandlers])
+    fixr.init([/* runEarly */], [scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
 }
