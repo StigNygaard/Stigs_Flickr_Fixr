@@ -5,10 +5,10 @@
 // @author      Stig Nygaard, http://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
 // @homepageURL http://www.rockland.dk/userscript/flickr/fixr/
 // @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
-// @icon        http://www.rockland.dk/img/fixr32.png
-// @icon64      http://www.rockland.dk/img/fixr64.png
+// @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
+// @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2017.10.30.0
+// @version     2018.04.14.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -16,13 +16,14 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2018.04.14.0', description: 'Minor details.'},
     {version: '2017.10.30.0', description: 'Revert one of two Greasemonkey 4 workarounds. A "@grant none" issue seems to be fixed from GM version 4.0alpha11 ...'},
     {version: '2017.10.28.0', description: 'Workarounds for a couple of shortcomings in early versions of new/upcoming Greasemonkey 4 WebExtension.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
-    {version: '2016.06.07.1', description: 'Quickly disabling the script\'s notes-feature, because OFFICIAL NATIVE NOTES-SUPPORT IS BACK ON FLICKR !!! :-) :-)'},
+    {version: '2016.06.07.1', description: 'Disabling the script\'s notes-feature, because OFFICIAL NATIVE NOTES-SUPPORT is back on Flickr! :-)'},
     {version: '2016.03.11.1', description: 'A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
-    {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page (To the right for now, but might move it to top-menu later?).'},
+    {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
     {version: '2016.01.30.0', description: 'Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
@@ -473,7 +474,7 @@ function updateAlbumCommentCount() {
                     if (album.commentCount === -1) {
                         document.getElementById('albumCommentCount').innerHTML = '?';
                     } else {
-                        document.getElementById('albumCommentCount').innerHTML = '' + album.commentCount;
+                        document.getElementById('albumCommentCount').innerHTML = String(album.commentCount);
                     }
                 } else {
                     log('albumCommentCount element not found');
@@ -485,7 +486,7 @@ function updateAlbumCommentCount() {
 
         if (fixr.context.albumId === album.albumId && fixr.context.albumId !== '' && album.commentCount !== -1) {
             log('Usinging CACHED album count!...');
-            document.getElementById('albumCommentCount').innerHTML = '' + album.commentCount;
+            document.getElementById('albumCommentCount').innerHTML = String(album.commentCount);
         } else if (fixr.context.albumId !== '') {
             var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias !== '' ? fixr.context.photographerAlias : fixr.context.photographerId) + '/albums/' + fixr.context.albumId + '/comments/';
             _reqAlbumComments.open('GET', url, true);
@@ -1068,7 +1069,7 @@ function updateTags() {
                 if (atag) {
                     var realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
                     if (!(tags[i].querySelector('a.fixrTag'))) {
-                        var icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + '' + fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]; // do we know for sure it is square?
+                        var icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
                         tags[i].insertAdjacentHTML('afterbegin', '<a class="fixrTag" href="/photos/' + (fixr.context.photographerAlias !== '' ? fixr.context.photographerAlias : fixr.context.photographerId) + '/tags/' + realtag + '/" title="' + atag.title + ' by ' + fixr.context.photographerName + '"><img src="' + icon + '" style="width:1em;height:1em;margin:0;padding:0;position:relative;top:3px" alt="*" /></a>');
                     }
                 }
@@ -1105,6 +1106,14 @@ function shootingSpaceballs() {
 function runEarly() {
     localStorage.setItem('filterFeedEvents', 'people'); // Make people feed default.
 }
+
+inspect = function(obj) { // for some debugging
+    let output='';
+    Object.keys(obj).forEach(function(key, idx) {
+        output+=key+': ' + typeof obj[key] + ((typeof obj[key] === 'string' || typeof obj[key] === 'boolean' || typeof obj[key] === 'number') ? ' = ' + obj[key] : '') + '\n';
+    });
+    alert(output);
+};
 
 
 if (window.location.href.indexOf('flickr.com\/services\/api\/explore\/')>-1) {
