@@ -1,0 +1,23 @@
+{
+
+  "manifest_version": 2,
+  "name": "Flickr Fixr",
+  "version": "1.0",
+
+  "description": "Fixes Flickr in various ways...",
+  "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
+
+  "icons": {
+    "48": "icons/fixr48.png",
+    "96": "icons/fixr96.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.flickr.com/*"],
+      "js": ["Stigs_Flickr_Fixr.user.js"],
+      "run_at": "document_start"
+    }
+  ]
+
+}
