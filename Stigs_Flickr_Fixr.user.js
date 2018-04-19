@@ -8,7 +8,7 @@
 // @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2018.04.14.0
+// @version     2018.04.19.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -16,7 +16,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
-    {version: '2018.04.14.0', description: 'Minor details.'},
+    {version: '2018.04.19.0', description: 'More reliable map-link fix when Flickr is slow to build a photopage.'},
     {version: '2017.10.30.0', description: 'Revert one of two Greasemonkey 4 workarounds. A "@grant none" issue seems to be fixed from GM version 4.0alpha11 ...'},
     {version: '2017.10.28.0', description: 'Workarounds for a couple of shortcomings in early versions of new/upcoming Greasemonkey 4 WebExtension.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
@@ -400,7 +400,6 @@ var fixr = fixr || {
 // FIXR page-tracker end
 
 
-var _timerMaplink = 0;
 function updateMapLink() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
@@ -431,12 +430,12 @@ function updateMapLink() {
     }
 }
 function updateMapLinkDelayed() {
-    if (fixr.context.pageType !== 'PHOTOPAGE') {
-        return;
-    } // exit if not photopage
-    log('updateMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
-    //clearTimeout(_timerMaplink);
-    _timerMaplink = setTimeout(updateMapLink, 2000); // make maplink work better on photopage
+    if (fixr.context.pageType === 'PHOTOPAGE') {
+        log('updateMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
+        setTimeout(updateMapLink, 2000); // make maplink work better on photopage
+        setTimeout(updateMapLink, 4000); // Twice. Photopage is sometimes a bit slow building
+        setTimeout(updateMapLink, 8000); // Triple. Photopage is sometimes very slow building
+    }
 }
 
 var album = { // cache to avoid repeating requests
@@ -720,7 +719,7 @@ var scaler = {
             var notesview = document.querySelector('div.photo-notes-scrappy-view');
             if (panel && !panel.querySelector('div.unscaleBtn')) {
                 log('scaler.addUnscaleBtn: adding option to div.height-controller');
-                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Stig\'s Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
+                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
                 log ('scaler.addUnscaleBtn: adding click event listner on div.unscaleBtn');
                 panel.querySelector('div.unscaleBtn').addEventListener('click',unscale, false);
             } else {
@@ -729,10 +728,10 @@ var scaler = {
             var unscaleBtnElem = document.getElementById('unscaleBtnId');
             if (unscaleBtnElem && parseInt(notesview.style.width,10)) {
                 if (scaler.mf.width === parseInt(notesview.style.width, 10)) { // Green icon
-                    unscaleBtnElem.title = "This photo has been up-scaled by Stig\'s Flickr Fixr. It appears Flickr was able to align the notes-area with scaled photo. You should be able to view and create notes correctly scaled and aligned on the upscaled photo.";
+                    unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears Flickr was able to align the notes-area with scaled photo. You should be able to view and create notes correctly scaled and aligned on the upscaled photo.";
                     unscaleBtnElem.src = 'https://farm9.staticflickr.com/8879/28767704565_17560d791f_o.png';
                 } else { // Orange icon/button
-                    unscaleBtnElem.title = "This photo has been up-scaled by Stig\'s Flickr Fixr. It appears the notes-area is UNALIGNED with the upscaled image. Please click here to align image-size to the notes-area before studying or creating notes on this image.";
+                    unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears the notes-area is UNALIGNED with the upscaled image. Please click here to align image-size to the notes-area before studying or creating notes on this image.";
                     unscaleBtnElem.src = 'https://farm9.staticflickr.com/8687/28690535161_19b3a34578_o.png';
                 }
             }
@@ -1083,10 +1082,10 @@ function updateTags() {
 }
 function updateTagsDelayed() {
     log('updateTagsDelayed() running... with pageType=' + fixr.context.pageType);
-    //clearTimeout(_timerMaplink);
     if (fixr.context.pageType === 'PHOTOPAGE') {
-        setTimeout(updateTags, 2000);
-        setTimeout(updateTags, 3500); // Twice. Those tags are sometimes a bit slow emerging
+        setTimeout(updateTags, 2500);
+        setTimeout(updateTags, 4500); // Twice. Those tags are sometimes a bit slow emerging
+        setTimeout(updateTags, 8500); // Triple. Those tags are sometimes very slow emerging
     }
 }
 
@@ -1104,7 +1103,7 @@ function shootingSpaceballs() {
 }
 
 function runEarly() {
-    localStorage.setItem('filterFeedEvents', 'people'); // Make people feed default.
+    localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
 inspect = function(obj) { // for some debugging
