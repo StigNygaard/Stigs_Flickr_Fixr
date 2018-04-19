@@ -1,15 +1,14 @@
 # Stig's Flickr Fixr
-It makes Flickr awesome (again)! :-)
 
 A userscript or a browser add-on to enhance the Flickr experience in desktop web-browsers.
 
 Show photographer's albums on photostream-pages, Increase display-size and quality of "old" photos, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more!...
 
-Available as an userscript or as an "independent" browser add-on (webextension).
+Available as an userscript or as "independent" browser add-on (webextension).
  
 Userscript version requires Tampermonkey, Greasemonkey or similar webbrowser extension for userscript support. The official way to install userscript version of Stig's Flickr Fixr, is via GreaseFork: https://greasyfork.org/scripts/12008-stig-s-flickr-fixr
 
-To install as a regular browser add-on:
+To install Flickr Fixr as a regular browser add-on:
 * [Firefox add-on](https://addons.mozilla.org/firefox/addon/flickr-fixr/)
 * [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb)
 
