@@ -3,12 +3,12 @@
 // @namespace   dk.rockland.userscript.flickr.fixr
 // @description Show photographer's albums on photostream-pages, Increase display-size and quality of "old" uploads, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more to come?...
 // @author      Stig Nygaard, http://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
-// @homepageURL http://www.rockland.dk/userscript/flickr/fixr/
+// @homepageURL https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2018.04.19.0
+// @version     2018.05.20.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -16,6 +16,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2018.05.20.0', description: 'Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
     {version: '2018.04.19.0', description: 'More reliable map-link fix when Flickr is slow to build a photopage.'},
     {version: '2017.10.30.0', description: 'Revert one of two Greasemonkey 4 workarounds. A "@grant none" issue seems to be fixed from GM version 4.0alpha11 ...'},
     {version: '2017.10.28.0', description: 'Workarounds for a couple of shortcomings in early versions of new/upcoming Greasemonkey 4 WebExtension.'},
@@ -754,7 +755,7 @@ var scaler = {
             addUnscaleBtn();
             scaler.postAction('notes on scaled photo');
         };
-        var replace = function () { // and (re-)scale?
+        var replace = function () {
             if (fixr.context.pageType !== 'PHOTOPAGE' && fixr.context.pageType !== 'PHOTOPAGE LIGHTBOX') {
                 return; // exit if not photopage or lightbox
             }
@@ -762,11 +763,14 @@ var scaler = {
             scaler.mf = document.querySelector('img.main-photo');  // for en sikkerheds skyld
             if (scaler.mf && scaler.mf !== null && scaler.maxSizeUrl !== '') {
                 if (scaler.mf.height>=640 || scaler.mf.width>=640) { // dirty hack to work-around a bug
-                    scaler.mf.src = scaler.maxSizeUrl; // Replace! only if original (maxSizeUrl should be orgUrl)
+                    if (scaler.mf.src !== scaler.maxSizeUrl) {
+                        scaler.mf.lowsrc = scaler.mf.src;
+                        scaler.mf.src = scaler.maxSizeUrl; // Replace! only if original (maxSizeUrl should be orgUrl)
+                    }
                 } else {
                     log('[scaler] Second thoughts. Do not replace this photo with original because unlikely needed here (bug work-around for small screens).');
                 }
-                scale();
+                scale(); // An extra Scale() - just in case...
             }
         };
         var getSizes = function () {
@@ -831,8 +835,9 @@ var scaler = {
                         }
                         if (scaler.hasOriginal) {
                             log('[scaler] Scale and replace using Original found from XMLHttpRequest');
-                            // do some caching here?...
-                            replace();
+                            var orgImage = new Image();
+                            orgImage.addEventListener("load", replace);
+                            orgImage.src = scaler.maxSizeUrl;
                         }
                     } else {
                         // wait for the call to complete
@@ -934,8 +939,9 @@ var scaler = {
                     if (org) { // quick access når vi bladrer?
                         scaler.hasOriginal = true; // ??? kun hvis original
                         scaler.maxSizeUrl = (org.href).replace(/^https\:/i, '').replace(/_d\./i, '.');
-                        // ... do some scaling here?...
-                        replace();
+                        var orgImage = new Image();
+                        orgImage.addEventListener("load", replace);
+                        orgImage.src = scaler.maxSizeUrl;
                     } else {
                         // vi kan finde original "inline"
                         var target = document.querySelector('div.photo-engagement-view');
@@ -950,8 +956,9 @@ var scaler = {
                                     scaler.hasOriginal = true; // ??? kun hvis original
                                     scaler.maxSizeUrl = (org.href).replace(/^https\:/i, '').replace(/_d\./i, '.');
                                     log('[scaler] Original photo found, now replacing');
-                                    // ... do some scaling here?...
-                                    replace();
+                                    var orgImage = new Image();
+                                    orgImage.addEventListener("load", replace);
+                                    orgImage.src = scaler.maxSizeUrl;
                                 } else {
                                     log('[scaler] Original photo not available for download on this photographer. Re-scale just in case...');
                                     scale(); // ???
@@ -984,7 +991,8 @@ function insertStyle() {
                           '.unscaleBtn:hover{cursor:pointer} ' +
                           'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)} ' +
                           '.signup-footer, .signup-footer-view{display:none} ' +
-                          '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block} ';
+                          '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block} ' +
+                          '.filter-sort.warning p {animation:wink 3s ease 1s 1;} @keyframes wink {0% {background-color:transparent;} 50% {background-color:rgba(255,250,150,0.9);} 100% {background-color:transparent;}} .filter-sort.warning:after{content:"You are looking at this photostream in Date-taken order. Change order to Date-uploaded, to be sure to see latest uploads in the top of the photostream.";z-index:10;padding:.5em;display:none;position:relative;top:-2px;right:-50px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .filter-sort.warning:hover:after{display:block;} ';
         document.getElementsByTagName('head')[0].appendChild(style);
         log('fixrStyle has been ADDED');
     } else {
@@ -1102,22 +1110,35 @@ function shootingSpaceballs() {
     }
 }
 
+function orderWarning() {
+    if (fixr.context.pageType === 'PHOTOSTREAM') {
+        var e = document.querySelector('.dropdown-link.filter-sort');
+        if(e) {
+            if (('Date taken, Fecha de captura, Aufnahmedatum, Date de prise de vue, Data dello scatto, Tirada na data, Ngày chụp, Tanggal pengambilan, 拍攝日期, 촬영 날짜').includes(e.textContent.trim())) {
+                e.classList.add('warning');
+            } else {
+                e.classList.remove('warning');
+            }
+        }
+    }
+}
+
 function runEarly() {
     localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
-inspect = function(obj) { // for some debugging
+function inspect(obj) { // for some debugging
     let output='';
     Object.keys(obj).forEach(function(key, idx) {
         output+=key+': ' + typeof obj[key] + ((typeof obj[key] === 'string' || typeof obj[key] === 'boolean' || typeof obj[key] === 'number') ? ' = ' + obj[key] : '') + '\n';
     });
     alert(output);
-};
+}
 
 
 if (window.location.href.indexOf('flickr.com\/services\/api\/explore\/')>-1) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
     // FIXR fixr.init([runNow],[onPageHandlers], [onResizeHandlers], [onFocusHandlers])
-    fixr.init([/* runEarly */], [scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
+    fixr.init([/* runEarly */], [scaler.run, insertStyle, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
 }
