@@ -8,7 +8,8 @@
 // @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
-// @version     2018.08.19.0
+// @exclude     https://api.flickr.com/*
+// @version     2018.09.23.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -16,7 +17,8 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
-    {version: '2018.08.19.0', description: 'Added link to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from same day.'},
+    {version: '2018.09.23.0', description: 'Minor optimizations.'},
+    {version: '2018.08.19.0', description: 'Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
     {version: '2018.05.20.0', description: 'Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
@@ -26,8 +28,7 @@ var changelog = [
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
     {version: '2016.01.30.0', description: 'Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
-    {version: '2015.12.05.2', description: 'Photo-notes support now includes displaying formatting and active links.'},
-    {version: '2015.12.03.2', description: 'New feature: Basic "beta" support for the good old photo-notes (read-only, no formatting/links).'},
+    {version: '2015.12.03.2', description: 'New feature: Support for the good old photo-notes (read-only).'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
     {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-feature.'}
 ];
@@ -407,7 +408,7 @@ function updateMapLink() {
     if (fixr.context.photoId) {
         var maplink = fixr.content.querySelector('a.static-maps');
         if (maplink) {
-            if (maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?') > 0) && (!maplink.getAttribute('href').includes('&photo='))) {
+            if (maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?')) && (!maplink.getAttribute('href').includes('&photo='))) {
                 maplink.setAttribute('href', maplink.getAttribute('href') + '&photo=' + fixr.context.photoId);
                 log('link is updated by updateMapLink() at readystate=' + document.readyState);
                 try {
@@ -446,10 +447,10 @@ function tagsMenuItem() {
         if (aad  && gid) {
             if (gid.hasAttribute('aria-label') && !m.querySelector('li[aria-label=Tags]')) {
                 // latest design
-                gid.insertAdjacentHTML('afterend', '<li class="menuitem" role="menuitem" aria-label="Tags"><a data-track="gnYouTagsClick" href="/photos/' + aad.href.substring(aad.href.indexOf('/photos/') + 8, aad.href.indexOf('/albums')) + '/tags">Tags</a></li>');
+                gid.insertAdjacentHTML('afterend', '<li class="menuitem" role="menuitem" aria-label="Tags"><a data-track="gnYouTagsClick" href="/photos/me/tags">Tags</a></li>');
             } else if (gid.classList.contains('gn-subnav-item') && !m.querySelector('a[data-track=You-tags]')) {
                 // earlier design
-                gid.insertAdjacentHTML('afterend', '<li class="gn-subnav-item"><a data-track="You-tags" href="/photos/' + aad.href.substring(aad.href.indexOf('/photos/') + 8, aad.href.indexOf('/albums')) + '/tags">Tags</a></li>');
+                gid.insertAdjacentHTML('afterend', '<li class="gn-subnav-item"><a data-track="You-tags" href="/photos/me/tags">Tags</a></li>');
             }
         }
     }
@@ -653,11 +654,8 @@ function exploreCalendar() {
         dtr.style.position = "relative";
         var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
         dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="https://www.flickr.com/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="https://www.flickr.com/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
-        log('San Francisco UTC-8: ' + fixr.clock.pst());
+        log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
-        if (document.querySelector('div.title-row h3')) {
-            document.querySelector('div.title-row h3').title = fixr.clock.explore() + ' - ' + fixr.clock.pst();
-        }
     }
 }
 var _timerExploreCalendarDelayed;
@@ -1176,83 +1174,79 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     var diff = Date.now() - _wsGetPhotoInfoLock;
     if ((_wsGetPhotoInfoLock > 0) && (diff < 50)) {
         log('Skipping wsGetPhotoInfo() because already running?: ' + diff);
-        // *** maybe add a check to see if we are still on same photo? !!!
+        // *** maybe add a check to see if we are still on same photo?!
         return;
     }
 
-    var _reqGetPhotoInfo = null;
-    if (window.XMLHttpRequest) {
-        _reqGetPhotoInfo = new XMLHttpRequest();
-        if (typeof _reqGetPhotoInfo.overrideMimeType !== 'undefined') {
-            _reqGetPhotoInfo.overrideMimeType('application/json');
+    _wsGetPhotoInfoLock = Date.now();
+    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=9b8140dc97b93a5c80751a9dad552bd4&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(function(response) {
+        if(response.ok) {
+            if (response.headers.get('content-type').includes('application/json')) {
+                return response.json()
+            }
+            throw new Error('Response was not in expected json format.');
         }
-        _reqGetPhotoInfo.onreadystatechange = function () {
-            if (_reqGetPhotoInfo.readyState === 4 && _reqGetPhotoInfo.status === 200) {
-                // do something with the results
-                log('webservice photos.getInfo returned status=' + _reqGetPhotoInfo.status);
-                var obj = JSON.parse(_reqGetPhotoInfo.responseText);
-                if (obj.stat === "ok") {
-                    log("flickr.photos.getInfo returned ok");
-                    if (obj.photo && obj.photo.id) {
-                        var uploadDate = new Date(0);
-                        var takenDateStr = '';
-                        if (obj.photo.dateuploaded) {
-                            uploadDate = new Date(obj.photo.dateuploaded*1000);
-                        }
-                        if (obj.photo.dates) {
-                            if (obj.photo.dateuploaded !== obj.photo.dates.posted) {
-                                log('Unexpected Date difference!');
-                            }
-                            if (obj.photo.dates.posted && obj.photo.dates.posted < obj.photo.dateuploaded) {
-                                // Uploaded
-                                uploadDate = new Date(obj.photo.dates.posted*1000); // GMT/UTC
-                            }
-                            if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
-                                // Taken
-                                takenDateStr = obj.photo.dates.taken; // "2018-03-30 00:35:44"
-                                var takenDate = new Date(Date.parse(takenDateStr.replace(' ','T')));
-                                var dayStart = new Date(Date.parse(takenDateStr.substring(0,10)+'T00:00:00'));
-                                var dayEnd = new Date(Date.parse(takenDateStr.substring(0,10)+'T23:59:59'));
-                                var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
-                                if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
-                                    takenDateStr = '<label>Taken:</label> <a href="/search/?user_id=' + fixr.context.photographerId + '&amp;view_all=1&amp;min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&amp;max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200) + '">' + takenDate.toString().substring(0, takenTimeIndex - 1) + '</a>' + takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"<br />';
-                                } else if (obj.photo.dates.takengranularity.toString() === '4') { // 4	Y-m
-                                    takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,7) + '<br />'; // billigt sluppet...
-                                } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
-                                    takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,4) + '<br />';
-                                } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
-                                    takenDateStr = '<label>Taken:</label> Circa ' + obj.photo.dates.taken.substring(0,4) + '<br />';
-                                } else {
-                                    log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
-                                }
-                            }
-                        }
-                        var elem = document.querySelector('.date-info');
-                        if (elem) {
-                            var uploadDateStr = uploadDate.toString();
-                            var n = uploadDateStr.indexOf('(');
-                            if (n > 0) {
-                                uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0,n);
-                            }
-                            elem.innerHTML = '<p>' + takenDateStr + uploadDateStr + '</p>';
+        throw new Error('Network response was not ok.');
+    }).then(function(obj) {
+        if (obj.stat === "ok") {
+            // ... Do the stuff ...
+            log("flickr.photos.getInfo returned ok");
+            if (obj.photo && obj.photo.id) {
+                var uploadDate = new Date(0);
+                var takenDateStr = '';
+                if (obj.photo.dateuploaded) {
+                    uploadDate = new Date(obj.photo.dateuploaded*1000);
+                }
+                if (obj.photo.dates) {
+                    if (obj.photo.dateuploaded !== obj.photo.dates.posted) {
+                        log('Unexpected Date difference!');
+                    }
+                    if (obj.photo.dates.posted && obj.photo.dates.posted < obj.photo.dateuploaded) {
+                        // Uploaded
+                        uploadDate = new Date(obj.photo.dates.posted*1000); // GMT/UTC
+                    }
+                    if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
+                        // Taken
+                        takenDateStr = obj.photo.dates.taken; // "2018-03-30 00:35:44"
+                        var takenDate = new Date(Date.parse(takenDateStr.replace(' ','T')));
+                        var dayStart = new Date(Date.parse(takenDateStr.substring(0,10)+'T00:00:00'));
+                        var dayEnd = new Date(Date.parse(takenDateStr.substring(0,10)+'T23:59:59'));
+                        var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
+                        if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
+                            takenDateStr = '<label>Taken:</label> <a href="/search/?user_id=' + fixr.context.photographerId + '&amp;view_all=1&amp;min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&amp;max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200) + '">' + takenDate.toString().substring(0, takenTimeIndex - 1) + '</a>' + takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"';
+                        } else if (obj.photo.dates.takengranularity.toString() === '4') { // 4	Y-m
+                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,7);
+                        } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
+                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,4);
+                        } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
+                            takenDateStr = '<label>Taken:</label> Circa ' + obj.photo.dates.taken.substring(0,4);
+                        } else {
+                            log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
                     }
-                } else {
-                    log('flickr.photos.getInfo returned an ERROR: obj.stat='+obj.stat+', obj.code='+obj.code+', obj.message='+obj.message);
                 }
-                _wsGetPhotoInfoLock = 0;
-            } else {
-                // wait for the call to complete
-                // alert(_reqGetPhotoInfo.readyState);
+                var elem = document.querySelector('.date-info');
+                if (elem) {
+                    var uploadDateStr = uploadDate.toString();
+                    var n = uploadDateStr.indexOf('(');
+                    if (n > 0) {
+                        uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0,n);
+                    }
+                    elem.innerHTML = '<p x-ms-format-detection="none">' + takenDateStr + '<br />' + uploadDateStr + '</p>';
+                }
+                var withTitle = elem.parentElement.querySelector('span[title]');
+                if (withTitle) {
+                    withTitle.removeAttribute('title');
+                }
             }
-        };
-
-        _wsGetPhotoInfoLock = Date.now();
-        _reqGetPhotoInfo.open('GET', 'https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=9b8140dc97b93a5c80751a9dad552bd4&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1', true);
-        _reqGetPhotoInfo.send(null);
-    } else {
-        log('understøtter ikke XMLHttpRequest');
-    }
+        } else {
+            log('flickr.photos.getInfo returned an ERROR: obj.stat='+obj.stat+', obj.code='+obj.code+', obj.message='+obj.message);
+        }
+        _wsGetPhotoInfoLock = 0;
+    }).catch(function(error) {
+        console.log('There has been a problem with your fetch operation: ', error.message);
+        log('There has been a problem with your fetch operation: ' + error);
+    });
 }
 
 function runEarly() {
