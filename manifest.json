@@ -2,11 +2,14 @@
   "manifest_version": 2,
   "name": "Flickr Fixr",
   "short_name": "Flickr Fixr",
-  "description": "Makes Flickr awesome (again) ! :-)",
-  "version": "1.2.1",
+  "description": "Makes Flickr almost awesome - while waiting for SmugMug to fully fix it ;-)",
+  "version": "1.2.3",
   "author": "Stig Nygaard",
   "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
-  "permissions": ["*://*.flickr.com/*"],
+  "permissions": [
+    "*://*.flickr.com/*",
+    "storage"
+  ],
   "icons": {
     "16": "icons/fr16.png",
     "32": "icons/fixr32.png",
@@ -18,15 +21,22 @@
   },
   "applications": {
     "gecko": {
-      "strict_min_version": "52.0"
+      "strict_min_version": "60.0"
     }
   },
-  "minimum_chrome_version": "60.0",
+  "minimum_chrome_version": "67.0",
+  "minimum_edge_version": "42.17134.1.0",
   "content_scripts": [
     {
       "matches": ["https://*.flickr.com/*"],
+      "exclude_matches": ["*://api.flickr.com/*"],
       "js": ["Stigs_Flickr_Fixr.user.js"],
+      // "js": ["lib/browser-polyfill.js", "options/options.js", "Stigs_Flickr_Fixr.user.js"],
       "run_at": "document_start"
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "options/options.html"
+    // , "open_in_tab": true
+  }
 }
