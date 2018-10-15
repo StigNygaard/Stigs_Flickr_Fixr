@@ -9,7 +9,7 @@
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
 // @exclude     https://api.flickr.com/*
-// @version     2018.10.15.0
+// @version     2018.10.15.1
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -17,6 +17,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
     {version: '2018.10.15.0', description: 'Added Collections and Map to topmenus. Removed the sign-up popup killer, because Flickr has removed the annoying thing themselves.'},
     {version: '2018.08.19.0', description: 'Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
     {version: '2018.05.20.0', description: 'Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
@@ -457,6 +458,7 @@ function updateMapLinkDelayed() {
     }
 }
 
+const topMenuItems_style = '.fluid-subnav a {padding: 12px 11px !important} .subnav-refresh ul.nav-links li.sn-navitem a {padding: 13px 11px 12px 11px !important}';
 function topMenuItems() {
     // User dropdown menu
     var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
@@ -633,6 +635,8 @@ function getAlbumlist() {
         log('understøtter ikke XMLHttpRequest');
     }
 }
+
+const albumTeaser_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}';
 function albumTeaser() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
         return; // exit if not photostream
@@ -701,14 +705,12 @@ function ctrlClick(e) {
     }
 }
 function ctrlClicking() {
-    // if (navigator.userAgent.search(/gecko\/20/i)>-1) { // Firefox/gecko-only ctrl click tab fix
-        var plv = document.querySelectorAll('div.photo-list-view');
-        for (var i = 0; i < plv.length; i++) {
-            log('ctrlClicking(): plv['+i+'] found!');
-            // Allow me to open tabs in background by ctrl-click in Firefox:
-            plv[i].parentNode.addEventListener('click', ctrlClick, true);
-        }
-    // }
+    var plv = document.querySelectorAll('div.photo-list-view');
+    for (var i = 0; i < plv.length; i++) {
+        log('ctrlClicking(): plv['+i+'] found!');
+        // Allow me to open tabs in background by ctrl-click in Firefox:
+        plv[i].parentNode.addEventListener('click', ctrlClick, true);
+    }
 }
 var _timerCtrlClicking;
 function ctrlClickingDelayed() {
@@ -727,6 +729,7 @@ var scaler = {
     hasOriginal: false,
     scaleToWidth: 0,
     scaleToHeight: 0,
+    style: '.unscaleBtn:hover{cursor:pointer}',
     postAction: function() {
         log('scaler.postAction'); // dummy-function to be replaced
     },
@@ -1033,6 +1036,7 @@ var scaler = {
     }
 };
 
+const topPagination_style = '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block}';
 function topPagination() {
     log('topPagination()');
     var bottomPagination = document.querySelector('.pagination-view');
@@ -1057,6 +1061,8 @@ function topPagination() {
         }
     }
 }
+
+const albumExtras_style = '.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://s.yimg.com/uy/build/images/icons-1x-s2fb29ad15b.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
 function albumExtras() { // links to album's map and comments
     if (fixr.context.pageType !== 'ALBUM') {
         return; // exit if not albumpage
@@ -1087,6 +1093,8 @@ function albumExtras() { // links to album's map and comments
         updateAlbumCommentCount();
     }
 }
+
+const updateTags_style = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:none;} ul.tags-list>li.tag:hover>a.fixrTag,ul.tags-list>li.autotag:hover>a.fixrTag{display:inline;}';
 function updateTags() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
@@ -1130,19 +1138,20 @@ function updateTagsDelayed() {
     }
 }
 
-function photoDatesDelayed() {
-    log('photoDates() running... with pageType=' + fixr.context.pageType);
-    if (fixr.context.pageType === 'PHOTOPAGE') {
-        setTimeout(photoDates, 2000);
-        setTimeout(photoDates, 4000); // Twice.
-    }
-}
+const photoDates_style = '.has-date-info {position:relative} .date-info{z-index:10;padding:0 .5em 0 .5em;display:none;position:absolute;top:30px;left:-40px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .has-date-info:hover .date-info{display:block;} .date-info label {display:inline-block; min-width: 5em;}';
 function photoDates() {
     var elem = document.querySelector('div.view.sub-photo-date-view');
     if (elem && !elem.classList.contains('has-date-info')) {
         elem.classList.add('has-date-info');
         elem.insertAdjacentHTML("beforeend", '<div class="date-info">Date info!</div>');
         wsGetPhotoInfo(); // get dates
+    }
+}
+function photoDatesDelayed() {
+    log('photoDates() running... with pageType=' + fixr.context.pageType);
+    if (fixr.context.pageType === 'PHOTOPAGE') {
+        setTimeout(photoDates, 2000);
+        setTimeout(photoDates, 4000); // Twice.
     }
 }
 
@@ -1159,6 +1168,7 @@ function shootingSpaceballs() {
     }
 }
 
+const orderwarning_style = '.filter-sort.warning p {animation:wink 3s ease 1s 1;} @keyframes wink {0% {background-color:transparent;} 50% {background-color:rgba(255,250,150,0.9);} 100% {background-color:transparent;}} .filter-sort.warning:after{content:"You are looking at this photostream in Date-taken order. Change order to Date-uploaded, to be sure to see latest uploads in the top of photostreams.";z-index:10;padding:.5em;display:none;position:relative;top:-2px;right:-50px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .filter-sort.warning:hover:after{display:block;}';
 function orderWarning() {
     if (fixr.context.pageType === 'PHOTOSTREAM') {
         var e = document.querySelector('.dropdown-link.filter-sort');
@@ -1259,27 +1269,81 @@ function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
+function handlerInitFixr(options) { // Webextension init
+    let runNow = [];
+    let onPageHandlers = [];
+    let onResizeHandlers = [];
+    let onFocusHandlers = [];
+    if (options.scaler) {
+        fixr.style.add(scaler.style);
+        onPageHandlers.push(scaler.run);
+        onResizeHandlers.push(scaler.run);
+    }
+    if (options.ctrlClicking) {
+        onPageHandlers.push(ctrlClicking);
+    }
+    if (options.albumExtras) {
+        fixr.style.add(albumExtras_style);
+        onPageHandlers.push(albumExtras);
+    }
+    if (options.topPagination) {
+        fixr.style.add(topPagination_style);
+        onPageHandlers.push(topPagination);
+    }
+    if (options.shootingSpaceballs) {
+        onPageHandlers.push(shootingSpaceballs);
+    }
+    if (options.orderWarning) {
+        fixr.style.add(orderwarning_style);
+        onPageHandlers.push(orderWarning);
+    }
+    if (options.topMenuItems) {
+        fixr.style.add(topMenuItems_style);
+        onPageHandlers.push(topMenuItems);
+    }
+    if (options.photoDates) {
+        fixr.style.add(photoDates_style);
+        onPageHandlers.push(photoDatesDelayed);
+    }
+    if (options.ctrlClicking) {
+        onPageHandlers.push(ctrlClickingDelayed);
+    }
+    if (options.exploreCalendar) {
+        onPageHandlers.push(exploreCalendarDelayed);
+    }
+    if (options.albumTeaser) {
+        fixr.style.add(albumTeaser_style);
+        onPageHandlers.push(albumTeaserDelayed);
+    }
+    if (options.updateMapLink) {
+        onPageHandlers.push(updateMapLinkDelayed);
+    }
+    if (options.updateTags) {
+        fixr.style.add(updateTags_style);
+        onPageHandlers.push(updateTagsDelayed);
+    }
+    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers);
+}
+
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
-    log('Userscript - fixr.init...');
-    // options.scaler
-    fixr.style.add('.unscaleBtn:hover{cursor:pointer}');
-    // albumExtras
-    fixr.style.add('.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://s.yimg.com/uy/build/images/icons-1x-s2fb29ad15b.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}');
-    // topPagination
-    fixr.style.add('#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block}');
-    // orderWarning
-    fixr.style.add('.filter-sort.warning p {animation:wink 3s ease 1s 1;} @keyframes wink {0% {background-color:transparent;} 50% {background-color:rgba(255,250,150,0.9);} 100% {background-color:transparent;}} .filter-sort.warning:after{content:"You are looking at this photostream in Date-taken order. Change order to Date-uploaded, to be sure to see latest uploads in the top of photostreams.";z-index:10;padding:.5em;display:none;position:relative;top:-2px;right:-50px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .filter-sort.warning:hover:after{display:block;}');
-    // topMenuItems
-    fixr.style.add('.fluid-subnav a {padding: 12px 11px !important} .subnav-refresh ul.nav-links li.sn-navitem a {padding: 13px 11px 12px 11px !important}');
-    // photoDates
-    fixr.style.add('.has-date-info {position:relative} .date-info{z-index:10;padding:0 .5em 0 .5em;display:none;position:absolute;top:30px;left:-40px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .has-date-info:hover .date-info{display:block;} .date-info label {display:inline-block; min-width: 5em;}');
-    // albumTeaser
-    fixr.style.add('img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}');
-    // updateTags
-    fixr.style.add('ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:none;} ul.tags-list>li.tag:hover>a.fixrTag,ul.tags-list>li.autotag:hover>a.fixrTag{display:inline;}');
+    if ((typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
+        log('WebExtension - init with options...');
+        withOptionsDo(handlerInitFixr); // load selected features and run fixr.init with them...
+    } else {
+        log('Userscript - fixr.init...');
+        fixr.style.add(scaler.style);
+        fixr.style.add(albumExtras_style);
+        fixr.style.add(topPagination_style);
+        fixr.style.add(orderwarning_style);
+        fixr.style.add(topMenuItems_style);
+        fixr.style.add(photoDates_style);
+        fixr.style.add(albumTeaser_style);
+        fixr.style.add(updateTags_style);
 
-    // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers])
-    fixr.init([/* runEarly */], [scaler.run, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, topMenuItems, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
+        // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers])
+        fixr.init([/* runEarly */], [scaler.run, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, topMenuItems, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
+    }
 }
+
