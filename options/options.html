@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flickr Fixr Options test</title>
+    <script type="application/javascript" src="/lib/browser-polyfill.js"></script>
+    <style>
+        #fixroptions fieldset {position:relative}
+        #fixroptions fieldset>div>div {display:none; width:50%; position:absolute; right:1em; top:1em; color: rgb(0,129,240)}
+        #fixroptions fieldset>div>div>p {padding-left:2em}
+        #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
+        #fixroptions fieldset>div:hover button {color: rgb(0,129,240); /* border-color: rgb(255,0,159) */ }
+        #fixroptions fieldset>div:hover>div {display:block}
+        #fixroptions fieldset>div {width:50%; margin-top:.5em}
+        #fixroptions fieldset button {margin-top:.5em}
+    </style>
+</head>
+<body>
+<form id="fixroptions">
+    <fieldset style="position:relative"><legend>Toggle features</legend>
+        <div><label><input type="checkbox" id="scaler" /> Show uploads predating March 2012 in big size</label>
+            <div><p>Up until 2012 Flickr had always updated the full database of photos when new browsing-sizes was introduced
+                on the site. However in May 2012 only photos uploaded after March 2012 was updated when Flickr introduced
+                1600px and 2048px wide browsing-sizes, leaving the majority of photos to be displayed only 1024px wide.
+                Flickr Fixr fixes this by scaling, and when the original is available, using the original uploaded photo for
+                best possible quality.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="albumTeaser" /> Album-teaser column on photostreams</label>
+            <div><p>Puts a column featuring albums on photographer's photostream. The 10 first albums as
+                sorted in Flickr Organizer are shown in the column.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="updateTags" /> Direct tag-links to <em>same</em> photographer's photos</label>
+            <div><p>Adds an extra direct link in tags, pointing to the same photographer's similar tagged photos.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="albumExtras" /> Links to album-map and album-comments</label>
+            <div><p>Adds two extra links in "album headers". One link pointing to a map with current album's photos, and another
+                link pointing to the old hidden/forgotten page with album comments, which also is a great page for reading
+                long album descriptions.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="updateMapLink" /> Extra and improved map links on photos</label>
+            <div><p>Adds the photo you came  from to the image-ribbon, when opening Flickr Map on a photo. Also "opens" the
+                photo, but it's a 90% fix: To see exactly where it was geotagged, click twice on the photo in the image-ribbon
+                to close and re-open it; Now a star showing the exact position of photo appears. <em>Bonus:</em> Also adds a
+                link to show geoposition on Google Maps.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="topPagination" /> Top-pagination for fast an easy navigation</label>
+            <div><p>Adds a pagination-bar when hovering mouse just in top of the photostreams, albumpages, favorite collections,
+                ("beta experience") group pools and on the Explore page.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="exploreCalendar" /> Explore Calendar and Recent Uploads</label>
+            <div><p>On the Explore page, add a link to the hidden/forgotten Explore Calendar and to page showing some of the latest
+                uploads to Flickr. A little warning regarding the latest upload though. Even though Safe Search is activated on
+                that page, you risk seeing stuff you might have preferred not to see.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="topMenuItems" /> Extra top menu items</label>
+            <div><p>Adds Tags, Collections and Map items to both the user ("You" dropdown) and the photographer menus (menu bar).</p></div>
+        </div>
+        <div><label><input type="checkbox" id="photoDates" /> Extended date &amp; time info on photopages</label>
+            <div><p>Via mouseover, show both Taken and Upload dates in detail when available. Taken date will also work as a
+                link to more photos from the same photographer.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
+            <div><p>When browsing a photostream in <em>Date taken</em>em> order, a subtle visual hint will warn you that the
+                latest added photos might not be on top of photostream.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="ctrlClicking" /> New tab fix for Firefox</label>
+            <div><p>If you have your Firefox configured to open tabs in the "background" when ctrl-clicking links, you may have
+                seen Flickr overriding this preference on search result pages (including the Trending Tags pages) and bring
+                immediately focus to new tabs instead. This should prevent Flickr overriding your open tabs preferences.
+                I have only seen the problem when using Firefox, so feature is default disabled for other browsers.</p></div>
+        </div>
+        <div><label><input type="checkbox" id="shootingSpaceballs" /> Allow image context menu on "All sizes" pages</label>
+            <div><p>Removes layer over images on "All sizes" pages, so you can use your browser's context menu for images. I have
+                been silent about this feature, because I don't want Flickr Fixr to be a tool for people who want to use
+                other peoples photos without permission. But I have image tools like "Search Similar image" and "EXIF viewer"
+                which I would like to access via the context menu. <em>Please respect ownership of images, and remember to ask
+                permission for any public use of other peoples photos, if not already granted by an attached license.</em></p></div>
+        </div>
+        <div><button type="submit" class="browser-style">Save</button></div>
+        <p>You will have to reload any already open Flickr webpages to enable updated settings.</p>
+    </fieldset>
+</form>
+<p>I'm <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard on Flickr</a>. Do you like Flickr Fixr, found an error,
+or have ideas for improvement, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment
+in the Flickr Hacks forum</a>. If you really really REEAAALLYY like Flickr Fixr, you are of course also always welcome to
+<a href="https://www.paypal.me/stignygaard">buy my next beer</a> ;-)</p>
+
+<script type="application/javascript" src="options.js"></script>
+</body>
+</html>
