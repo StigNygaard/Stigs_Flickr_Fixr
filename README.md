@@ -4,7 +4,7 @@ A userscript or a browser extension to enhance the Flickr experience in your des
 
 Show photographer's albums on photostream-pages, Increase display-size and quality of "old" photos, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagination - And more!...
 
-Available as an userscript or as browser webextensions.
+Available as an userscript or as browser webextensions. Currently features of userscript and browser extensions are generally the same, but the browser extensions have the additional capability of allowing you to turn individual features on and off.
  
 Userscript version requires Tampermonkey, Greasemonkey or similar webbrowser extension for userscript support. The official way to install userscript version of Stig's Flickr Fixr, is via GreaseFork: https://greasyfork.org/scripts/12008-stig-s-flickr-fixr
 
@@ -28,4 +28,4 @@ Find me on Flickr at: https://www.flickr.com/photos/stignygaard/
  
 ![Screenshot6](https://c1.staticflickr.com/5/4323/35889673300_b36f445f4b_z.jpg)
  
-This script was originally published in August 2015 and maintained in a GitHub Gist until it was moved to this repository in end of July 2017. The older script versions can still be found via revisions in the old Gist: https://gist.github.com/StigNygaard/268c676687c5ff53130c .
+This script was originally published in August 2015 and maintained in a GitHub Gist until it was moved to [this repository](https://github.com/StigNygaard/Stigs_Flickr_Fixr) in end of July 2017. The older script versions can still be found via revisions in the old Gist: https://gist.github.com/StigNygaard/268c676687c5ff53130c .
