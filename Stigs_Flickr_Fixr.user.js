@@ -9,7 +9,7 @@
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
 // @exclude     https://api.flickr.com/*
-// @version     2018.10.15.1
+// @version     2018.10.28.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -17,6 +17,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2018.10.28.0', description: 'Minor style adjustment.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
     {version: '2018.10.15.0', description: 'Added Collections and Map to topmenus. Removed the sign-up popup killer, because Flickr has removed the annoying thing themselves.'},
     {version: '2018.08.19.0', description: 'Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
@@ -458,7 +459,7 @@ function updateMapLinkDelayed() {
     }
 }
 
-const topMenuItems_style = '.fluid-subnav a {padding: 12px 11px !important} .subnav-refresh ul.nav-links li.sn-navitem a {padding: 13px 11px 12px 11px !important}';
+const topMenuItems_style = '.fluid-subnav a {padding: 12px 10px !important} .subnav-refresh ul.nav-links li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
 function topMenuItems() {
     // User dropdown menu
     var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
@@ -1341,9 +1342,7 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(photoDates_style);
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style);
-
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers])
         fixr.init([/* runEarly */], [scaler.run, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, topMenuItems, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
     }
 }
-
