@@ -10,8 +10,7 @@ Userscript version requires Tampermonkey, Greasemonkey or similar webbrowser ext
 
 To install Flickr Fixr as a "native" browser webextension:
 * [Mozilla Firefox extension](https://addons.mozilla.org/firefox/addon/flickr-fixr/)
-* [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb)
-* Opera extension (expected soon)
+* [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) (Should also work for Opera users)
 
 For cross-browser compatibility, Flickr Fixr browser extensions are using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
 
