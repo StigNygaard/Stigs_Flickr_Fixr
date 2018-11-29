@@ -9,7 +9,7 @@
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
 // @exclude     https://api.flickr.com/*
-// @version     2018.10.28.0
+// @version     2018.11.29.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -17,18 +17,18 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
-    {version: '2018.10.28.0', description: 'Minor style adjustment.'},
+    {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
-    {version: '2018.10.15.0', description: 'Added Collections and Map to topmenus. Removed the sign-up popup killer, because Flickr has removed the annoying thing themselves.'},
-    {version: '2018.08.19.0', description: 'Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
-    {version: '2018.05.20.0', description: 'Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
+    {version: '2018.10.15.0', description: 'New feature: Added Collections and Map to topmenus. Removed the sign-up popup killer, because Flickr has removed the annoying thing themselves.'},
+    {version: '2018.08.19.0', description: 'New features: Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
+    {version: '2018.05.20.0', description: 'New feature: Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
-    {version: '2016.06.07.1', description: 'Disabling the script\'s notes-feature, because OFFICIAL NATIVE NOTES-SUPPORT is back on Flickr! :-)'},
-    {version: '2016.03.11.1', description: 'A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
+    {version: '2016.06.07.1', description: 'Disabling the script\'s notes-feature, because native notes-support is back on Flickr!'},
+    {version: '2016.03.11.1', description: 'New features: A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
-    {version: '2016.01.30.0', description: 'Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
+    {version: '2016.01.30.0', description: 'New feature: Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
     {version: '2015.12.03.2', description: 'New feature: Support for the good old photo-notes (read-only).'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
@@ -78,6 +78,7 @@ var fixr = fixr || {
     onPageHandlers: [],
     onResizeHandlers: [],
     onFocusHandlers: [],
+    onStandaloneHandlers: [],
     runningDirty: function() { // In-development and extra experiments enabled?
         return (DEBUG && (fixr.context.userId==='10259776@N00'));
     },
@@ -349,8 +350,20 @@ var fixr = fixr || {
             log('ej nødvendigt at køre fixr.pageActions() på bagkant i dette tilfælde...');
         }
     },
+    runIfStandalonePage: function () {
+        if (fixr.content === null && fixr.pageactionsCount === 0) { // if really looks like a "standalone page"...
+            // Now run the standalone handlers
+            if (fixr.onStandaloneHandlers && fixr.onStandaloneHandlers !== null && fixr.onStandaloneHandlers.length) {
+                log('We have ' + fixr.onStandaloneHandlers.length + ' standalone handlers starting now...');
+                for (var f = 0; f < fixr.onStandaloneHandlers.length; f++) {
+                    fixr.onStandaloneHandlers[f]();
+                }
+            }
+        }
+    },
     runDelayedPageActionsIfMissed: function () {
         setTimeout(fixr.runPageActionsIfMissed, 2000);
+        setTimeout(fixr.runIfStandalonePage, 500);
     },
     resizeActions: function () {
         if (fixr.onResizeHandlers && fixr.onResizeHandlers !== null && fixr.onResizeHandlers.length) {
@@ -390,7 +403,7 @@ var fixr = fixr || {
         observer.observe(fixr.content, config);
         log('fixr.setupObserve INITIALIZATION DONE');
     },
-    init: function (runNow, onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray) {
+    init: function (runNow, onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray, onStandaloneHandlerArray) {
         // General page-change observer setup:
         if (document.readyState === 'interactive') { // already late?
             fixr.setupObserver();
@@ -402,12 +415,16 @@ var fixr = fixr || {
         if (onPageHandlerArray && onPageHandlerArray !== null && onPageHandlerArray.length) {
             fixr.onPageHandlers = onPageHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
-        fixr.onPageHandlers.push(fixr.style.init); // init styles
+        fixr.onPageHandlers.push(fixr.style.init); //  styles
         if (onResizeHandlerArray && onResizeHandlerArray !== null && onResizeHandlerArray.length) {
             fixr.onResizeHandlers = onResizeHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
         if (onFocusHandlerArray && onFocusHandlerArray !== null && onFocusHandlerArray.length) {
             fixr.onFocusHandlers = onFocusHandlerArray;
+        }
+        if (onStandaloneHandlerArray && onStandaloneHandlerArray !== null && onStandaloneHandlerArray.length) { // on standalone pages, not part of "single page application"
+            fixr.onStandaloneHandlers = onStandaloneHandlerArray;
+            fixr.onStandaloneHandlers.push(fixr.style.init); //  styles
         }
 
         if (runNow && runNow.length) {
@@ -420,6 +437,10 @@ var fixr = fixr || {
 };
 // FIXR page-tracker end
 
+
+function escapeHTML(str) {
+    return str.replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
+}
 
 function updateMapLink() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
@@ -435,7 +456,7 @@ function updateMapLink() {
                 try {
                     var lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     var lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="//www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
                 }
                 catch (e) {
                     log('Failed creating Google Maps link: ' + e);
@@ -459,7 +480,7 @@ function updateMapLinkDelayed() {
     }
 }
 
-const topMenuItems_style = '.fluid-subnav a {padding: 12px 10px !important} .subnav-refresh ul.nav-links li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
+const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !important} .subnav-refresh ul.nav-links.extraitems li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
 function topMenuItems() {
     // User dropdown menu
     var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
@@ -484,14 +505,15 @@ function topMenuItems() {
         var gib = m.querySelector('li#groups') || m.querySelector('li.sn-groups');
         var aab = m.querySelector('li#albums a') || m.querySelector('li.sn-navitem-sets a');
         if (aab && gib) {
+            m.classList.add('extraitems'); // mark extra items being added (so adjust spacing in style)
             if (gib.id === 'groups' && !m.querySelector('li#tags')) {
                 // latest design
-                gib.insertAdjacentHTML('afterend', '<li id="tags" class="link " role="menuitem"><a href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/tags"><span>Tags</span></a></li>');
-                aab.parentElement.insertAdjacentHTML('afterend', '<li id="collections" class="link " role="menuitem" title="Collections"><a href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/collections"><span>Collections</span></a></li><li id="map" class="link " role="menuitem"><a href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map"><span>Map</span></a></li>');
+                gib.insertAdjacentHTML('afterend', '<li id="tags" class="link " role="menuitem"><a href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/tags"><span>Tags</span></a></li>');
+                aab.parentElement.insertAdjacentHTML('afterend', '<li id="collections" class="link " role="menuitem" title="Collections"><a href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/collections"><span>Collections</span></a></li><li id="map" class="link " role="menuitem"><a href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map"><span>Map</span></a></li>');
             } else if (gib.classList.contains('sn-groups') && !m.querySelector('li.sn-tags')) {
                 // earlier design
-                gib.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-tags"><a data-track="YouSubnav-tags" href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/tags">Tags</a></li>');
-                aab.parentElement.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-collections" title="Collections"><a data-track="YouSubnav-collections" href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/collections">Collections</a></li><li class="sn-navitem sn-map"><a data-track="YouSubnav-map" href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map">Map</a></li>');
+                gib.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-tags"><a data-track="YouSubnav-tags" href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/tags">Tags</a></li>');
+                aab.parentElement.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-collections" title="Collections"><a data-track="YouSubnav-collections" href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/collections">Collections</a></li><li class="sn-navitem sn-map"><a data-track="YouSubnav-map" href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map">Map</a></li>');
             }
         }
     }
@@ -600,7 +622,7 @@ function getAlbumlist() {
                         if (a && a !== null) {
                             log('Album title: ' + a.title);
                             log('Album url: ' + a.getAttribute('href'));
-                            albums.html += '<div><a href="//www.flickr.com' + a.getAttribute('href') + '"><img src="' + imgUrl + '" class="asquare" alt="" /><div style="margin:0 0 .8em 0">' + a.title + '</div></a></div>';
+                            albums.html += '<div><a href="//www.flickr.com' + a.getAttribute('href') + '"><img src="' + imgUrl + '" class="asquare" alt="" /><div style="margin:0 0 .8em 0">' + escapeHTML(a.title) + '</div></a></div>';
                         } else {
                             log('a element not found?');
                         }
@@ -637,7 +659,7 @@ function getAlbumlist() {
     }
 }
 
-const albumTeaser_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}';
+const albumTeaser_style = 'div#albumTeaser {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px}';
 function albumTeaser() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
         return; // exit if not photostream
@@ -647,12 +669,10 @@ function albumTeaser() {
     if (!dpc) {
         return;
     }
-    // to-do: check om personlig photostream?
-    // to-do: check padding-right er mindst 130px?
     log('AlbumTeaser found div.photolist-container');
     if (!document.getElementById('albumTeaser')) {
         dpc.style.position = "relative";
-        dpc.insertAdjacentHTML('afterbegin', '<div id="albumTeaser" style="border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px"></div>');
+        dpc.insertAdjacentHTML('afterbegin', '<div id="albumTeaser"></div>');
     }
     if (document.getElementById('albumTeaser')) {
         getAlbumlist();  // også check på fixr.context.photographerId ?
@@ -681,7 +701,7 @@ function exploreCalendar() {
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
         var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
-        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="https://www.flickr.com/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="https://www.flickr.com/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
+        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="//www.flickr.com/explore/interesting/' + exploreMonth + '/"><img src="//c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="//www.flickr.com/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="//c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
@@ -776,7 +796,7 @@ var scaler = {
             var notesview = document.querySelector('div.photo-notes-scrappy-view');
             if (panel && !panel.querySelector('div.unscaleBtn')) {
                 log('scaler.addUnscaleBtn: adding option to div.height-controller');
-                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
+                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="//farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
                 log ('scaler.addUnscaleBtn: adding click event listner on div.unscaleBtn');
                 panel.querySelector('div.unscaleBtn').addEventListener('click',unscale, false);
             } else {
@@ -786,10 +806,10 @@ var scaler = {
             if (unscaleBtnElem && parseInt(notesview.style.width,10)) {
                 if (scaler.mf.width === parseInt(notesview.style.width, 10)) { // Green icon
                     unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears Flickr was able to align the notes-area with scaled photo. You should be able to view and create notes correctly scaled and aligned on the upscaled photo.";
-                    unscaleBtnElem.src = 'https://farm9.staticflickr.com/8879/28767704565_17560d791f_o.png';
+                    unscaleBtnElem.src = '//farm9.staticflickr.com/8879/28767704565_17560d791f_o.png';
                 } else { // Orange icon/button
                     unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears the notes-area is UNALIGNED with the upscaled image. Please click here to align image-size to the notes-area before studying or creating notes on this image.";
-                    unscaleBtnElem.src = 'https://farm9.staticflickr.com/8687/28690535161_19b3a34578_o.png';
+                    unscaleBtnElem.src = '//farm9.staticflickr.com/8687/28690535161_19b3a34578_o.png';
                 }
             }
         };
@@ -1063,7 +1083,7 @@ function topPagination() {
     }
 }
 
-const albumExtras_style = '.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://s.yimg.com/uy/build/images/icons-1x-s2fb29ad15b.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
+const albumExtras_style = '.album-map-icon{background:url("//c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("//c1.staticflickr.com/5/4816/46041390622_f8a0cf0148_o.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
 function albumExtras() { // links to album's map and comments
     if (fixr.context.pageType !== 'ALBUM') {
         return; // exit if not albumpage
@@ -1183,6 +1203,33 @@ function orderWarning() {
     }
 }
 
+const newsfeedLinks_style = 'div#feedlinks {border:none; margin:0; padding:0; position:absolute; top:0; right:10px; width:100px} div#gn-wrap>div#feedlinks {right:-120px} div#feedlinks>a {display:block; float:left; margin:10px 8px 0 0; width:16px} div#feedlinks>a>img {width:16px; height:16px}';
+function newsfeedLinks() {
+    var elem = document.getElementById('feedlinks');
+    if (elem) {
+        elem.innerHTML = '';
+    }
+    setTimeout(updateNewsfeedLinks, 500); // give Flickr time to update link tags in head
+}
+function updateNewsfeedLinks() {
+    var feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
+    var dgnc = document.querySelector('div.global-nav-container') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') ;
+    if (dgnc) {
+        if (!document.getElementById('feedlinks')) {
+            dgnc.style.position = "relative";
+            dgnc.insertAdjacentHTML('afterbegin', '<div id="feedlinks"></div>');
+        }
+        var elem = document.getElementById('feedlinks');
+        if (elem) {
+            var feedicons = '';
+            for (const link of feedlinks) {
+                feedicons += '<a href="' + escapeHTML(link.href) + '"><img src="//c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png" alt="Feedlink" style="width:16px;height:16px" title="' + escapeHTML(link.title) + '"></a>';
+            }
+            elem.innerHTML = feedicons;
+        }
+    }
+}
+
 var _wsGetPhotoInfoLock = 0;
 function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     var diff = Date.now() - _wsGetPhotoInfoLock;
@@ -1191,7 +1238,6 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         // *** maybe add a check to see if we are still on same photo?!
         return;
     }
-
     _wsGetPhotoInfoLock = Date.now();
     fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=9b8140dc97b93a5c80751a9dad552bd4&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(function(response) {
         if(response.ok) {
@@ -1209,19 +1255,25 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             if (obj.photo && obj.photo.id) {
                 var uploadDate = new Date(0);
                 var takenDateStr = '';
+                var debugstr = '';
                 if (obj.photo.dateuploaded) {
                     uploadDate = new Date(obj.photo.dateuploaded*1000);
+                    debugstr = 'UploadDate: ' + uploadDate.toString();
                 }
                 if (obj.photo.dates) {
                     if (obj.photo.dateuploaded !== obj.photo.dates.posted) {
                         log('Unexpected Date difference!');
                     }
-                    if (obj.photo.dates.posted && obj.photo.dates.posted < obj.photo.dateuploaded) {
-                        // Uploaded
-                        uploadDate = new Date(obj.photo.dates.posted*1000); // GMT/UTC
+                    if (obj.photo.dates.posted) {
+                        if (obj.photo.dates.posted < obj.photo.dateuploaded) {
+                            // Uploaded
+                            uploadDate = new Date(obj.photo.dates.posted * 1000); // GMT/UTC
+                        }
+                        debugstr += '<br />PostDate: ' + uploadDate.toString();
                     }
                     if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
                         // Taken
+                        debugstr += '<br />TakenDate: ' + obj.photo.dates.taken + ' (granularity=' + obj.photo.dates.takengranularity + ')';
                         takenDateStr = obj.photo.dates.taken; // "2018-03-30 00:35:44"
                         var takenDate = new Date(Date.parse(takenDateStr.replace(' ','T')));
                         var dayStart = new Date(Date.parse(takenDateStr.substring(0,10)+'T00:00:00'));
@@ -1239,6 +1291,9 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                             log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
                     }
+                    if (obj.photo.dates.lastupdate) { // photo has been updated/replaced
+                        debugstr += '<br />UpdateDate: ' + (new Date(obj.photo.dates.lastupdate * 1000)).toString();
+                    }
                 }
                 if (elem) {
                     var uploadDateStr = uploadDate.toString();
@@ -1246,7 +1301,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     if (n > 0) {
                         uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0,n);
                     }
-                    elem.innerHTML = '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
+                    elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
                 }
                 var withTitle = elem.parentElement.querySelector('span[title]');
                 if (withTitle) {
@@ -1255,7 +1310,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             }
         } else {
             if (elem && obj.message) {
-                elem.innerHTML = 'Error fetching date details: ' + obj.message;
+                elem.innerHTML = 'Cannot fetch detailed date details on this photo: ' + obj.message;
             }
             log('flickr.photos.getInfo returned an ERROR: obj.stat='+obj.stat+', obj.code='+obj.code+', obj.message='+obj.message);
         }
@@ -1270,15 +1325,25 @@ function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
+const shared_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features
+
 function handlerInitFixr(options) { // Webextension init
     let runNow = [];
     let onPageHandlers = [];
     let onResizeHandlers = [];
     let onFocusHandlers = [];
+    let onStandaloneHandlers = [];
+
+    fixr.style.add(shared_style);
     if (options.scaler) {
         fixr.style.add(scaler.style);
         onPageHandlers.push(scaler.run);
         onResizeHandlers.push(scaler.run);
+    }
+    if (options.topMenuItems) {
+        fixr.style.add(topMenuItems_style);
+        onPageHandlers.push(topMenuItems);
+        onStandaloneHandlers.push(topMenuItems);
     }
     if (options.ctrlClicking) {
         onPageHandlers.push(ctrlClicking);
@@ -1298,9 +1363,10 @@ function handlerInitFixr(options) { // Webextension init
         fixr.style.add(orderwarning_style);
         onPageHandlers.push(orderWarning);
     }
-    if (options.topMenuItems) {
-        fixr.style.add(topMenuItems_style);
-        onPageHandlers.push(topMenuItems);
+    if (options.newsfeedLinks) {
+        fixr.style.add(newsfeedLinks_style);
+        onPageHandlers.push(newsfeedLinks);
+        onStandaloneHandlers.push(newsfeedLinks);
     }
     if (options.photoDates) {
         fixr.style.add(photoDates_style);
@@ -1323,7 +1389,7 @@ function handlerInitFixr(options) { // Webextension init
         fixr.style.add(updateTags_style);
         onPageHandlers.push(updateTagsDelayed);
     }
-    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers);
+    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
 }
 
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
@@ -1334,15 +1400,17 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         withOptionsDo(handlerInitFixr); // load selected features and run fixr.init with them...
     } else {
         log('Userscript - fixr.init...');
+        fixr.style.add(shared_style);
         fixr.style.add(scaler.style);
         fixr.style.add(albumExtras_style);
         fixr.style.add(topPagination_style);
         fixr.style.add(orderwarning_style);
         fixr.style.add(topMenuItems_style);
         fixr.style.add(photoDates_style);
+        fixr.style.add(newsfeedLinks_style);
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style);
-        // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers])
-        fixr.init([/* runEarly */], [scaler.run, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, topMenuItems, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], []);
+        // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
+        fixr.init([/* runEarly */], [scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks]);
     }
 }
