@@ -15,6 +15,7 @@
         #fixroptions fieldset>div button:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div button:active {color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
+        #fixroptions fieldset>div label.new::after {content: url(/icons/new27x14.png);margin-left:3px;vertical-align:bottom}
         #fixroptions fieldset>div {width:50%; margin-top:.5em}
         #fixroptions fieldset button {margin-top:.5em}
     </style>
@@ -66,6 +67,10 @@
                 <div><p>Via mouseover, show both Taken and Upload dates in detail when available. Taken date will also work as a
                     link to more photos from the same photographer.</p></div>
             </div>
+            <div><label class="browser-style new"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
+                <div><p>When a newsfeed is detected on a page, an orange feed-icon is added as link to this. The feed-icons are
+                    added in upper right corner of pages.</p></div>
+            </div>
             <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
                 <div><p>When browsing a photostream in <em>Date taken</em> order, a subtle visual hint will remind you that latest added photos
                 might not be on top of photostream.</p></div>
@@ -87,10 +92,10 @@
             <p>You will have to reload any already open Flickr webpages to enable updated settings.</p>
         </fieldset>
     </form>
-    <p>I'm <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard on Flickr</a>. Do you like Flickr Fixr, found an error,
+    <p>I'm <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard on Flickr</a>. Do you like Flickr Fixr, have a question, found an error,
     or have ideas for improvement, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment
     in the Flickr Hacks forum</a>. If you really really REEEAALLYY like Flickr Fixr, you are of course always welcome to
-    <a href="https://www.paypal.me/stignygaard">buy my next beer</a> or leave a nice review on the extension install page;-)</p>
+    <a href="https://www.paypal.me/stignygaard">buy my next beer</a> or leave a nice little review on the extension install page ;-)</p>
 </div>
 
 <script type="application/javascript" src="options.js"></script>

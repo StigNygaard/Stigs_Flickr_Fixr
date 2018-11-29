@@ -5,6 +5,7 @@ let defaults = {
     shootingSpaceballs: true,
     orderWarning: true,
     topMenuItems: true,
+    newsfeedLinks: true,
     photoDates: true,
     ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")), // default enabled for firefox
     exploreCalendar: true,
@@ -22,6 +23,7 @@ function saveOptions(e) {
         shootingSpaceballs: document.querySelector("form#fixroptions #shootingSpaceballs").checked,
         orderWarning: document.querySelector("form#fixroptions #orderWarning").checked,
         topMenuItems: document.querySelector("form#fixroptions #topMenuItems").checked,
+        newsfeedLinks: document.querySelector("form#fixroptions #newsfeedLinks").checked,
         photoDates: document.querySelector("form#fixroptions #photoDates").checked,
         ctrlClicking: document.querySelector("form#fixroptions #ctrlClicking").checked,
         exploreCalendar: document.querySelector("form#fixroptions #exploreCalendar").checked,
@@ -52,6 +54,7 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #shootingSpaceballs").checked = options.shootingSpaceballs;
     document.querySelector("form#fixroptions #orderWarning").checked = options.orderWarning;
     document.querySelector("form#fixroptions #topMenuItems").checked = options.topMenuItems;
+    document.querySelector("form#fixroptions #newsfeedLinks").checked = options.newsfeedLinks;
     document.querySelector("form#fixroptions #photoDates").checked = options.photoDates;
     document.querySelector("form#fixroptions #ctrlClicking").checked= options.ctrlClicking;
     document.querySelector("form#fixroptions #exploreCalendar").checked = options.exploreCalendar;
