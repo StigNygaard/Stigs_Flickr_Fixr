@@ -28,7 +28,7 @@
   "minimum_opera_version": "56.0",
   "content_scripts": [
     {
-      "matches": ["https://*.flickr.com/*"],
+      "matches": ["https://*.flickr.com/*", "*://*.flickr.net/*"],
       "exclude_matches": ["*://api.flickr.com/*"],
       "js": ["lib/mozilla/browser-polyfill.js", "options/options.js", "Stigs_Flickr_Fixr.user.js"],
       "run_at": "document_start"

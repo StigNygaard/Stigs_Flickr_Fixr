@@ -8,8 +8,9 @@
 // @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
 // @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
 // @match       https://*.flickr.com/*
-// @exclude     https://api.flickr.com/*
-// @version     2018.11.29.0
+// @match       *://*.flickr.net/*
+// @exclude     *://api.flickr.com/*
+// @version     2018.12.07.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -17,9 +18,10 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2018.12.07.0', description: 'Also show available RSS/Atom newsfeeds on blog.flickr.net and code.flickr.net.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
-    {version: '2018.10.15.0', description: 'New feature: Added Collections and Map to topmenus. Removed the sign-up popup killer, because Flickr has removed the annoying thing themselves.'},
+    {version: '2018.10.15.0', description: 'New feature: Added Collections and Map to topmenus.'},
     {version: '2018.08.19.0', description: 'New features: Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
     {version: '2018.05.20.0', description: 'New feature: Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
@@ -28,7 +30,6 @@ var changelog = [
     {version: '2016.03.11.1', description: 'New features: A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
-    {version: '2016.01.30.0', description: 'New feature: Killing the terrible annoying sign-up box that keeps popping up if you are *not* logged in on Flickr. Also fixes for and fine-tuning of the notes-support.'},
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
     {version: '2015.12.03.2', description: 'New feature: Support for the good old photo-notes (read-only).'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
@@ -1203,7 +1204,7 @@ function orderWarning() {
     }
 }
 
-const newsfeedLinks_style = 'div#feedlinks {border:none; margin:0; padding:0; position:absolute; top:0; right:10px; width:100px} div#gn-wrap>div#feedlinks {right:-120px} div#feedlinks>a {display:block; float:left; margin:10px 8px 0 0; width:16px} div#feedlinks>a>img {width:16px; height:16px}';
+const newsfeedLinks_style = 'div#feedlinks {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px} ul.gn-tools>div#feedlinks {right:-120px} div#gn-wrap>div#feedlinks, div.header-wrap>div#feedlinks, header#branding>div#feedlinks {right:-120px} div#feedlinks>a {display:block;float:left;margin:10px 8px 0 0;width:16px} div#feedlinks>a>img {display:block;width:16px;height:16px} ul.gn-tools>div#feedlinks>a {margin-top:2px}';
 function newsfeedLinks() {
     var elem = document.getElementById('feedlinks');
     if (elem) {
@@ -1213,7 +1214,7 @@ function newsfeedLinks() {
 }
 function updateNewsfeedLinks() {
     var feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
-    var dgnc = document.querySelector('div.global-nav-container') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') ;
+    var dgnc = document.querySelector('div.global-nav-container ul.gn-tools') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') || document.querySelector('div.header-wrap') || document.querySelector('header#branding');
     if (dgnc) {
         if (!document.getElementById('feedlinks')) {
             dgnc.style.position = "relative";
@@ -1309,8 +1310,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                 }
             }
         } else {
-            if (elem && obj.message) {
-                elem.innerHTML = 'Cannot fetch detailed date details on this photo: ' + obj.message;
+            if (elem) {
+                elem.innerHTML = 'Cannot fetch detailed date details on private photos';
             }
             log('flickr.photos.getInfo returned an ERROR: obj.stat='+obj.stat+', obj.code='+obj.code+', obj.message='+obj.message);
         }
