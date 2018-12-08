@@ -8,7 +8,7 @@ Available as an userscript or as browser webextensions. Currently features of us
  
 Install Flickr Fixr as a browser webextension:
 * [Mozilla Firefox extension](https://addons.mozilla.org/firefox/addon/flickr-fixr/)
-* [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in Opera, if the [Install Chrome Extensions](https://addons.opera.com/en-gb/extensions/details/install-chrome-extensions/) extension is installed first.
+* [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in Opera, if the [Install Chrome Extensions](https://addons.opera.com/extensions/details/install-chrome-extensions/) extension is installed first.
 
 Userscript version requires Tampermonkey, Greasemonkey or similar webbrowser extension for userscript support. The official way to install userscript version of Stig's Flickr Fixr, is via GreaseFork: https://greasyfork.org/scripts/12008-stig-s-flickr-fixr
 
