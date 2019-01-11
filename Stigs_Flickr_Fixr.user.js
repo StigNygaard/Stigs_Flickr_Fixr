@@ -10,7 +10,7 @@
 // @match       https://*.flickr.com/*
 // @match       *://*.flickr.net/*
 // @exclude     *://api.flickr.com/*
-// @version     2018.12.07.0
+// @version     2019.01.11.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -18,6 +18,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
     {version: '2018.12.07.0', description: 'Also show available RSS/Atom newsfeeds on blog.flickr.net and code.flickr.net.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
@@ -33,7 +34,7 @@ var changelog = [
     {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
     {version: '2015.12.03.2', description: 'New feature: Support for the good old photo-notes (read-only).'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
-    {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-feature.'}
+    {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-link feature.'}
 ];
 
 var DEBUG = false;
@@ -486,8 +487,14 @@ function topMenuItems() {
     // User dropdown menu
     var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
     if (m) {
-        var gid = m.querySelector('li[aria-label=Groups]') || m.querySelector('a[data-track=You-groups]').parentElement;
-        var aad = m.querySelector('li[aria-label=Albums] a') || m.querySelector('a[data-track=You-sets]');
+        var gid = null;
+        if (m.querySelector('a[data-track=gnYouGroupsClick]')) {
+            gid = m.querySelector('a[data-track=gnYouGroupsClick]').parentElement;
+        }
+        if (!gid && m.querySelector('a[data-track=You-groups]')) {
+            gid = m.querySelector('a[data-track=You-groups]').parentElement;
+        }
+        var aad = m.querySelector('a[data-track=gnYouSetsClick]') || m.querySelector('a[data-track=You-sets]');
         if (aad  && gid) {
             if (gid.hasAttribute('aria-label') && !m.querySelector('li[aria-label=Tags]')) {
                 // latest design
