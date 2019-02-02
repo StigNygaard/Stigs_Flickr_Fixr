@@ -10,7 +10,7 @@
 // @match       https://*.flickr.com/*
 // @match       *://*.flickr.net/*
 // @exclude     *://api.flickr.com/*
-// @version     2019.01.11.0
+// @version     2019.02.02.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -18,6 +18,7 @@
 
 // CHANGELOG - The most important updates/versions:
 var changelog = [
+    {version: '2019.02.02.0', description: 'Improvements to the map-fix.'},
     {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
     {version: '2018.12.07.0', description: 'Also show available RSS/Atom newsfeeds on blog.flickr.net and code.flickr.net.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
@@ -476,9 +477,24 @@ function updateMapLink() {
 function updateMapLinkDelayed() {
     if (fixr.context.pageType === 'PHOTOPAGE') {
         log('updateMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
-        setTimeout(updateMapLink, 2000); // make maplink work better on photopage
-        setTimeout(updateMapLink, 4000); // Twice. Photopage is sometimes a bit slow building
+        setTimeout(updateMapLink, 1500); // make maplink work better on photopage
+        setTimeout(updateMapLink, 3500); // Twice. Photopage is sometimes a bit slow building
         setTimeout(updateMapLink, 8000); // Triple. Photopage is sometimes very slow building
+    }
+}
+function mapInitializer() {
+    if (window.location.href.includes('flickr.com/map/?')) {
+        // https://developer.mozilla.org/en-US/docs/Web/API/URL
+        const url = new URL(window.location.href);
+        // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+        const imgId = url.searchParams.get('photo');
+        if (imgId) {
+            const focusImg = document.getElementById('f_img_thumb_' + imgId);
+            if (focusImg) {
+                focusImg.click(); // close
+                focusImg.click(); // reopen
+            }
+        }
     }
 }
 
@@ -1392,6 +1408,7 @@ function handlerInitFixr(options) { // Webextension init
     }
     if (options.updateMapLink) {
         onPageHandlers.push(updateMapLinkDelayed);
+        onStandaloneHandlers.push(mapInitializer);
     }
     if (options.updateTags) {
         fixr.style.add(updateTags_style);
@@ -1419,6 +1436,6 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks]);
+        fixr.init([/* runEarly */], [scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
