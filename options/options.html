@@ -8,16 +8,18 @@
         div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px}
         div#fixroptionspage>p {margin-left: 1em}
         #fixroptions fieldset {position:relative}
-        #fixroptions fieldset>div>div {display:none; width:50%; position:absolute; right:1em; top:1em; color: rgb(0,129,240)}
-        #fixroptions fieldset>div>div>p {padding-left:2em}
+        #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
+        #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
+        #fixroptions fieldset a:link, a:visited {color: rgb(0,129,240); font-style: italic}
+        #fixroptions fieldset a:hover, a:active {color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
         #fixroptions fieldset>div button:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div button:active {color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
         #fixroptions fieldset>div label.new::after {content: url(/icons/new27x14.png);margin-left:3px;vertical-align:bottom}
-        #fixroptions fieldset>div {width:50%; margin-top:.5em}
-        #fixroptions fieldset button {margin-top:.5em}
+        #fixroptions fieldset>div {width:45%; margin-top:.5em}
+        #fixroptions fieldset button {margin-top:.7em; margin-bottom:.7em}
     </style>
 </head>
 <body>
@@ -32,6 +34,14 @@
                     1600px and 2048px wide browsing-sizes, leaving the majority of photos to be displayed only 1024px wide.
                     Flickr Fixr fixes this by scaling, and when the original is available, using the original uploaded photo for
                     best possible quality.</p>
+                    <p>A note about up-scaling and <a href="https://www.flickr.com/help/forum/en-us/72157668990488722/">photo notes</a>!...
+                    Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When a photo
+                    is up-scaled, Flickr Fixr shows an orange or green icon above the photo on the photopage:<br />
+                    <img src="/icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                    If the icon is green, everything is alright, and you can work with notes directly on the up-scaled photo.<br />
+                    <img src="/icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                    If the icon is orange and you want to work with notes, you should always first click the orange icon to align image size with
+                    size of the "notes canvas". Otherwise notes will not be correctly aligned on the photo.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="albumTeaser" /> Album-teaser column on photostreams</label>
@@ -49,10 +59,8 @@
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="updateMapLink" /> Extra and improved map links on photos</label>
-                <div><p>Adds the photo you came from to the image-ribbon, when opening Flickr Map on a photo. Also "opens" the
-                    photo on the image-ribbon, but it's a 90% fix: To see <em>exactly</em> where it was geotagged, click twice on the photo in the
-                    image-ribbon to close and re-open it; Now a star showing the exact position of photo appears on the map.
-                    <em>Bonus:</em> Also adds a link on photopage to show geoposition on Google Maps.</p>
+                <div><p>When following map-link from a photopage, this ensures the photo you want to see the location of, is <em>actually shown</em> on the Flickr map!</p>
+                    <p>As a bonus, also adds a link on photopage to show geoposition of photo directly on <em>Google Maps</em>.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="topPagination" /> Top-pagination for fast an easy navigation</label>
@@ -62,7 +70,8 @@
             </div>
             <div><label class="browser-style"><input type="checkbox" id="exploreCalendar" /> Explore Calendar and Recent Uploads</label>
                 <div><p>On the Explore page, add a link to the hidden/forgotten Explore Calendar and to a page showing some of the latest
-                    uploads to Flickr. A little warning regarding the latest uploads though; Even though Safe Search is activated on
+                    uploads to Flickr.</p>
+                    <p>A little warning regarding the latest uploads though; Even though Safe Search is activated on
                     that page, you risk seeing stuff you might have preferred not to see.</p>
                 </div>
             </div>
@@ -72,13 +81,17 @@
             <div><label class="browser-style"><input type="checkbox" id="photoDates" /> Extended date &amp; time info on photopages</label>
                 <div><p>Via mouseover, show both Taken and Upload dates in detail when available. Taken date will also work as a
                     link to more photos from the same photographer.</p>
+                    <p>Notice, Flickr Fixr can only find the extended date &amp; time information on
+                    <em>public</em> photos.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
-                <div><p>When a newsfeed is detected on a page, an orange feed-icon is added as link to this. The feed-icons are
-                    added in upper right corner of pages. Works both on the main flickr.com site and on the blogs on blog.flickr.net and code.flickr.net.</p>
-                    <p>Notice, Flickr Fixr does <em>nothing to handle</em> the newsfeeds, it just makes them visible. If you are not using or familar with newfeeds,
-                    you don't really have any reason to have this feature enabled.</p>
+                <div><p><img src="/icons/feed32.png" alt="" style="width:16px;height:16px;margin:0 0 0 .5em;display:block;float:right" />
+                    When a newsfeed is detected on a page, an orange feed-icon is added as link to this. The feed-icons are
+                    added in upper right corner of pages. Feeds are detected both on the main <a href="https://flickr.com/">flickr.com</a> site and on the blogs on
+                    <a href="https://blog.flickr.net/">blog.flickr.net</a> and <a href="https://code.flickr.net/">code.flickr.net</a>.</p>
+                    <p>Notice, Flickr Fixr does <em>nothing to handle</em> the newsfeeds, it just makes them visible. If you are not using or familar with
+                    newsfeeds, you might not have any reason to have this feature enabled.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
@@ -87,15 +100,15 @@
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="ctrlClicking" /> <em>Open in New Tab</em> fix for Firefox</label>
-                <div><p>If you have your Firefox configured to open tabs in the <em>background</em> when ctrl-clicking links, you may have
+                <div><p>If you have your Firefox webbrowser configured to open tabs in the <em>background</em> when ctrl-clicking links, you may have
                     seen Flickr overriding this preference on search result pages (including the Trending Tags pages) and bring
                     immediately focus to new tabs instead. This feature should prevent Flickr overriding your open tabs preferences.
-                    I have only seen the problem when using Firefox, so feature is default disabled for other browsers.</p>
+                    I have only seen the problem when using Firefox, so feature is default disabled for other webbrowsers.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="shootingSpaceballs" /> Allow image context menu on "All sizes" pages</label>
-                <div><p>Removes layer over images on "All sizes" pages, so you can use your browser's context menu for images. I have
-                    been silent about this feature, because I don't want Flickr Fixr to be a tool for people who want to use
+                <div><p>Removes layer over images on "All sizes" pages, so you can use your browser's context menu for images.</p>
+                    <p>I have been silent about this feature, because I don't want Flickr Fixr to be a tool for people who want to use
                     other peoples photos without permission. But I have image tools like "Search Similar image" and "EXIF viewer"
                     which I would like to access via the context menu.</p>
                     <p><em>Please respect ownership of images, and remember to ask permission for any public use of other peoples photos, if not
@@ -106,10 +119,12 @@
             <p>You will have to reload any already open Flickr webpages to enable updated settings.</p>
         </fieldset>
     </form>
-    <p>I'm <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard on Flickr</a>. Do you like Flickr Fixr, have a question, found an error,
-    or have ideas for improvement, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment
-    in the Flickr Hacks forum</a>. If you really really REEEAALLYY like Flickr Fixr, you are of course always welcome to
-    <a href="https://www.paypal.me/stignygaard">buy my next beer</a> or leave a nice little review on the extension install page ;-)</p>
+    <p>Thanks for using my browser extension. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or
+    maybe just want to tell you like Flickr Fixr, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment in
+    the Flickr Hacks forum</a>. You are of course also always welcome to <a href="https://www.paypal.me/stignygaard">buy my next beer</a> or leave a nice
+    little review on the extension install page :-)</p>
+    <p>Have a great time on Flickr. I hope you, like myself, enjoy Flickr even more with Flickr Fixr installed...<br />
+    <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard</a></p>
 </div>
 
 <script type="application/javascript" src="options.js"></script>
