@@ -2,7 +2,7 @@
 // @name        Stig's Flickr Fixr
 // @namespace   dk.rockland.userscript.flickr.fixr
 // @description Show photographer's albums on photostream-pages, Increase display-size and quality of "old" uploads, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more to come?...
-// @author      Stig Nygaard, http://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
+// @author      Stig Nygaard, https://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
 // @homepageURL https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
@@ -10,15 +10,16 @@
 // @match       https://*.flickr.com/*
 // @match       *://*.flickr.net/*
 // @exclude     *://api.flickr.com/*
-// @version     2019.02.02.0
+// @version     2019.03.03.0
 // @run-at      document-start
 // @grant       none
 // @noframes
 // ==/UserScript==
 
-// CHANGELOG - The most important updates/versions:
+// CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2019.02.02.0', description: 'Improvements to the map-fix.'},
+    {version: '2019.03.03.0', description: 'Minor internal adjustments.'},
+    {version: '2019.02.02.0', description: 'Improved map-fix.'},
     {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
     {version: '2018.12.07.0', description: 'Also show available RSS/Atom newsfeeds on blog.flickr.net and code.flickr.net.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
@@ -441,6 +442,8 @@ var fixr = fixr || {
 // FIXR page-tracker end
 
 
+const fkey="9b8140dc97b93a5c80751a9dad552bd4"; // This api key is for Flickr Fixr only. Get your own key for free at https://www.flickr.com/services/apps/create/
+
 function escapeHTML(str) {
     return str.replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
 }
@@ -459,7 +462,7 @@ function updateMapLink() {
                 try {
                     var lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     var lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="//www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
                 }
                 catch (e) {
                     log('Failed creating Google Maps link: ' + e);
@@ -646,7 +649,7 @@ function getAlbumlist() {
                         if (a && a !== null) {
                             log('Album title: ' + a.title);
                             log('Album url: ' + a.getAttribute('href'));
-                            albums.html += '<div><a href="//www.flickr.com' + a.getAttribute('href') + '"><img src="' + imgUrl + '" class="asquare" alt="" /><div style="margin:0 0 .8em 0">' + escapeHTML(a.title) + '</div></a></div>';
+                            albums.html += '<div><a href="' + a.getAttribute('href') + '"><img src="' + imgUrl + '" class="asquare" alt="" /><div style="margin:0 0 .8em 0">' + escapeHTML(a.title) + '</div></a></div>';
                         } else {
                             log('a element not found?');
                         }
@@ -725,7 +728,7 @@ function exploreCalendar() {
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
         var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
-        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="//www.flickr.com/explore/interesting/' + exploreMonth + '/"><img src="//c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="//www.flickr.com/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="//c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
+        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
@@ -820,7 +823,7 @@ var scaler = {
             var notesview = document.querySelector('div.photo-notes-scrappy-view');
             if (panel && !panel.querySelector('div.unscaleBtn')) {
                 log('scaler.addUnscaleBtn: adding option to div.height-controller');
-                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="//farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
+                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
                 log ('scaler.addUnscaleBtn: adding click event listner on div.unscaleBtn');
                 panel.querySelector('div.unscaleBtn').addEventListener('click',unscale, false);
             } else {
@@ -830,10 +833,10 @@ var scaler = {
             if (unscaleBtnElem && parseInt(notesview.style.width,10)) {
                 if (scaler.mf.width === parseInt(notesview.style.width, 10)) { // Green icon
                     unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears Flickr was able to align the notes-area with scaled photo. You should be able to view and create notes correctly scaled and aligned on the upscaled photo.";
-                    unscaleBtnElem.src = '//farm9.staticflickr.com/8879/28767704565_17560d791f_o.png';
+                    unscaleBtnElem.src = 'https://farm9.staticflickr.com/8879/28767704565_17560d791f_o.png';
                 } else { // Orange icon/button
                     unscaleBtnElem.title = "This photo has been up-scaled by Flickr Fixr. It appears the notes-area is UNALIGNED with the upscaled image. Please click here to align image-size to the notes-area before studying or creating notes on this image.";
-                    unscaleBtnElem.src = '//farm9.staticflickr.com/8687/28690535161_19b3a34578_o.png';
+                    unscaleBtnElem.src = 'https://farm9.staticflickr.com/8687/28690535161_19b3a34578_o.png';
                 }
             }
         };
@@ -1107,7 +1110,7 @@ function topPagination() {
     }
 }
 
-const albumExtras_style = '.album-map-icon{background:url("//c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("//c1.staticflickr.com/5/4816/46041390622_f8a0cf0148_o.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
+const albumExtras_style = '.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://c1.staticflickr.com/5/4816/46041390622_f8a0cf0148_o.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
 function albumExtras() { // links to album's map and comments
     if (fixr.context.pageType !== 'ALBUM') {
         return; // exit if not albumpage
@@ -1247,7 +1250,7 @@ function updateNewsfeedLinks() {
         if (elem) {
             var feedicons = '';
             for (const link of feedlinks) {
-                feedicons += '<a href="' + escapeHTML(link.href) + '"><img src="//c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png" alt="Feedlink" style="width:16px;height:16px" title="' + escapeHTML(link.title) + '"></a>';
+                feedicons += '<a href="' + escapeHTML(link.href) + '"><img src="https://c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png" alt="Feedlink" style="width:16px;height:16px" title="' + escapeHTML(link.title) + '"></a>';
             }
             elem.innerHTML = feedicons;
         }
@@ -1263,7 +1266,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         return;
     }
     _wsGetPhotoInfoLock = Date.now();
-    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=9b8140dc97b93a5c80751a9dad552bd4&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(function(response) {
+    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(function(response) {
         if(response.ok) {
             if (response.headers.get('content-type').includes('application/json')) {
                 return response.json()
