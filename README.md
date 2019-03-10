@@ -7,14 +7,14 @@ Show photographer's albums on photostream-pages, Increase display-size and quali
 Available as browser webextensions or as an userscript. Currently features of browser extensions and userscript are generally the same, but the browser extensions have the additional capability of allowing you to turn individual features on and off.
  
 Install Flickr Fixr as a browser webextension:
-* [Mozilla Firefox extension](https://addons.mozilla.org/firefox/addon/flickr-fixr/)
+* [Mozilla Firefox extension](https://addons.mozilla.org/firefox/addon/flickr-fixr?src=external-github)
 * [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in Opera, if the [Install Chrome Extensions](https://addons.opera.com/extensions/details/install-chrome-extensions/) extension is installed first.
 
 Userscript version requires Tampermonkey, Greasemonkey or similar webbrowser extension for userscript support. If you prefer running userscript, the recommended way to install userscript-version of Stig's Flickr Fixr, is via GreaseFork: https://greasyfork.org/scripts/12008-stig-s-flickr-fixr
 
 Most detailed feature description can currently be found in the Flickr Hacks forum: https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
-The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed [through Firefox Add-ons](https://addons.mozilla.org/firefox/addon/flickr-fixr/) and [through Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb). 
+The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed [through Firefox Add-ons](https://addons.mozilla.org/firefox/addon/flickr-fixr?src=external-github) and [through Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb). 
 
 To help with the cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
 
