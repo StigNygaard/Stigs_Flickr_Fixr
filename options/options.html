@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Flickr Fixr Options test</title>
-    <script type="application/javascript" src="/lib/mozilla/browser-polyfill.js"></script>
+    <script src="/lib/mozilla/browser-polyfill.js"></script>
     <style>
         div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px}
         div#fixroptionspage>p {margin-left: 1em}
+        div#fixroptionspage a:link, div#fixroptionspage a:visited {color: rgb(0,129,240)}
+        div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
         #fixroptions fieldset {position:relative}
         #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
         #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
-        #fixroptions fieldset a:link, a:visited {color: rgb(0,129,240); font-style: italic}
-        #fixroptions fieldset a:hover, a:active {color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
         #fixroptions fieldset>div button:hover {color: rgb(0,129,240)}
@@ -20,6 +20,7 @@
         #fixroptions fieldset>div label.new::after {content: url(/icons/new27x14.png);margin-left:3px;vertical-align:bottom}
         #fixroptions fieldset>div {width:45%; margin-top:.5em}
         #fixroptions fieldset button {margin-top:.7em; margin-bottom:.7em}
+        #fixroptions fieldset a {font-style: italic}
     </style>
 </head>
 <body>
@@ -119,14 +120,18 @@
             <p>You will have to reload any already open Flickr webpages to enable updated settings.</p>
         </fieldset>
     </form>
-    <p>Thanks for using my browser extension. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or
+    <p>Thanks for using Flickr Fixr. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or
     maybe just want to tell you like Flickr Fixr, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment in
     the Flickr Hacks forum</a>. You are of course also always welcome to <a href="https://www.paypal.me/stignygaard">buy my next beer</a> or leave a nice
     little review on the extension install page :-)</p>
-    <p>Have a great time on Flickr. I hope you, like myself, enjoy Flickr even more with Flickr Fixr installed...<br />
+    <p>Flickr Fixr is an <a href="https://github.com/StigNygaard/Stigs_Flickr_Fixr">open source</a> cross-browser <a href="https://wiki.mozilla.org/WebExtensions">WebExtension</a>.
+    It is the exact same <a href="https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases">version</a> of the extension, you'll find
+    <a href="https://addons.mozilla.org/addon/flickr-fixr?src=external-options">in Firefox Add-ons</a> and
+    <a href="https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb">in Chrome Web Store</a>.</p>
+    <p>Have a great time on Flickr. I hope you, like myself, enjoy Flickr a bit more with Flickr Fixr installed...<br />
     <a href="https://www.flickr.com/photos/stignygaard/">Stig Nygaard</a></p>
 </div>
 
-<script type="application/javascript" src="options.js"></script>
+<script src="options.js"></script>
 </body>
 </html>
