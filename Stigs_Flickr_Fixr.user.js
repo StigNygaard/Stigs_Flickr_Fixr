@@ -1351,8 +1351,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
         var elem = document.querySelector('.date-info');
-        if (elem && navigator.userAgent.contains('Chrome/') && (typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
-            elem.innerHTML = 'Sorry, this feature currently doesn\'t work in Flickr Fixr extension on Chrome version 73+ - I plan to work on a fix very soon.'; // https://www.chromium.org/Home/chromium-security/extension-content-script-fetches - Cross-Origin Read Blocking (CORB) blocked cross-origin response
+        if (elem && navigator.userAgent.includes('Chrome/') && (typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
+            elem.innerHTML = 'Sorry, this feature currently doesn\'t work in Flickr Fixr extension on Chrome version 73+ - I plan to work on a fix very soon...'; // https://www.chromium.org/Home/chromium-security/extension-content-script-fetches - Cross-Origin Read Blocking (CORB) blocked cross-origin response
         }
     });
 }
