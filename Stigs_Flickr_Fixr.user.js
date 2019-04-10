@@ -10,7 +10,11 @@
 // @match       https://*.flickr.com/*
 // @match       *://*.flickr.net/*
 // @exclude     *://api.flickr.com/*
-// @version     2019.03.03.0
+// @exclude     *://identify.flickr.com/*
+// @exclude     *://*.flickr.com/signin/*
+// @exclude     *://*.flickr.com/signup/*
+// @exclude     *://*.flickr.com/account/*
+// @version     2019.04.10.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -18,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.04.10.0', description: 'Inform Flickr Fixr extension users on Chrome 73+ (or similar Chromium based browser), that extended date info currently ain\'t working.'},
     {version: '2019.03.03.0', description: 'Minor internal adjustments.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
     {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
@@ -1345,6 +1350,10 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     }).catch(function(error) {
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
+        var elem = document.querySelector('.date-info');
+        if (elem && navigator.userAgent.contains('Chrome/') && (typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
+            elem.innerHTML = 'Sorry, this feature currently doesn\'t work in Flickr Fixr extension on Chrome version 73+ - I plan to work on a fix very soon.'; // https://www.chromium.org/Home/chromium-security/extension-content-script-fetches - Cross-Origin Read Blocking (CORB) blocked cross-origin response
+        }
     });
 }
 
