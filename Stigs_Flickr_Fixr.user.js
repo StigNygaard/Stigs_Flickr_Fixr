@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.04.10.0
+// @version     2019.04.15.1
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,7 +22,8 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2019.04.10.0', description: 'Inform Flickr Fixr extension users on Chrome 73+ (or similar Chromium based browser), that extended date info currently ain\'t working.'},
+    {version: '2019.04.15.0', description: 'Fix for extended date info with webextension on Chrome 73+.'},
+    {version: '2019.04.10.0', description: 'Inform Flickr Fixr extension users on Chrome 73+ (or similar Chromium based browser), that extended date info currently ain\'t working. Userscript version not affected.'},
     {version: '2019.03.03.0', description: 'Minor internal adjustments.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
     {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
@@ -134,6 +135,12 @@ var fixr = fixr || {
             }
             return this._explore.toISOString().substring(0,16).replace('T',' ')+' Explore beat!';
         }
+    },
+    isWebExtension: function() {
+        return (typeof GM_info === 'undefined') && (typeof GM === 'undefined');
+    },
+    isUserscript: function() {
+        return !fixr.isWebExtension();
     },
     initUserId: function () {
         if (window.auth && window.auth.user && window.auth.user.nsid) {
@@ -1271,25 +1278,26 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         return;
     }
     _wsGetPhotoInfoLock = Date.now();
-    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(function(response) {
-        if(response.ok) {
-            if (response.headers.get('content-type').includes('application/json')) {
+
+    function handleResponse(response) {
+        if (response.ok) {
+            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
                 return response.json()
             }
             throw new Error('Response was not in expected json format.');
         }
         throw new Error('Network response was not ok.');
-    }).then(function(obj) {
+    }
+    function handleResult(obj) {
         var elem = document.querySelector('.date-info');
         if (obj.stat === "ok") {
-            // ... Do the stuff ...
             log("flickr.photos.getInfo returned ok");
             if (obj.photo && obj.photo.id) {
                 var uploadDate = new Date(0);
                 var takenDateStr = '';
                 var debugstr = '';
                 if (obj.photo.dateuploaded) {
-                    uploadDate = new Date(obj.photo.dateuploaded*1000);
+                    uploadDate = new Date(obj.photo.dateuploaded * 1000);
                     debugstr = 'UploadDate: ' + uploadDate.toString();
                 }
                 if (obj.photo.dates) {
@@ -1298,27 +1306,25 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     }
                     if (obj.photo.dates.posted) {
                         if (obj.photo.dates.posted < obj.photo.dateuploaded) {
-                            // Uploaded
                             uploadDate = new Date(obj.photo.dates.posted * 1000); // GMT/UTC
                         }
                         debugstr += '<br />PostDate: ' + uploadDate.toString();
                     }
                     if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
-                        // Taken
                         debugstr += '<br />TakenDate: ' + obj.photo.dates.taken + ' (granularity=' + obj.photo.dates.takengranularity + ')';
                         takenDateStr = obj.photo.dates.taken; // "2018-03-30 00:35:44"
-                        var takenDate = new Date(Date.parse(takenDateStr.replace(' ','T')));
-                        var dayStart = new Date(Date.parse(takenDateStr.substring(0,10)+'T00:00:00'));
-                        var dayEnd = new Date(Date.parse(takenDateStr.substring(0,10)+'T23:59:59'));
+                        var takenDate = new Date(Date.parse(takenDateStr.replace(' ', 'T')));
+                        var dayStart = new Date(Date.parse(takenDateStr.substring(0, 10) + 'T00:00:00'));
+                        var dayEnd = new Date(Date.parse(takenDateStr.substring(0, 10) + 'T23:59:59'));
                         var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
                         if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
                             takenDateStr = '<label>Taken:</label> <a href="/search/?user_id=' + fixr.context.photographerId + '&amp;view_all=1&amp;min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&amp;max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200) + '">' + takenDate.toString().substring(0, takenTimeIndex - 1) + '</a>' + takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '4') { // 4	Y-m
-                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,7) + '<br />';
+                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0, 7) + '<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
-                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0,4) + '<br />';
+                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0, 4) + '<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
-                            takenDateStr = '<label>Taken:</label> Circa ' + obj.photo.dates.taken.substring(0,4) + '<br />';
+                            takenDateStr = '<label>Taken:</label> Circa ' + obj.photo.dates.taken.substring(0, 4) + '<br />';
                         } else {
                             log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
@@ -1331,7 +1337,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     var uploadDateStr = uploadDate.toString();
                     var n = uploadDateStr.indexOf('(');
                     if (n > 0) {
-                        uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0,n);
+                        uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0, n);
                     }
                     elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
                 }
@@ -1344,17 +1350,25 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             if (elem) {
                 elem.innerHTML = 'Cannot fetch detailed date details on private photos';
             }
-            log('flickr.photos.getInfo returned an ERROR: obj.stat='+obj.stat+', obj.code='+obj.code+', obj.message='+obj.message);
+            log('flickr.photos.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
         }
         _wsGetPhotoInfoLock = 0;
-    }).catch(function(error) {
+    }
+    function handleError(error) {
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
         var elem = document.querySelector('.date-info');
-        if (elem && navigator.userAgent.includes('Chrome/') && (typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
-            elem.innerHTML = 'Sorry, this feature currently doesn\'t work in Flickr Fixr extension on Chrome version 73+ - I plan to work on a fix very soon...'; // https://www.chromium.org/Home/chromium-security/extension-content-script-fetches - Cross-Origin Read Blocking (CORB) blocked cross-origin response
+        if (elem) {
+            elem.innerHTML = 'There was an error fetching detailed date details...';
         }
-    });
+    }
+
+    if (fixr.isWebExtension()) {
+        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
+        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photos.getInfo", fkey: fkey, options: {photoId: fixr.context.photoId}}).then(handleResult).catch(handleError);
+    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
+        fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
+    }
 }
 
 function runEarly() {
@@ -1371,6 +1385,7 @@ function handlerInitFixr(options) { // Webextension init
     let onStandaloneHandlers = [];
 
     fixr.style.add(shared_style);
+    onPageHandlers.push(stereotest);
     if (options.scaler) {
         fixr.style.add(scaler.style);
         onPageHandlers.push(scaler.run);
@@ -1432,7 +1447,7 @@ function handlerInitFixr(options) { // Webextension init
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
-    if ((typeof GM_info === 'undefined') && (typeof GM === 'undefined')) {
+    if (fixr.isWebExtension()) {
         log('WebExtension - init with options...');
         withOptionsDo(handlerInitFixr); // load selected features and run fixr.init with them...
     } else {
@@ -1448,6 +1463,6 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
