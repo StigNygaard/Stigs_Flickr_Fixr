@@ -1371,6 +1371,19 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     }
 }
 
+function stereotest() {
+    var self = "flickrfixruserscript";
+    var other = "flickrfixrwebextension";
+    if (fixr.isWebExtension()) {
+        self = "flickrfixrwebextension";
+        other = "flickrfixruserscript";
+    }
+    document.body.classList.add(self);
+    if (document.body.classList.contains(other)) {
+        alert("It looks like you are running both Stigs Flickr Fixr userscript and Flickr Fixr browser extension at once. Please uninstall or disable one of them to avoid errors and unpredictable behaviors!");
+    }
+}
+
 function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
@@ -1466,3 +1479,4 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
+
