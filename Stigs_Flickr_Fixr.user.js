@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.04.15.1
+// @version     2019.05.15.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,12 +22,9 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.05.15.0', description: 'Fix for Album list visibility (Adapting to a site change).'},
     {version: '2019.04.15.0', description: 'Fix for extended date info with webextension on Chrome 73+.'},
-    {version: '2019.04.10.0', description: 'Inform Flickr Fixr extension users on Chrome 73+ (or similar Chromium based browser), that extended date info currently ain\'t working. Userscript version not affected.'},
-    {version: '2019.03.03.0', description: 'Minor internal adjustments.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
-    {version: '2019.01.11.0', description: 'Fix incompatibility with Flickr when non-English language is selected.'},
-    {version: '2018.12.07.0', description: 'Also show available RSS/Atom newsfeeds on blog.flickr.net and code.flickr.net.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
     {version: '2018.10.15.0', description: 'New feature: Added Collections and Map to topmenus.'},
@@ -640,16 +637,15 @@ function getAlbumlist() {
                 albums.ownerId = fixr.context.photographerId;
                 albums.html = '';
                 albums.count = 0;
-                var e = doc.body.querySelectorAll('div.photo-list-album-view');
+                var alist = doc.body.querySelectorAll('div.photo-list-album-view');
                 var imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
-                if (e && e.length > 0) {
-                    albums.count = e.length;
-                    for (var i = 0; i < Math.min(10, e.length); i++) {
+                if (alist && alist.length > 0) {
+                    albums.count = alist.length;
+                    for (let e of alist) {
                         var imgUrl = '';
-                        //log(e[i].outerHTML);
-                        //log('A7 (' + i + ') : ' + e[i].style.backgroundImage);
-                        // var result = e[i].style.backgroundImage.match(imgPattern); // strangely not working in Chrome
-                        var result = (e[i].outerHTML).match(imgPattern); // quick work-around for above (works for now)
+                        //log(e.outerHTML);
+                        // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
+                        var result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
                         if (result) {
                             // imgUrl = result[1].replace(/_[a-z]$/, '') + '_s' + result[2];
                             imgUrl = result[1].replace(/_[a-z]$/, '') + '_q' + result[2];
@@ -657,7 +653,7 @@ function getAlbumlist() {
                         } else {
                             log('No match on imgPattern');
                         }
-                        var a = e[i].querySelector('a[href][title]'); // sub-element
+                        var a = e.querySelector('a[href][title]'); // sub-element
                         if (a && a !== null) {
                             log('Album title: ' + a.title);
                             log('Album url: ' + a.getAttribute('href'));
@@ -666,12 +662,12 @@ function getAlbumlist() {
                             log('a element not found?');
                         }
                     }
-                } else if (e) {
+                } else if (alist) {
                     if (doc.body.querySelector('h3')) {
                         albums.html = '<div  style="margin:0 0 .8em 0">'+doc.body.querySelector('h3').textContent+'</div>';
                     }
                 } else {
-                    log('(e UNdefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
+                    log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
                 }
                 if (document.getElementById('albumTeaser')) {
                     document.getElementById('albumTeaser').innerHTML = '<div style="margin:0 0 .8em 0">Albums</div>' + albums.html + '<div><i><a href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/">' + (albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '')) + '</a></i></div>';
@@ -698,7 +694,7 @@ function getAlbumlist() {
     }
 }
 
-const albumTeaser_style = 'div#albumTeaser {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px}';
+const albumTeaser_style = 'div#albumTeaser {border:none;margin:0;padding:0;position:absolute;top:0;right:-120px;width:100px}';
 function albumTeaser() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
         return; // exit if not photostream
@@ -1172,13 +1168,13 @@ function updateTags() {
     if (document.querySelector('ul.tags-list')) {
         var tags = document.querySelectorAll('ul.tags-list>li');
         if (tags && tags !== null && tags.length > 0) {
-            for (var i = 0; i < tags.length; i++) {
-                var atag = tags[i].querySelector('a[title][href*="/photos/tags/"],a[title][href*="?tags="],a[title][href*="?q="]');
+            for (let tag of tags) {
+                var atag = tag.querySelector('a[title][href*="/photos/tags/"],a[title][href*="?tags="],a[title][href*="?q="]');
                 if (atag) {
                     var realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
-                    if (!(tags[i].querySelector('a.fixrTag'))) {
+                    if (!(tag.querySelector('a.fixrTag'))) {
                         var icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
-                        tags[i].insertAdjacentHTML('afterbegin', '<a class="fixrTag" href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/tags/' + realtag + '/" title="' + atag.title + ' by ' + fixr.context.photographerName + '"><img src="' + icon + '" style="width:1em;height:1em;margin:0;padding:0;position:relative;top:3px" alt="*" /></a>');
+                        tag.insertAdjacentHTML('afterbegin', '<a class="fixrTag" href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/tags/' + realtag + '/" title="' + atag.title + ' by ' + fixr.context.photographerName + '"><img src="' + icon + '" style="width:1em;height:1em;margin:0;padding:0;position:relative;top:3px" alt="*" /></a>');
                     }
                 }
             }
@@ -1365,7 +1361,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
 
     if (fixr.isWebExtension()) {
         // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photos.getInfo", fkey: fkey, options: {photoId: fixr.context.photoId}}).then(handleResult).catch(handleError);
+        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photos.getInfo", fkey: fkey, options: {photo_id: fixr.context.photoId}}).then(handleResult).catch(handleError);
     } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
         fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
     }
@@ -1479,4 +1475,3 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
-
