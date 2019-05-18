@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.05.15.0
+// @version     2019.05.18.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
     {version: '2019.05.15.0', description: 'Fix for Album list visibility (Adapting to a site change).'},
     {version: '2019.04.15.0', description: 'Fix for extended date info with webextension on Chrome 73+.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
@@ -32,12 +33,9 @@ var changelog = [
     {version: '2018.05.20.0', description: 'New feature: Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
     {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
     {version: '2016.06.12.3', description: 'An "un-scale button" to align image-size with (native) notes (on photo-pages, but not in lightbox mode).'},
-    {version: '2016.06.07.1', description: 'Disabling the script\'s notes-feature, because native notes-support is back on Flickr!'},
     {version: '2016.03.11.1', description: 'New features: A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
-    {version: '2016.01.24.3', description: 'New feature: Updating notes on photos! Besides displaying, you can now also Create, Edit and Delete notes (in a "hacky" and slightly restricted but generally usable way)'},
-    {version: '2015.12.03.2', description: 'New feature: Support for the good old photo-notes (read-only).'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
     {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-link feature.'}
 ];
@@ -1248,7 +1246,8 @@ function newsfeedLinks() {
 }
 function updateNewsfeedLinks() {
     var feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
-    var dgnc = document.querySelector('div.global-nav-container ul.gn-tools') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') || document.querySelector('div.header-wrap') || document.querySelector('header#branding');
+    log('Number of feed links found: ' + feedlinks.length);
+    var dgnc = document.querySelector('div.global-nav-container ul.gn-tools') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') || document.querySelector('div.header-wrap') || document.querySelector('header#branding') || document.querySelector('div.custom-header-container>div>div');
     if (dgnc) {
         if (!document.getElementById('feedlinks')) {
             dgnc.style.position = "relative";
