@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.05.18.0
+// @version     2019.05.19.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.05.19.0', description: 'Album column length fix.'},
     {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
     {version: '2019.05.15.0', description: 'Fix for Album list visibility (Adapting to a site change).'},
     {version: '2019.04.15.0', description: 'Fix for extended date info with webextension on Chrome 73+.'},
