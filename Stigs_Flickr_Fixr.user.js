@@ -635,11 +635,11 @@ function getAlbumlist() {
                 albums.ownerId = fixr.context.photographerId;
                 albums.html = '';
                 albums.count = 0;
-                var alist = doc.body.querySelectorAll('div.photo-list-album-view');
+                var alist = Array.from(doc.body.querySelectorAll('div.photo-list-album-view'));
                 var imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
                 if (alist && alist.length > 0) {
                     albums.count = alist.length;
-                    for (let e of alist) {
+                    for (let e of alist.slice(0,10)) {
                         var imgUrl = '';
                         //log(e.outerHTML);
                         // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
