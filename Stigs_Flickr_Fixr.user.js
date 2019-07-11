@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.07.11.0', description: 'Warning that Explore Calendar and Album Comments pages/features are currently not available (after Flickr May update).'},
     {version: '2019.05.19.0', description: 'Album column length fix.'},
     {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
     {version: '2019.05.15.0', description: 'Fix for Album list visibility (Adapting to a site change).'},
@@ -147,7 +148,7 @@ var fixr = fixr || {
     },
     initPhotographerName: function () {
         if (fixr.content.querySelector('a.owner-name')) {
-            fixr.context.photographerName = fixr.content.querySelector('a.owner-name').textContent;
+            fixr.context.photographerName = fixr.content.querySelector('a.owner-name').innerText;
             return true;
         }
         return false;
@@ -575,7 +576,7 @@ function updateAlbumCommentCount() {
                 album.commentCount = -1;
                 var e = doc.body.querySelectorAll('span.LinksNew b.Here');
                 if (e && e.length === 1) {
-                    var n = parseInt(e[0].textContent, 10);
+                    var n = parseInt(e[0].innerText, 10);
                     if (isNaN(n)) {
                         album.commentCount = 0;
                     } else {
@@ -587,9 +588,9 @@ function updateAlbumCommentCount() {
                 }
                 if (document.getElementById('albumCommentCount')) {
                     if (album.commentCount === -1) {
-                        document.getElementById('albumCommentCount').innerHTML = '?';
+                        document.getElementById('albumCommentCount').innerText = '?';
                     } else {
-                        document.getElementById('albumCommentCount').innerHTML = String(album.commentCount);
+                        document.getElementById('albumCommentCount').innerText = String(album.commentCount);
                     }
                 } else {
                     log('albumCommentCount element not found');
@@ -601,7 +602,7 @@ function updateAlbumCommentCount() {
 
         if (fixr.context.albumId === album.albumId && fixr.context.albumId !== '' && album.commentCount !== -1) {
             log('Usinging CACHED album count!...');
-            document.getElementById('albumCommentCount').innerHTML = String(album.commentCount);
+            document.getElementById('albumCommentCount').innerText = String(album.commentCount);
         } else if (fixr.context.albumId !== '') {
             var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/' + fixr.context.albumId + '/comments/';
             _reqAlbumComments.open('GET', url, true);
@@ -663,7 +664,7 @@ function getAlbumlist() {
                     }
                 } else if (alist) {
                     if (doc.body.querySelector('h3')) {
-                        albums.html = '<div  style="margin:0 0 .8em 0">'+doc.body.querySelector('h3').textContent+'</div>';
+                        albums.html = '<div  style="margin:0 0 .8em 0">'+doc.body.querySelector('h3').innerText+'</div>';
                     }
                 } else {
                     log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
@@ -735,7 +736,7 @@ function exploreCalendar() {
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
         var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
-        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar" href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
+        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar - Sorry, currently not available" href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0"><del>Explore Calendar</del></div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
@@ -901,12 +902,12 @@ var scaler = {
                         var largest = null;
                         var largesttext = '';
                         while(!largest && sizelist.length>0) {
-                            if (sizelist[sizelist.length-1].textContent.replace(/\s+/g,'')==='') {
+                            if (sizelist[sizelist.length-1].innerText.replace(/\s+/g,'')==='') {
                                 sizelist.pop(); // remove last
                             } else {
-                                log('[scaler] Found LARGEST size: '+sizelist[sizelist.length-1].textContent.replace(/\s+/g,''));
+                                log('[scaler] Found LARGEST size: '+sizelist[sizelist.length-1].innerText.replace(/\s+/g,''));
                                 largest = sizelist[sizelist.length-1];
-                                largesttext = largest.textContent.replace(/\s+/g,'');
+                                largesttext = largest.innerText.replace(/\s+/g,'');
                             }
                         }
                         if (largest.querySelector('a')) {
@@ -1143,7 +1144,7 @@ function albumExtras() { // links to album's map and comments
         cmdiv.className = 'create-book-container';
         cmdiv.title = 'Comments';
         cmdiv.style.textAlign = 'center';
-        cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';
+        cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments - Sorry, currently not available" class="album-comments-icon" id="albumCommentCount"></span></a>';
         elist.appendChild(cmdiv);
         updateAlbumCommentCount();
     }
@@ -1228,7 +1229,7 @@ function orderWarning() {
     if (fixr.context.pageType === 'PHOTOSTREAM') {
         var e = document.querySelector('.dropdown-link.filter-sort');
         if(e) {
-            if (['Date taken', 'Fecha de captura', 'Aufnahmedatum', 'Date de prise de vue', 'Data dello scatto', 'Tirada na data', 'Ngày chụp', 'Tanggal pengambilan', '拍攝日期', '촬영 날짜'].includes(e.textContent.trim())) {
+            if (['Date taken', 'Fecha de captura', 'Aufnahmedatum', 'Date de prise de vue', 'Data dello scatto', 'Tirada na data', 'Ngày chụp', 'Tanggal pengambilan', '拍攝日期', '촬영 날짜'].includes(e.innerText.trim())) {
                 e.classList.add('warning');
             } else {
                 e.classList.remove('warning');
