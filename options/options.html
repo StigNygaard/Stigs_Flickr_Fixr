@@ -33,20 +33,23 @@
     <form id="fixroptions">
         <fieldset style="position:relative"><legend>&nbsp;Toggle features&nbsp;</legend>
             <div><label class="browser-style"><input type="checkbox" id="scaler" /> Always show photos in big size</label>
-                <div><p>Up until 2012 Flickr had always updated the full database of photos when new browsing-sizes was introduced
-                    on the site. However in May 2012 only photos uploaded after March 2012 was updated when Flickr introduced
-                    1600px and 2048px wide browsing-sizes, leaving the majority of photos to be displayed only 1024px wide.
-                    When the display sizes are smaller than available browser space, Flickr Fixr will fix this by up-scaling photo
-                    to fit the browser window. And when the original is available, it will be used to display the photo in best
-                    possible quality.</p>
+                <div>
+<!--                    <p>With Flickr's <a href="https://www.flickr.com/help/forum/en-us/72157711364062311/">2019 introduction of bigger sizes display sizes</a>-->
+<!--                    (<a href="https://www.flickr.com/help/forum/72157710955873986/">including for pre-2012 uploads</a>!),-->
+<!--                    this up-scaling feature is now default disabled for new installs. But if you like photos to upscale if they are only available in smaller-->
+<!--                    size than your browser window, turn this feature on.</p>-->
+<!--                    <p>This feature will use the original uploaded version of a photo when available (Should always be available when surfing your own photos).</p>-->
+                    <p>If this feature is enabled, Flickr Fixr will try to upscale photos when current display-versions are too small to fit
+                        the available space in your browser window. Also when the original uploaded version of a photo is available (Should
+                        always be available when surfing your own photos), Flickr Fixr will use <em>that</em> for best possible quality.</p>
                     <p>A note about up-scaling and <a href="https://www.flickr.com/help/forum/en-us/72157668990488722/">photo notes</a>!...
-                    Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When a photo
-                    is up-scaled, an icon is shown above photo on photopage:<br />
-                    <img src="/icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
-                    If the icon is green, everything is alright, and you can work with notes directly on the up-scaled photo.<br />
-                    <img src="/icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
-                    If the icon is orange and you want to work with notes, you should always first click the orange icon to align image size with
-                    size of the "notes canvas". Otherwise notes will not be correctly aligned on the photo.</p>
+                        Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When a photo
+                        is up-scaled, an icon is shown above photo on the photopage:<br />
+                        <img src="/icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                        If the icon is green, everything is alright, and you can work with notes directly on the up-scaled photo.<br />
+                        <img src="/icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                        If the icon is orange and you want to work with notes, you should always first click the orange icon to align image size with
+                        size of the "notes canvas". Otherwise notes will not be correctly aligned on the photo.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="albumTeaser" /> Album-teaser column on photostreams</label>
@@ -73,10 +76,10 @@
                     ("beta experience") group pools and on the Explore page.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="exploreCalendar" /> <del>Explore Calendar</del> and Recent Uploads</label>
-                <div><p>On the Explore page, add a link <del>to the hidden/forgotten Explore Calendar and</del> to a page showing some of the latest
-                    uploads to Flickr. <i><b>Edit:</b> Explore Calendar is not available anymore. I might - or might not - make a fix for that later.</i></p>
-                    <p>A little warning regarding the latest uploads though; Even though Safe Search is activated on
+            <div><label class="browser-style"><input type="checkbox" id="exploreCalendar" /> Explore Calendar and Recent Uploads</label>
+                <div><p>On the Explore page, add a link to the hidden/forgotten Explore Calendar and to a page showing some of the latest
+                    uploads to Flickr.</p>
+                    <p>A little warning regarding the latest uploads though; Even though Safe Search is always activated on
                     that page, you risk seeing stuff you might have preferred not to see.</p>
                 </div>
             </div>

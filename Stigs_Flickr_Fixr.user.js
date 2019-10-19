@@ -22,11 +22,8 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2019.07.11.0', description: 'Warning that Explore Calendar and Album Comments pages/features are currently not available (after Flickr May update).'},
-    {version: '2019.05.19.0', description: 'Album column length fix.'},
+    {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
     {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
-    {version: '2019.05.15.0', description: 'Fix for Album list visibility (Adapting to a site change).'},
-    {version: '2019.04.15.0', description: 'Fix for extended date info with webextension on Chrome 73+.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
@@ -557,7 +554,9 @@ function topMenuItems() {
 
 var album = { // cache to avoid repeating requests
     albumId: '',
-    commentCount: 0
+    commentCount: 0,
+    comment: [],
+    description: ''
 };
 function updateAlbumCommentCount() {
     var _reqAlbumComments = null;
@@ -614,6 +613,125 @@ function updateAlbumCommentCount() {
         log('understøtter ikke XMLHttpRequest');
     }
 }
+
+var _wsGetPhotosetInfoLock = 0;
+function wsGetPhotosetInfo() {
+    var diff = Date.now() - _wsGetPhotosetInfoLock;
+    if ((_wsGetPhotosetInfoLock > 0) && (diff < 50)) {
+        log('Skipping wsGetPhotosetInfo() because already running?: ' + diff);
+        // *** maybe add a check to see if we are still on same album?!
+        return;
+    }
+    _wsGetPhotosetInfoLock = Date.now();
+    function handleResponse(response) {
+        if (response.ok) {
+            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+                return response.json()
+            }
+            throw new Error('Response was not in expected json format.');
+        }
+        throw new Error('Network response was not ok.');
+    }
+    function handleResult(obj) {
+        if (obj.stat === "ok") {
+            if (obj.photoset && obj.photoset && obj.photoset.description) {
+
+                document.getElementById('albumDescription').innerHTML = obj.photoset.description._content.replace(/\n/g, '<br />');
+
+            }
+        } else {
+            log('flickr.photosets.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
+        }
+    }
+    function handleError(error) {
+        console.log('There has been a problem with your fetch operation: ', error.message);
+        log('There has been a problem with your fetch operation: ' + error);
+    }
+
+    if (fixr.isWebExtension()) {
+        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
+        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.getInfo", fkey: fkey, options: {photoset_id: fixr.context.albumId, user_id: fixr.context.photographerId}}).then(handleResult).catch(handleError);
+    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
+        fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.getInfo&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&user_id=' + fixr.context.photographerId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
+    }
+}
+
+var _wsGetPhotosetCommentsLock = 0;
+function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
+    var diff = Date.now() - _wsGetPhotosetCommentsLock;
+    if ((_wsGetPhotosetCommentsLock > 0) && (diff < 50)) {
+        log('Skipping wsGetPhotosetComments() because already running?: ' + diff);
+        // *** maybe add a check to see if we are still on same album?!
+        return;
+    }
+    _wsGetPhotosetCommentsLock = Date.now();
+
+    function handleResponse(response) {
+        if (response.ok) {
+            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+                return response.json()
+            }
+            throw new Error('Response was not in expected json format.');
+        }
+        throw new Error('Network response was not ok.');
+    }
+    function handleResult(obj) {
+
+        album.albumId = fixr.context.albumId;
+        album.commentCount = -1;
+
+        if (obj.stat === "ok") {
+            log("flickr.photosets.comments.getList returned ok");
+            if (obj.comments && obj.comments.photoset_id) {
+                album.albumId = obj.comments.photoset_id;
+            }
+            if (obj.comments && obj.comments.comment) {
+                album.commentCount = obj.comments.comment.length;
+            } else {
+                album.commentCount = 0;
+            }
+        } else {
+            // if (elem) {
+            //     elem.innerHTML = 'Cannot fetch detailed date details on private photos';
+            // }
+            log('flickr.photosets.comments.getList returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
+        }
+
+        if (document.getElementById('albumCommentCount')) {
+            if (album.commentCount === -1) {
+                document.getElementById('albumCommentCount').innerText = '?';
+            } else {
+                document.getElementById('albumCommentCount').innerText = String(album.commentCount);
+            }
+        } else {
+            log('albumCommentCount element not found');
+        }
+
+        if (obj.comments.comment) {
+            let comments = '';
+            for (let comment of obj.comments.comment) {
+                comments += '<hr /><div><p class="comment-author"><a href="/photos/' + comment.author + '/">' + comment.authorname + '</a> ' + (new Date(comment.datecreate * 1000)).toString().replace(/\([^\\)]+\)/, '') + '</p><p>' + comment._content.replace(/\n/g, '<br />').replace(/http:\/\/farm\d+\.static\.flickr\.com/g, 'https://live.staticflickr.com').replace(/http:\/\/(www\.)?flickr\.com/g, 'https://www.flickr.com') + '</p></div>';
+            }
+            if (document.getElementById('albumComments')) { // Todo: This doesn't yet exist!
+                document.getElementById('albumComments').innerHTML = comments;
+            }
+        }
+
+        _wsGetPhotosetCommentsLock = 0;
+    }
+    function handleError(error) {
+        console.log('There has been a problem with your fetch operation: ', error.message);
+        log('There has been a problem with your fetch operation: ' + error);
+    }
+
+    if (fixr.isWebExtension()) {
+        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
+        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.comments.getList", fkey: fkey, options: {photoset_id: fixr.context.albumId}}).then(handleResult).catch(handleError);
+    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
+        fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.comments.getList&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
+    }
+}
+
 
 var albums = { // cache albums to avoid repeating requests
     ownerId: '',
@@ -736,7 +854,7 @@ function exploreCalendar() {
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
         var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
-        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a title="Explore Calendar - Sorry, currently not available" href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0"><del>Explore Calendar</del></div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
+        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
@@ -1140,13 +1258,43 @@ function albumExtras() { // links to album's map and comments
         elist.appendChild(mapdiv);
         // comments-link:
         var comurl = '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/comments/';
+        // var comurl = '#'; // NEW?!
         var cmdiv = document.createElement('div');
         cmdiv.className = 'create-book-container';
         cmdiv.title = 'Comments';
         cmdiv.style.textAlign = 'center';
         cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments - Sorry, currently not available" class="album-comments-icon" id="albumCommentCount"></span></a>';
+        // cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';  // NEW?!
         elist.appendChild(cmdiv);
-        updateAlbumCommentCount();
+
+        // Sorry, album comments are currently not available to view
+        document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not available to view'));
+
+        // updateAlbumCommentCount();
+
+        // // create overlay lightbox  // NEW?!...
+        // let infobox = document.createElement('div');
+        // let description = document.createElement('div');
+        // let comments = document.createElement('div');
+        // infobox.style = 'display:none;position:absolute;top:2em;left:4em;right:4em;z-index:500;border:none;padding:2rem;background-color:#000';
+        // infobox.id = 'albumInfobox';
+        // infobox.innerHTML = '<h2>Album description and comments</h2>';
+        // description.id = 'albumDescription';
+        // description.innerHTML = '[description]';
+        // comments.id = 'albumComments';
+        // comments.innerHTML = '[comments]';
+        // infobox.appendChild(description);
+        // infobox.appendChild(comments);
+        // let header = document.querySelector('div.album-header-content');
+        // if (header) {
+        //     header.style.position = 'relative';
+        //     header.appendChild(infobox);
+        //     // infobox.style.display = 'block';
+        //     document.getElementById('albumCommentsLink').addEventListener('click', function(evt){evt.preventDefault();evt.stopPropagation();infobox.style.display = 'block';return false}, false);
+        // }
+        wsGetPhotosetComments();  // (NEW!)
+        // wsGetPhotosetInfo();  // NEW?!
+
     }
 }
 
@@ -1459,7 +1607,7 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
 } else {
     if (fixr.isWebExtension()) {
         log('WebExtension - init with options...');
-        withOptionsDo(handlerInitFixr); // load selected features and run fixr.init with them...
+        withOptionsDo(handlerInitFixr); // Load selected features and run fixr.init with them...
     } else {
         log('Userscript - fixr.init...');
         fixr.style.add(shared_style);
