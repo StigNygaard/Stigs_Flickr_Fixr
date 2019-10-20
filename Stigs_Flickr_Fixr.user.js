@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.07.11.0
+// @version     2019.10.20.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.10.20.0', description: 'Fix for use of original in scaling/replace.'},
     {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
     {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
     {version: '2019.02.02.0', description: 'Improved map-fix.'},
@@ -1002,7 +1003,7 @@ var scaler = {
                 scale(); // An extra Scale() - just in case...
             }
         };
-        var getSizes = function () {
+        var getSizes = function () { // Loading and parsing Sizes (.../sizes/o/) page is where we normally get original size/url
             log('[scaler] scaler.run.getSizes() running...');
             var _reqAllSizes = null;
             if (window.XMLHttpRequest) {
@@ -1016,7 +1017,7 @@ var scaler = {
                         var doc = document.implementation.createHTMLDocument("sizeDoc");
                         doc.documentElement.innerHTML = _reqAllSizes.responseText;
 
-                        var sizelist = doc.body.querySelectorAll('ol.sizes-list li ol li');
+                        var sizelist = doc.body.querySelectorAll('ol.sizes-list li ol li'); // display sizes (but original not included in this list)
                         var largest = null;
                         var largesttext = '';
                         while(!largest && sizelist.length>0) {
@@ -1024,13 +1025,15 @@ var scaler = {
                                 sizelist.pop(); // remove last
                             } else {
                                 log('[scaler] Found LARGEST size: '+sizelist[sizelist.length-1].innerText.replace(/\s+/g,''));
+                                // alert('[scaler] Found LARGEST size: '+sizelist[sizelist.length-1].innerText.replace(/\s+/g,''));
                                 largest = sizelist[sizelist.length-1];
                                 largesttext = largest.innerText.replace(/\s+/g,'');
                             }
                         }
-                        if (largest.querySelector('a')) {
-                            // list has link to _PAGE_ for showing largest image, thus it cannot be the original we already see ON the page!
-                            log ('[scaler] Sizes-page/o has link to _PAGE_ for showing largest image, thus it cannot be the largest/original we already see ON the page!');
+                        if (!largest.querySelector('a')) {
+                            // List doesn't have link to _PAGE_ for showing largest display size. Thus we are already on page for largest display size. Not page for original which apparently isn't available
+                            log ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available - or not needed in current browser size!');
+                            // alert ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available - or not needed in current browser size!');
                             scaler.orgUrl = '';
                             scaler.maxSizeUrl = '';
                             scaler.hasOriginal = false;
@@ -1045,9 +1048,11 @@ var scaler = {
                             scaler.maxSizeUrl = '';
                             scaler.hasOriginal = false;
                         }
-                        var r = /\((\d+)x(\d+)\)$/;
+                        // alert('largesttext: *' + largesttext + '*');
+                        var r = /\((\d+)[\u{00D7}x](\d+)\)$/u; // dimensions pattern (????x????)
                         var res = largesttext.match(r);
                         if (res !== null) {
+                            // alert ('dimensions: x=' + parseInt(res[1],10) + ', y=' + parseInt(res[2],10));
                             if (scaler.photoOrientation === 'h' && parseInt(res[1],10)<parseInt(res[2],10)) {
                                 log('[scaler] Photo has been rotated from vertical to horizontal - Should NOT use the original here!');
                                 scaler.orgUrl = '';
@@ -1068,6 +1073,7 @@ var scaler = {
                             orgImage.addEventListener("load", replace);
                             orgImage.src = scaler.maxSizeUrl;
                         }
+                        // alert('scaler.maxSizeUrl=' + scaler.maxSizeUrl + ' , scaler.orgUrl=' + scaler.orgUrl);
                     } else {
                         // wait for the call to complete
                     }
@@ -1099,8 +1105,8 @@ var scaler = {
 
         // Fortsæt kun hvis PhotoId!!!?
 
-        var dpev = document.querySelector('div.photo-engagement-view');
-        var pwv = document.querySelector('div.photo-well-view');
+        var dpev = document.querySelector('div.photo-engagement-view'); // icon bar below photo on standard photopage
+        var pwv = document.querySelector('div.photo-well-view'); // Photo "container" in "full screen view"
         if (pwv) {
             log('[scaler] height-controller: height=' + pwv.clientHeight + ' (padding=70?), width=' + pwv.clientWidth + ' (padding=80?).'); // hc.style.padding: 20px 40px 50px
             if (roomHeight === 0) {
@@ -1112,7 +1118,7 @@ var scaler = {
             roomPaddingHeight += (parseInt(window.getComputedStyle(pwv, null).getPropertyValue('padding-top'), 10) + parseInt(window.getComputedStyle(pwv, null).getPropertyValue('padding-bottom'), 10));
             roomPaddingWidth += (parseInt(window.getComputedStyle(pwv, null).getPropertyValue('padding-left'), 10) + parseInt(window.getComputedStyle(pwv, null).getPropertyValue('padding-right'), 10));
         }
-        var hc = document.querySelector('div.height-controller');
+        var hc = document.querySelector('div.height-controller'); // black top area on standard photopage
         if (hc) {
             log('[scaler] height-controller: height=' + hc.clientHeight + ' (padding=70?), width=' + hc.clientWidth + ' (padding=80?).'); // hc.style.padding: 20px 40px 50px
             if (roomHeight === 0) {
@@ -1124,7 +1130,7 @@ var scaler = {
             roomPaddingHeight += (parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-top'), 10) + parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-bottom'), 10));
             roomPaddingWidth += (parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-left'), 10) + parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-right'), 10));
         }
-        var pwmsv = document.querySelector('div.photo-well-media-scrappy-view');
+        var pwmsv = document.querySelector('div.photo-well-media-scrappy-view'); // photo container+ on standard photopage
         if (pwmsv) {
             log('[scaler] div.photo-well-media-scrappy-view: height=' + pwmsv.clientHeight + ' (padding=70?), width=' + pwmsv.clientWidth + ' (padding=80?).'); // pwmsv.style.padding: 20px 40px 50px
             if (roomHeight === 0) {
@@ -1164,12 +1170,13 @@ var scaler = {
                 scale();
                 log('[scaler] ...AND CONTINUE LOOKING FOR ORIGINAL...');
                 if (dpev && scaler.photoOrientation==='h' && document.querySelector('ul.sizes')) { // if (document.querySelector('ul.sizes')) -> PHOTOPAGE in normal mode (if vertical (bigger) risk for rotated, which are better handled by getSizes())
+                    // NOTE: 'ul.sizes' probably doesn't exist until user opens download menu below photo. So this flow rarely (if ever?) run in practice
                     var org = document.querySelector('ul.sizes li.Original a.download-image-size');
                     if (org) { // quick access når vi bladrer?
-                        scaler.hasOriginal = true; // ??? kun hvis original
+                        scaler.hasOriginal = true;
                         scaler.maxSizeUrl = (org.href).replace(/^https\:/i, '').replace(/_d\./i, '.');
                         var orgImage = new Image();
-                        orgImage.addEventListener("load", replace);
+                        orgImage.addEventListener("load", replace); // replaces with original once it is loaded
                         orgImage.src = scaler.maxSizeUrl;
                     } else {
                         // vi kan finde original "inline"
