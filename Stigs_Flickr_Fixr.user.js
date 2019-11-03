@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.10.20.0
+// @version     2019.11.03.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.11.03.0', description: 'Fix for scaling/replace showing low res photos (Adapt to a site change).'},
     {version: '2019.10.20.0', description: 'Fix for use of original in scaling/replace.'},
     {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
     {version: '2019.05.18.0', description: 'Also show feed links on status.flickr.net.'},
@@ -1003,8 +1004,8 @@ var scaler = {
                 scale(); // An extra Scale() - just in case...
             }
         };
-        var getSizes = function () { // Loading and parsing Sizes (.../sizes/o/) page is where we normally get original size/url
-            log('[scaler] scaler.run.getSizes() running...');
+        var getSizes = function (url) { // Loading and parsing Sizes (.../sizes/o/) page is where we normally get original size/url
+            log('[scaler] scaler.run.getSizes() running looking at ' + url);
             var _reqAllSizes = null;
             if (window.XMLHttpRequest) {
                 _reqAllSizes = new XMLHttpRequest();
@@ -1021,7 +1022,7 @@ var scaler = {
                         var largest = null;
                         var largesttext = '';
                         while(!largest && sizelist.length>0) {
-                            if (sizelist[sizelist.length-1].innerText.replace(/\s+/g,'')==='') {
+                            if (sizelist[sizelist.length-1].innerText.replace(/\s+/g,'')==='') { // remove empty items
                                 sizelist.pop(); // remove last
                             } else {
                                 log('[scaler] Found LARGEST size: '+sizelist[sizelist.length-1].innerText.replace(/\s+/g,''));
@@ -1030,20 +1031,28 @@ var scaler = {
                                 largesttext = largest.innerText.replace(/\s+/g,'');
                             }
                         }
-                        if (!largest.querySelector('a')) {
-                            // List doesn't have link to _PAGE_ for showing largest display size. Thus we are already on page for largest display size. Not page for original which apparently isn't available
-                            log ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available - or not needed in current browser size!');
-                            // alert ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available - or not needed in current browser size!');
-                            scaler.orgUrl = '';
-                            scaler.maxSizeUrl = '';
-                            scaler.hasOriginal = false;
-                        } else if (doc.body.querySelector('div#allsizes-photo>img')) {
+                        var shownImg = doc.body.querySelector('div#allsizes-photo>img');
+                        if (shownImg && shownImg.src && shownImg.src.match(/_o\.\w+$/)) {
+                            // We are seeing the original - use it...
                             scaler.orgUrl = doc.body.querySelector('div#allsizes-photo>img').src;
                             scaler.hasOriginal = true;
                             scaler.maxSizeUrl = doc.body.querySelector('div#allsizes-photo>img').src;
                             log('[scaler] Largest/original image: ' + scaler.maxSizeUrl);
+                        }
+                        else if (shownImg && shownImg.src && !largest.querySelector('a')) {
+                            // List doesn't have link to _PAGE_ for showing largest display size. Thus we are already on page for largest display size. Use this size
+                            log ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available.');
+                            scaler.orgUrl = '';
+                            scaler.maxSizeUrl = doc.body.querySelector('div#allsizes-photo>img').src;
+                            scaler.hasOriginal = true; // actually not original, but largest...
+                        } else if (largest && largest.querySelector('a')) {
+                            log('[scaler] It seems original is NOT available, and Flickr forwarded us to a page NOT directly showing largest display version available...');
+                            // **** Probably Flickr is already showing us best/largest display size. So no further action necessary !!(?) ****
+                            scaler.orgUrl = '';
+                            scaler.maxSizeUrl = '';
+                            scaler.hasOriginal = false;
                         } else {
-                            log('[scaler] UNEXPECTED situation. Assuming NO original available');
+                            log('[scaler] UNEXPECTED situation.');
                             scaler.orgUrl = '';
                             scaler.maxSizeUrl = '';
                             scaler.hasOriginal = false;
@@ -1078,7 +1087,6 @@ var scaler = {
                         // wait for the call to complete
                     }
                 };
-                var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/' + fixr.context.photoId + '/sizes/o';
                 _reqAllSizes.open('GET', url, true);
                 _reqAllSizes.send(null);
             } else {
@@ -1207,7 +1215,7 @@ var scaler = {
                         }
                     }
                 } else { // PHOTOPAGE (likely) in LIGHTBOX mode
-                    getSizes(); // resize (& replace) from/when size-list
+                    getSizes('https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/' + fixr.context.photoId + '/sizes/o'); // Try loading Photo Sizes page showing original
                 }
             } else {
                 log('[scaler] Scaling NOT relevant');
@@ -1275,7 +1283,7 @@ function albumExtras() { // links to album's map and comments
         elist.appendChild(cmdiv);
 
         // Sorry, album comments are currently not available to view
-        document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not available to view'));
+        document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not visible on Flickr'));
 
         // updateAlbumCommentCount();
 
