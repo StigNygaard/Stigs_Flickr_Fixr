@@ -3,7 +3,7 @@
   "name": "Flickr Fixr",
   "short_name": "Flickr Fixr",
   "description": "Makes Flickr almost awesome - while waiting for SmugMug to fully fix it ;-)",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "author": "Stig Nygaard",
   "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
   "permissions": [
@@ -26,6 +26,7 @@
   },
   "minimum_chrome_version": "67.0",
   "minimum_opera_version": "56.0",
+  "minimum_edge_version": "79.0",
   "background": {
     "scripts": ["lib/mozilla/browser-polyfill.js", "background/flickr_fixr.js"]
   },
