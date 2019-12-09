@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.11.03.0
+// @version     2019.12.09.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2019.12.09.0', description: 'Album comments are back again!'},
     {version: '2019.11.03.0', description: 'Fix for scaling/replace showing low res photos (Adapt to a site change).'},
     {version: '2019.10.20.0', description: 'Fix for use of original in scaling/replace.'},
     {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
@@ -605,7 +606,7 @@ function updateAlbumCommentCount() {
             log('Usinging CACHED album count!...');
             document.getElementById('albumCommentCount').innerText = String(album.commentCount);
         } else if (fixr.context.albumId !== '') {
-            var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/' + fixr.context.albumId + '/comments/';
+            var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/sets/' + fixr.context.albumId + '/comments/'; // /sets/* urls works, /albums/* urls doesn't currently work
             _reqAlbumComments.open('GET', url, true);
             _reqAlbumComments.send(null);
         } else {
@@ -1272,7 +1273,7 @@ function albumExtras() { // links to album's map and comments
         mapdiv.innerHTML = '<a href="/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/" style="font-size:14px;color:#FFF;"><span title="Album on map" class="album-map-icon"></span></a>';
         elist.appendChild(mapdiv);
         // comments-link:
-        var comurl = '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/comments/';
+        var comurl = '/photos/' + fixr.context.photographerAlias + '/sets/' + fixr.context.albumId + '/comments/';  // /sets/* urls works, /albums/* urls currently doesn't work (yet?)
         // var comurl = '#'; // NEW?!
         var cmdiv = document.createElement('div');
         cmdiv.className = 'create-book-container';
@@ -1283,7 +1284,7 @@ function albumExtras() { // links to album's map and comments
         elist.appendChild(cmdiv);
 
         // Sorry, album comments are currently not available to view
-        document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not visible on Flickr'));
+        // document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not visible on Flickr'));
 
         // updateAlbumCommentCount();
 
@@ -1500,10 +1501,10 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                         uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0, n);
                     }
                     elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
-                }
-                var withTitle = elem.parentElement.querySelector('span[title]');
-                if (withTitle) {
-                    withTitle.removeAttribute('title');
+                    var withTitle = elem.parentElement.querySelector('span[title]');
+                    if (withTitle) {
+                        withTitle.removeAttribute('title');
+                    }
                 }
             }
         } else {
