@@ -79,6 +79,9 @@ function messageHandler(request, sender, sendResponse) {
 }
 
 
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/onboarding_upboarding_offboarding_best_practices
+// https://discourse.mozilla.org/t/best-way-to-do-install-update-uninstall-pages/40302
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
 function installHandler(details) {
     console.log("Extension version: " + browser.runtime.getManifest().version);
     console.log("Installation or update! details.reason: " + details.reason);
@@ -87,6 +90,10 @@ function installHandler(details) {
     }
     switch(details.reason) {
         case 'install':
+            // browser.runtime.openOptionsPage();
+            // browser.runtime.getURL()
+            // browser.runtime.getManifest()
+            // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Extension_pages
             break;
         case 'update':
             if (typeof details.previousVersion !== 'undefined') { // Ff55
