@@ -1279,7 +1279,7 @@ function albumExtras() { // links to album's map and comments
         cmdiv.className = 'create-book-container';
         cmdiv.title = 'Comments';
         cmdiv.style.textAlign = 'center';
-        cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments - Sorry, currently not available" class="album-comments-icon" id="albumCommentCount"></span></a>';
+        cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';
         // cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';  // NEW?!
         elist.appendChild(cmdiv);
 
