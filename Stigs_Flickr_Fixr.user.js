@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.12.09.0
+// @version     2019.12.15.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -1045,7 +1045,7 @@ var scaler = {
                             log ('[scaler] Sizes-page/o seems to be showing largest display-size, not the original. Thus original is not available.');
                             scaler.orgUrl = '';
                             scaler.maxSizeUrl = doc.body.querySelector('div#allsizes-photo>img').src;
-                            scaler.hasOriginal = true; // actually not original, but largest...
+                            scaler.hasOriginal = false;
                         } else if (largest && largest.querySelector('a')) {
                             log('[scaler] It seems original is NOT available, and Flickr forwarded us to a page NOT directly showing largest display version available...');
                             // **** Probably Flickr is already showing us best/largest display size. So no further action necessary !!(?) ****
