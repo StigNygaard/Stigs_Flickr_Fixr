@@ -3,13 +3,14 @@
   "name": "Flickr Fixr",
   "short_name": "Flickr Fixr",
   "description": "Makes Flickr almost awesome - while waiting for SmugMug to fully fix it ;-)",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "author": "Stig Nygaard",
   "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
   "permissions": [
     "https://*.flickr.com/*",
     "storage"
   ],
+  "content_security_policy": "script-src 'self'; object-src 'none'",
   "icons": {
     "16": "icons/fr16.png",
     "32": "icons/fixr32.png",
