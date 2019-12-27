@@ -1,4 +1,4 @@
-# Stig's Flickr Fixr
+# Flickr Fixr
 
 A browser extension to enhance the Flickr experience in your desktop web-browser.
 
@@ -6,15 +6,16 @@ Show photographer's albums on photostream-pages, Increase display-size of "old" 
 
 Available as browser extension or as an userscript. Currently features of browser extension and userscript are generally the same, but the browser extension have the additional capability of allowing you to turn individual features on and off. Browser extension is also my primary focus going forward, and the recommended way to install Flickr Fixr.
 
-Install the Flickr Fixr browser extension:
-* [Mozilla Firefox extension](https://addons.mozilla.org/addon/flickr-fixr?src=external-github)
-* [Google Chrome extension](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in Opera webbrowser, if the _[Install Chrome Extensions](https://addons.opera.com/extensions/details/install-chrome-extensions/)_ extension is installed first.
+Install the _Flickr Fixr_ browser extension:
+* [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github)
+* [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in other Chromium based browsers.
+* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new/upcoming Chromium version of Edge (to be officially released in mid-Januar).
 
-If you prefer using the userscript, the recommended way to install Stig's Flickr Fixr, is [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
+If you prefer using the userscript, the recommended way to install _Stig's Flickr Fixr_, is [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
 
 Most detailed feature description can currently be found in the Flickr Hacks forum: https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
-The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed [through Firefox Add-ons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github) and [through Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb). To help with the cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
+The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge. To help with the cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
 
 Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
 
