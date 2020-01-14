@@ -30,7 +30,7 @@ function saveOptions(e) {
         albumTeaser: document.querySelector("form#fixroptions #albumTeaser").checked,
         updateMapLink: document.querySelector("form#fixroptions #updateMapLink").checked,
         updateTags: document.querySelector("form#fixroptions #updateTags").checked
-    });
+    }); // then ( "saved ok" message? )
 }
 
 function withOptionsDo(handler) {
@@ -77,5 +77,4 @@ function initializeOptionsPage() {
     }
 }
 
-// Options page only:
 window.addEventListener("DOMContentLoaded", initializeOptionsPage);
