@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2019.12.15.0
+// @version     2020.01.14.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2020.01.14.0', description: 'Internal changes: Remove potential unsafe or unnecessary use of innerHTML and insertAdjacentHTML'},
     {version: '2019.12.09.0', description: 'Album comments are back again!'},
     {version: '2019.11.03.0', description: 'Fix for scaling/replace showing low res photos (Adapt to a site change).'},
     {version: '2019.10.20.0', description: 'Fix for use of original in scaling/replace.'},
@@ -50,9 +51,9 @@ function log(s) {
 }
 if (DEBUG) {
     if ('loading' === document.readyState) {
-        log("This userscript is running at document-start time.");
+        log("This script is running at document-start time.");
     } else {
-        log("This userscript is running with document.readyState: " + document.readyState);
+        log("This script is running with document.readyState: " + document.readyState);
     }
     window.addEventListener('DOMContentLoaded', function(){log('(onDOMContentLoaded)');}, false);
     window.addEventListener('focus', function(){log('(onfocus)');}, false);
@@ -102,7 +103,7 @@ var fixr = fixr || {
                 var styleElem = document.createElement('style');
                 styleElem.type = 'text/css';
                 styleElem.id = 'fixrStyle';
-                styleElem.innerHTML = fixr.style._declarations;
+                styleElem.textContent = fixr.style._declarations;
                 document.getElementsByTagName('head')[0].appendChild(styleElem);
                 log('fixrStyle has been ADDED');
             } else {
@@ -167,13 +168,13 @@ var fixr = fixr || {
         } else if (document.querySelector('div.album-page-view')) {
             // album page
             elem = document.querySelector('div.album-page-view div.album-container div.album-header-view div.album-attribution div.avatar.person');
+        } else if (document.querySelector('div.coverphoto-content div.avatar.person')) {
+            // fallback, should catch most
+            elem = document.querySelector('div.coverphoto-content div.avatar.person');
         } else {
             log('we do not look for photographerId on this page');
             return true;
         }
-        // album oversigt
-        // etc...
-        // men minus f.eks. favorites oversigt!
         if (!elem) {
             log('fixr.initPhotographerId() - Attribution elem NOT found - returning false');
             return false;
@@ -471,7 +472,7 @@ function updateMapLink() {
                 try {
                     var lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     var lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>');
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentHTML('beforeend', '<div class="location-data-container"><a href="https://www.google.com/maps/search/?api=1&amp;query=' + lat + ',' + lon + '">Show location on Google Maps</a></div>'); // NOTICE how lat and lon are defined above. This should be safe.
                 }
                 catch (e) {
                     log('Failed creating Google Maps link: ' + e);
@@ -544,12 +545,12 @@ function topMenuItems() {
             m.classList.add('extraitems'); // mark extra items being added (so adjust spacing in style)
             if (gib.id === 'groups' && !m.querySelector('li#tags')) {
                 // latest design
-                gib.insertAdjacentHTML('afterend', '<li id="tags" class="link " role="menuitem"><a href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/tags"><span>Tags</span></a></li>');
-                aab.parentElement.insertAdjacentHTML('afterend', '<li id="collections" class="link " role="menuitem" title="Collections"><a href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/collections"><span>Collections</span></a></li><li id="map" class="link " role="menuitem"><a href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map"><span>Map</span></a></li>');
+                gib.insertAdjacentHTML('afterend', '<li id="tags" class="link " role="menuitem"><a href="/photos/' + fixr.context.photographerId + '/tags"><span>Tags</span></a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
+                aab.parentElement.insertAdjacentHTML('afterend', '<li id="collections" class="link " role="menuitem" title="Collections"><a href="/photos/' + fixr.context.photographerId + '/collections"><span>Collections</span></a></li><li id="map" class="link " role="menuitem"><a href="/photos/' + fixr.context.photographerId + '/map"><span>Map</span></a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
             } else if (gib.classList.contains('sn-groups') && !m.querySelector('li.sn-tags')) {
                 // earlier design
-                gib.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-tags"><a data-track="YouSubnav-tags" href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/tags">Tags</a></li>');
-                aab.parentElement.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-collections" title="Collections"><a data-track="YouSubnav-collections" href="/photos/' + escapeHTML(aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums'))) + '/collections">Collections</a></li><li class="sn-navitem sn-map"><a data-track="YouSubnav-map" href="/photos/' + aab.href.substring(aab.href.indexOf('/photos/') + 8, aab.href.indexOf('/albums')) + '/map">Map</a></li>');
+                gib.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-tags"><a data-track="YouSubnav-tags" href="/photos/' + fixr.context.photographerId + '/tags">Tags</a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
+                aab.parentElement.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-collections" title="Collections"><a data-track="YouSubnav-collections" href="/photos/' + fixr.context.photographerId + '/collections">Collections</a></li><li class="sn-navitem sn-map"><a data-track="YouSubnav-map" href="/photos/' + fixr.context.photographerId + '/map">Map</a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
             }
         }
     }
@@ -561,103 +562,100 @@ var album = { // cache to avoid repeating requests
     comment: [],
     description: ''
 };
-function updateAlbumCommentCount() {
-    var _reqAlbumComments = null;
-    if (window.XMLHttpRequest) {
-        _reqAlbumComments = new XMLHttpRequest();
-        if (typeof _reqAlbumComments.overrideMimeType !== 'undefined') {
-            _reqAlbumComments.overrideMimeType('text/html');
-        }
-
-        _reqAlbumComments.onreadystatechange = function () {
-            if (_reqAlbumComments.readyState === 4 && _reqAlbumComments.status === 200) {
-                log('_reqAlbumComments returned status=' + _reqAlbumComments.status);
-                var doc = document.implementation.createHTMLDocument("sizeDoc");
-                doc.documentElement.innerHTML = _reqAlbumComments.responseText;
-                album.albumId = fixr.context.albumId;
-                album.commentCount = -1;
-                var e = doc.body.querySelectorAll('span.LinksNew b.Here');
-                if (e && e.length === 1) {
-                    var n = parseInt(e[0].innerText, 10);
-                    if (isNaN(n)) {
-                        album.commentCount = 0;
-                    } else {
-                        album.commentCount = n;
-                    }
-                } else {
-                    album.commentCount = -1;
-                    log('b.Here??? ');
-                }
-                if (document.getElementById('albumCommentCount')) {
-                    if (album.commentCount === -1) {
-                        document.getElementById('albumCommentCount').innerText = '?';
-                    } else {
-                        document.getElementById('albumCommentCount').innerText = String(album.commentCount);
-                    }
-                } else {
-                    log('albumCommentCount element not found');
-                }
-            } else {
-                // wait for the call to complete
-            }
-        };
-
-        if (fixr.context.albumId === album.albumId && fixr.context.albumId !== '' && album.commentCount !== -1) {
-            log('Usinging CACHED album count!...');
-            document.getElementById('albumCommentCount').innerText = String(album.commentCount);
-        } else if (fixr.context.albumId !== '') {
-            var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/sets/' + fixr.context.albumId + '/comments/'; // /sets/* urls works, /albums/* urls doesn't currently work
-            _reqAlbumComments.open('GET', url, true);
-            _reqAlbumComments.send(null);
-        } else {
-            log('albumId not initialized');
-        }
-    } else {
-        log('understøtter ikke XMLHttpRequest');
-    }
-}
-
-var _wsGetPhotosetInfoLock = 0;
-function wsGetPhotosetInfo() {
-    var diff = Date.now() - _wsGetPhotosetInfoLock;
-    if ((_wsGetPhotosetInfoLock > 0) && (diff < 50)) {
-        log('Skipping wsGetPhotosetInfo() because already running?: ' + diff);
-        // *** maybe add a check to see if we are still on same album?!
-        return;
-    }
-    _wsGetPhotosetInfoLock = Date.now();
-    function handleResponse(response) {
-        if (response.ok) {
-            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
-                return response.json()
-            }
-            throw new Error('Response was not in expected json format.');
-        }
-        throw new Error('Network response was not ok.');
-    }
-    function handleResult(obj) {
-        if (obj.stat === "ok") {
-            if (obj.photoset && obj.photoset && obj.photoset.description) {
-
-                document.getElementById('albumDescription').innerHTML = obj.photoset.description._content.replace(/\n/g, '<br />');
-
-            }
-        } else {
-            log('flickr.photosets.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
-        }
-    }
-    function handleError(error) {
-        console.log('There has been a problem with your fetch operation: ', error.message);
-        log('There has been a problem with your fetch operation: ' + error);
-    }
-
-    if (fixr.isWebExtension()) {
-        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.getInfo", fkey: fkey, options: {photoset_id: fixr.context.albumId, user_id: fixr.context.photographerId}}).then(handleResult).catch(handleError);
-    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
-        fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.getInfo&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&user_id=' + fixr.context.photographerId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
-    }
-}
+// function updateAlbumCommentCount() {
+//     var _reqAlbumComments = null;
+//     if (window.XMLHttpRequest) {
+//         _reqAlbumComments = new XMLHttpRequest();
+//         if (typeof _reqAlbumComments.overrideMimeType !== 'undefined') {
+//             _reqAlbumComments.overrideMimeType('text/html');
+//         }
+//         _reqAlbumComments.onreadystatechange = function () {
+//             if (_reqAlbumComments.readyState === 4 && _reqAlbumComments.status === 200) {
+//                 log('_reqAlbumComments returned status=' + _reqAlbumComments.status);
+//                 var doc = document.implementation.createHTMLDocument("sizeDoc");
+//                 doc.documentElement.innerHTML = _reqAlbumComments.responseText;
+//                 album.albumId = fixr.context.albumId;
+//                 album.commentCount = -1;
+//                 var e = doc.body.querySelectorAll('span.LinksNew b.Here');
+//                 if (e && e.length === 1) {
+//                     var n = parseInt(e[0].innerText, 10);
+//                     if (isNaN(n)) {
+//                         album.commentCount = 0;
+//                     } else {
+//                         album.commentCount = n;
+//                     }
+//                 } else {
+//                     album.commentCount = -1;
+//                     log('b.Here??? ');
+//                 }
+//                 if (document.getElementById('albumCommentCount')) {
+//                     if (album.commentCount === -1) {
+//                         document.getElementById('albumCommentCount').innerText = '?';
+//                     } else {
+//                         document.getElementById('albumCommentCount').innerText = String(album.commentCount);
+//                     }
+//                 } else {
+//                     log('albumCommentCount element not found');
+//                 }
+//             } else {
+//                 // wait for the call to complete
+//             }
+//         };
+//         if (fixr.context.albumId === album.albumId && fixr.context.albumId !== '' && album.commentCount !== -1) {
+//             log('Usinging CACHED album count!...');
+//             document.getElementById('albumCommentCount').innerText = String(album.commentCount);
+//         } else if (fixr.context.albumId !== '') {
+//             var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/sets/' + fixr.context.albumId + '/comments/'; // /sets/* urls works, /albums/* urls doesn't currently work
+//             _reqAlbumComments.open('GET', url, true);
+//             _reqAlbumComments.send(null);
+//         } else {
+//             log('albumId not initialized');
+//         }
+//     } else {
+//         log('understøtter ikke XMLHttpRequest');
+//     }
+// }
+//
+// var _wsGetPhotosetInfoLock = 0;
+// function wsGetPhotosetInfo() {
+//     var diff = Date.now() - _wsGetPhotosetInfoLock;
+//     if ((_wsGetPhotosetInfoLock > 0) && (diff < 50)) {
+//         log('Skipping wsGetPhotosetInfo() because already running?: ' + diff);
+//         // *** maybe add a check to see if we are still on same album?!
+//         return;
+//     }
+//     _wsGetPhotosetInfoLock = Date.now();
+//     function handleResponse(response) {
+//         if (response.ok) {
+//             if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+//                 return response.json()
+//             }
+//             throw new Error('Response was not in expected json format.');
+//         }
+//         throw new Error('Network response was not ok.');
+//     }
+//     function handleResult(obj) {
+//         if (obj.stat === "ok") {
+//             if (obj.photoset && obj.photoset && obj.photoset.description) {
+//
+//                 document.getElementById('albumDescription').innerHTML = obj.photoset.description._content.replace(/\n/g, '<br />');
+//
+//             }
+//         } else {
+//             log('flickr.photosets.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
+//         }
+//     }
+//     function handleError(error) {
+//         console.log('There has been a problem with your fetch operation: ', error.message);
+//         log('There has been a problem with your fetch operation: ' + error);
+//     }
+//     if (fixr.isWebExtension()) {
+//         // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
+//         browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.getInfo", fkey: fkey, options: {photoset_id: fixr.context.albumId, user_id: fixr.context.photographerId}}).then(handleResult).catch(handleError);
+//     } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
+//         fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.getInfo&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&user_id=' + fixr.context.photographerId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
+//     }
+// }
 
 var _wsGetPhotosetCommentsLock = 0;
 function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
@@ -710,15 +708,15 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
             log('albumCommentCount element not found');
         }
 
-        if (obj.comments.comment) {
-            let comments = '';
-            for (let comment of obj.comments.comment) {
-                comments += '<hr /><div><p class="comment-author"><a href="/photos/' + comment.author + '/">' + comment.authorname + '</a> ' + (new Date(comment.datecreate * 1000)).toString().replace(/\([^\\)]+\)/, '') + '</p><p>' + comment._content.replace(/\n/g, '<br />').replace(/http:\/\/farm\d+\.static\.flickr\.com/g, 'https://live.staticflickr.com').replace(/http:\/\/(www\.)?flickr\.com/g, 'https://www.flickr.com') + '</p></div>';
-            }
-            if (document.getElementById('albumComments')) { // Todo: This doesn't yet exist!
-                document.getElementById('albumComments').innerHTML = comments;
-            }
-        }
+        // if (obj.comments.comment) {
+        //     let comments = '';
+        //     for (let comment of obj.comments.comment) {
+        //         comments += '<hr /><div><p class="comment-author"><a href="/photos/' + comment.author + '/">' + comment.authorname + '</a> ' + (new Date(comment.datecreate * 1000)).toString().replace(/\([^\\)]+\)/, '') + '</p><p>' + comment._content.replace(/\n/g, '<br />').replace(/http:\/\/farm\d+\.static\.flickr\.com/g, 'https://live.staticflickr.com').replace(/http:\/\/(www\.)?flickr\.com/g, 'https://www.flickr.com') + '</p></div>';
+        //     }
+        //     if (document.getElementById('albumComments')) { // Todo: id="albumComments" doesn't yet exist!!!
+        //         document.getElementById('albumComments').innerHTML = comments;
+        //     }
+        // }
 
         _wsGetPhotosetCommentsLock = 0;
     }
@@ -738,7 +736,7 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
 
 var albums = { // cache albums to avoid repeating requests
     ownerId: '',
-    html: '',
+    column: '',
     count: 0
 };
 function getAlbumlist() {
@@ -753,45 +751,69 @@ function getAlbumlist() {
             if (_reqAlbumlist.readyState === 4 && _reqAlbumlist.status === 200) {
                 log('_reqAlbumlist returned status=' + _reqAlbumlist.status); // + ', \ntext:\n' + _reqAlbumlist.responseText);
                 var doc = document.implementation.createHTMLDocument("sizeDoc");
-                doc.documentElement.innerHTML = _reqAlbumlist.responseText;
-
+                doc.documentElement.innerHTML = _reqAlbumlist.responseText; // NOTICE, this is NOT inserted directly into HTML-document! In the following DOM-content of doc is being analyzed...
                 albums.ownerId = fixr.context.photographerId;
-                albums.html = '';
+                albums.column = new DocumentFragment();
                 albums.count = 0;
                 var alist = Array.from(doc.body.querySelectorAll('div.photo-list-album-view'));
                 var imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
-                if (alist && alist.length > 0) {
-                    albums.count = alist.length;
-                    for (let e of alist.slice(0,10)) {
-                        var imgUrl = '';
-                        //log(e.outerHTML);
-                        // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
-                        var result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
-                        if (result) {
-                            // imgUrl = result[1].replace(/_[a-z]$/, '') + '_s' + result[2];
-                            imgUrl = result[1].replace(/_[a-z]$/, '') + '_q' + result[2];
-                            log('imgUrl=' + imgUrl);
-                        } else {
-                            log('No match on imgPattern');
-                        }
-                        var a = e.querySelector('a[href][title]'); // sub-element
-                        if (a && a !== null) {
-                            log('Album title: ' + a.title);
-                            log('Album url: ' + a.getAttribute('href'));
-                            albums.html += '<div><a href="' + a.getAttribute('href') + '"><img src="' + imgUrl + '" class="asquare" alt="" /><div style="margin:0 0 .8em 0">' + escapeHTML(a.title) + '</div></a></div>';
-                        } else {
-                            log('a element not found?');
-                        }
-                    }
-                } else if (alist) {
-                    if (doc.body.querySelector('h3')) {
-                        albums.html = '<div  style="margin:0 0 .8em 0">'+doc.body.querySelector('h3').innerText+'</div>';
-                    }
-                } else {
-                    log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
-                }
+                var columnhead = document.createElement("div");
+                columnhead.style = "margin:0 0 .8em 0";
                 if (document.getElementById('albumTeaser')) {
-                    document.getElementById('albumTeaser').innerHTML = '<div style="margin:0 0 .8em 0">Albums</div>' + albums.html + '<div><i><a href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/">' + (albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '')) + '</a></i></div>';
+                    if (alist && alist.length > 0) {
+                        columnhead.textContent = "Albums";
+                        albums.column.appendChild(columnhead);
+                        albums.count = alist.length;
+                        for (let e of alist.slice(0,10)) {
+                            var imgUrl = '';
+                            //log(e.outerHTML);
+                            // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
+                            var result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
+                            if (result) {
+                                // imgUrl = result[1].replace(/_[a-z]$/, '') + '_s' + result[2];
+                                imgUrl = result[1].replace(/_[a-z]$/, '') + '_q' + result[2];
+                                log('imgUrl=' + imgUrl);
+                            } else {
+                                log('No match on imgPattern');
+                            }
+                            var a = e.querySelector('a[href][title]'); // sub-element
+                            if (a && a !== null) {
+                                log('Album title: ' + a.title);
+                                log('Album url: ' + a.getAttribute('href'));
+                                var album = document.createElement("div");
+                                var anchor = document.createElement("a");
+                                anchor.href = a.getAttribute('href');
+                                var thumbnail = document.createElement("img");
+                                thumbnail.src = imgUrl;
+                                thumbnail.classList.add("asquare");
+                                thumbnail.alt = "";
+                                var albumtitle = document.createElement("div");
+                                albumtitle.style = "margin:0 0 .8em 0";
+                                albumtitle.textContent = a.title;
+                                anchor.append(thumbnail, albumtitle);
+                                album.appendChild(anchor);
+                                albums.column.appendChild(album);
+                            } else {
+                                log('a element not found?');
+                            }
+                        }
+                    } else if (alist) {
+                        if (doc.body.querySelector('h3')) {
+                            columnhead.textContent = doc.body.querySelector('h3').innerText;
+                            albums.column.appendChild(columnhead);
+                        }
+                    } else {
+                        log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
+                    }
+                    var foot = document.createElement("div");
+                    var cursive = document.createElement("i");
+                    var moreanchor = document.createElement("a");
+                    moreanchor.href = "/photos/" + (fixr.context.photographerAlias || fixr.context.photographerId) + "/albums/";
+                    moreanchor.textContent = albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '');
+                    cursive.appendChild(moreanchor);
+                    foot.appendChild(cursive);
+                    albums.column.appendChild(foot);
+                    document.getElementById('albumTeaser').appendChild(albums.column);
                 } else {
                     log('albumTeaser NOT FOUND!?!');
                 }
@@ -800,10 +822,14 @@ function getAlbumlist() {
             }
         };
 
-        if (fixr.context.photographerId === albums.ownerId && fixr.context.photographerId !== '') {
-            log('Using CACHED albumlist!...');
-            document.getElementById('albumTeaser').innerHTML = '<div style="margin:0 0 .8em 0">Albums</div>' + albums.html + '<div><i><a href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/">' + (albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '')) + '</a></i></div>';
-        } else if (fixr.context.photographerId) {
+        // if (fixr.context.photographerId === albums.ownerId && fixr.context.photographerId !== '') { // todo: Cache functionality currently not working it seems!?
+        //
+        //     log('Using CACHED albumlist!...');
+        //     document.getElementById('albumTeaser').appendChild(albums.column);
+        //     // document.getElementById('albumTeaser').innerHTML = '<div style="margin:0 0 .8em 0">Albums</div>' + albums.column + '<div><i><a href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/">' + (albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '')) + '</a></i></div>';
+        //
+        // } else
+        if (fixr.context.photographerId) {
             var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums';
             _reqAlbumlist.open('GET', url, true);
             _reqAlbumlist.send(null);
@@ -856,7 +882,7 @@ function exploreCalendar() {
     log('exploreCalendar found div.photo-list-view');
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
-        var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
+        var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/'); // NOTICE, exploreMonth is ultimately derived from a Date() and is safe to insert with insertAdjacentHTML here:
         dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
@@ -1017,7 +1043,7 @@ var scaler = {
                     if (_reqAllSizes.readyState === 4 && _reqAllSizes.status === 200) {
                         log('[scaler] _reqAllSizes returned status=' + _reqAllSizes.status); // + ', \ntext:\n' + _reqAllSizes.responseText);
                         var doc = document.implementation.createHTMLDocument("sizeDoc");
-                        doc.documentElement.innerHTML = _reqAllSizes.responseText;
+                        doc.documentElement.innerHTML = _reqAllSizes.responseText;  // NOTICE, this is NOT inserted directly into HTML-document! In the following DOM-content of doc is being analyzed...
 
                         var sizelist = doc.body.querySelectorAll('ol.sizes-list li ol li'); // display sizes (but original not included in this list)
                         var largest = null;
@@ -1270,7 +1296,14 @@ function albumExtras() { // links to album's map and comments
         mapdiv.className = 'create-book-container';
         mapdiv.title = 'Album on map';
         mapdiv.style.textAlign = 'center';
-        mapdiv.innerHTML = '<a href="/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/" style="font-size:14px;color:#FFF;"><span title="Album on map" class="album-map-icon"></span></a>';
+        var maplink = document.createElement('a');
+        maplink.href= '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
+        maplink.style = 'font-size:14px;color:#FFF';
+        var mapicon = document.createElement('span');
+        mapicon.title = 'Album on map';
+        mapicon.className = 'album-map-icon';
+        maplink.appendChild(mapicon);
+        mapdiv.appendChild(maplink);
         elist.appendChild(mapdiv);
         // comments-link:
         var comurl = '/photos/' + fixr.context.photographerAlias + '/sets/' + fixr.context.albumId + '/comments/';  // /sets/* urls works, /albums/* urls currently doesn't work (yet?)
@@ -1279,8 +1312,16 @@ function albumExtras() { // links to album's map and comments
         cmdiv.className = 'create-book-container';
         cmdiv.title = 'Comments';
         cmdiv.style.textAlign = 'center';
-        cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';
-        // cmdiv.innerHTML = '<a href="' + comurl + '" style="font-size:14px;color:#FFF;" id="albumCommentsLink"><span title="Album comments" class="album-comments-icon" id="albumCommentCount"></span></a>';  // NEW?!
+        var cmlink = document.createElement('a');
+        cmlink.href = comurl;
+        cmlink.style = 'font-size:14px;color:#FFF';
+        cmlink.id = 'albumCommentsLink';
+        var cmicon = document.createElement('span');
+        cmicon.title = 'Album comments';
+        cmicon.className = 'album-comments-icon';
+        cmicon.id = 'albumCommentCount';
+        cmlink.appendChild(cmicon);
+        cmdiv.appendChild(cmlink);
         elist.appendChild(cmdiv);
 
         // Sorry, album comments are currently not available to view
@@ -1338,7 +1379,16 @@ function updateTags() {
                     var realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
                     if (!(tag.querySelector('a.fixrTag'))) {
                         var icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
-                        tag.insertAdjacentHTML('afterbegin', '<a class="fixrTag" href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/tags/' + realtag + '/" title="' + atag.title + ' by ' + fixr.context.photographerName + '"><img src="' + icon + '" style="width:1em;height:1em;margin:0;padding:0;position:relative;top:3px" alt="*" /></a>');
+                        var avatar = document.createElement('img');
+                        avatar.src = icon;
+                        avatar.style = 'width:1em;height:1em;margin:0;padding:0;position:relative;top:3px';
+                        avatar.alt = '*';
+                        var taglink = document.createElement('a');
+                        taglink.className = 'fixrTag';
+                        taglink.href = '/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/tags/' + realtag + '/';
+                        taglink.title = atag.title + ' by ' + fixr.context.photographerName;
+                        taglink.appendChild(avatar);
+                        tag.insertBefore(taglink, tag.firstChild);
                     }
                 }
             }
@@ -1406,7 +1456,7 @@ const newsfeedLinks_style = 'div#feedlinks {border:none;margin:0;padding:0;posit
 function newsfeedLinks() {
     var elem = document.getElementById('feedlinks');
     if (elem) {
-        elem.innerHTML = '';
+        elem.textContent = '';
     }
     setTimeout(updateNewsfeedLinks, 500); // give Flickr time to update link tags in head
 }
@@ -1421,11 +1471,20 @@ function updateNewsfeedLinks() {
         }
         var elem = document.getElementById('feedlinks');
         if (elem) {
-            var feedicons = '';
+            var feedicons = new DocumentFragment();
             for (const link of feedlinks) {
-                feedicons += '<a href="' + escapeHTML(link.href) + '"><img src="https://c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png" alt="Feedlink" style="width:16px;height:16px" title="' + escapeHTML(link.title) + '"></a>';
+                var feedlink = document.createElement('a');
+                feedlink.href = link.href;
+                var feedsymbol = document.createElement('img');
+                feedsymbol.src = 'https://c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png';
+                feedsymbol.alt = 'Feedlink';
+                feedsymbol.style = 'width:16px;height:16px';
+                feedsymbol.title = link.title;
+                feedlink.appendChild(feedsymbol);
+                feedicons.appendChild(feedlink);
             }
-            elem.innerHTML = feedicons;
+            elem.textContent = ''; // remove existing content
+            elem.appendChild(feedicons);
         }
     }
 }
@@ -1473,19 +1532,19 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     }
                     if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
                         debugstr += '<br />TakenDate: ' + obj.photo.dates.taken + ' (granularity=' + obj.photo.dates.takengranularity + ')';
-                        takenDateStr = obj.photo.dates.taken; // "2018-03-30 00:35:44"
-                        var takenDate = new Date(Date.parse(takenDateStr.replace(' ', 'T')));
-                        var dayStart = new Date(Date.parse(takenDateStr.substring(0, 10) + 'T00:00:00'));
-                        var dayEnd = new Date(Date.parse(takenDateStr.substring(0, 10) + 'T23:59:59'));
+                        var takenDateTmp = obj.photo.dates.taken.replace(/[^\d-:\s]/g, ''); // "2018-03-30 00:35:44" (Remove any unexpected characters)
+                        var takenDate = new Date(Date.parse(takenDateTmp.replace(' ', 'T')));
+                        var dayStart = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T00:00:00'));
+                        var dayEnd = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T23:59:59'));
                         var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
                         if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
                             takenDateStr = '<label>Taken:</label> <a href="/search/?user_id=' + fixr.context.photographerId + '&amp;view_all=1&amp;min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&amp;max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200) + '">' + takenDate.toString().substring(0, takenTimeIndex - 1) + '</a>' + takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '4') { // 4	Y-m
-                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0, 7) + '<br />';
+                            takenDateStr = '<label>Taken:</label> ' + takenDateTmp.substring(0, 7) + '<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
-                            takenDateStr = '<label>Taken:</label> ' + obj.photo.dates.taken.substring(0, 4) + '<br />';
+                            takenDateStr = '<label>Taken:</label> ' + takenDateTmp.substring(0, 4) + '<br />';
                         } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
-                            takenDateStr = '<label>Taken:</label> Circa ' + obj.photo.dates.taken.substring(0, 4) + '<br />';
+                            takenDateStr = '<label>Taken:</label> Circa ' + takenDateTmp.substring(0, 4) + '<br />';
                         } else {
                             log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
@@ -1500,7 +1559,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     if (n > 0) {
                         uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0, n);
                     }
-                    elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
+                    elem.innerHTML = '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>'; // NOTICE how takenDateStr and uploadDateStr are defined above. This should be safe.
+                    // elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
                     var withTitle = elem.parentElement.querySelector('span[title]');
                     if (withTitle) {
                         withTitle.removeAttribute('title');
@@ -1509,7 +1569,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             }
         } else {
             if (elem) {
-                elem.innerHTML = 'Cannot fetch detailed date details on private photos';
+                elem.textContent = 'Cannot fetch detailed date details on private photos';
             }
             log('flickr.photos.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
         }
@@ -1520,7 +1580,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         log('There has been a problem with your fetch operation: ' + error);
         var elem = document.querySelector('.date-info');
         if (elem) {
-            elem.innerHTML = 'There was an error fetching detailed date details...';
+            elem.textContent = 'There was an error fetching detailed date details...';
         }
     }
 
