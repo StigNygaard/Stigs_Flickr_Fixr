@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2020.01.14.0
+// @version     2020.01.15.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2020.01.15.0', description: 'Fix for extra menuitems on pages with the old header design'},
     {version: '2020.01.14.0', description: 'Internal changes: Remove potential unsafe or unnecessary use of innerHTML and insertAdjacentHTML'},
     {version: '2019.12.09.0', description: 'Album comments are back again!'},
     {version: '2019.11.03.0', description: 'Fix for scaling/replace showing low res photos (Adapt to a site change).'},
@@ -155,6 +156,9 @@ var fixr = fixr || {
         return false;
     },
     initPhotographerId: function () { // photographer/attribution id
+
+        // todo: This needs a rewrite some day...
+
         var elem;
         if (document.querySelector('div.photostream-page-view')) {
             // photostream
@@ -169,8 +173,11 @@ var fixr = fixr || {
             // album page
             elem = document.querySelector('div.album-page-view div.album-container div.album-header-view div.album-attribution div.avatar.person');
         } else if (document.querySelector('div.coverphoto-content div.avatar.person')) {
-            // fallback, should catch most
+            // fallback, modern design pages
             elem = document.querySelector('div.coverphoto-content div.avatar.person');
+        } else if (document.querySelector('div.subnav-middle div.sn-avatar > img')) {
+            // fallback, old design pages
+            elem = document.querySelector('div.subnav-middle div.sn-avatar > img');
         } else {
             log('we do not look for photographerId on this page');
             return true;
@@ -182,27 +189,26 @@ var fixr = fixr || {
         log('fixr.initPhotographerId() - Attribution elem found');
         // (div.avatar.person).style.backgroundImage=url(https://s.yimg.com/pw/images/buddyicon07_r.png#44504567@N00)
         //                    .style.backgroundImage=url(//c4.staticflickr.com/8/7355/buddyicons/10259776@N00_r.jpg?1372021232#10259776@N00)
-        if (elem.style.backgroundImage) {
+        var result;
+        if (elem.tagName.toUpperCase() === 'IMG' && elem.src) {
+            result = elem.src.match(/https:(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
+        } else if (elem.style.backgroundImage) {
             log('fixr.initPhotographerId() - elem has style.backgroundImage "' + elem.style.backgroundImage + '", now looking for the attribution id...');
-            var pattern = /url[^#\?]+(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i;
             // var pattern = /\/buddyicons\/(\d+\@N\d{2})\D+/i;
-            var result = elem.style.backgroundImage.match(pattern);
-            if (result) {
-                log('fixr.initPhotographerId() - Attribution pattern match found: ' + result[0]);
-                log('fixr.initPhotographerId() - the attribution icon is ' + result[1]);
-                log('fixr.initPhotographerId() - the attribution id is ' + result[2]);
-                fixr.context.photographerIcon = result[1];
-                fixr.context.photographerId = result[2];
-            } else {
-                log('fixr.initPhotographerId() - attribution pattern match not found');
-                return false;
-            }
+            result = elem.style.backgroundImage.match(/url[^#\?]+(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
+        }
+        if (result) {
+            log('fixr.initPhotographerId() - Attribution pattern match found: ' + result[0]);
+            log('fixr.initPhotographerId() - the attribution icon is ' + result[1]);
+            log('fixr.initPhotographerId() - the attribution id is ' + result[2]);
+            fixr.context.photographerIcon = result[1];
+            fixr.context.photographerId = result[2];
+            log('fixr.initPhotographerId() - returning true...');
+            return true;
         } else {
-            log('fixr.initPhotographerId() - elem.style.backgroundImage not found');
+            log('fixr.initPhotographerId() - attribution pattern match not found');
             return false;
         }
-        log('fixr.initPhotographerId() - returning true...');
-        return true;
     },
     initPhotoId: function () { // Photo Id
         //  *flickr.com/photos/user/PId/*
