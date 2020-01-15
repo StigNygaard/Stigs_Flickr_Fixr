@@ -67,7 +67,7 @@ function handlerInitOptionsPage(options) {
 
 function initializeOptionsPage() {
     if (document.querySelector('div#fixroptionspage form#fixroptions')) { // Only run if Options page
-        document.querySelector('div#fixroptionspage #verstr').innerHTML = browser.runtime.getManifest().version;
+        document.querySelector('div#fixroptionspage #verstr').textContent = browser.runtime.getManifest().version;
         if ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")) { // if firefox...
             document.querySelectorAll('#fixroptions fieldset>div>div>p:first-child').forEach(function(p, i, nodes) {
                 nodes[i].style.marginTop = 0;
