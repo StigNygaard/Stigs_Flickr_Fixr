@@ -2,7 +2,7 @@
 
 A browser extension to enhance the Flickr experience in your desktop web-browser.
 
-Show photographer's albums on photostream-pages, Increase display-size of "old" photos, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!), Top-pagination, Newsfeed detection - _And more!..._
+Show photographer's albums on photostream-pages, Increase display-size of small photos, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!), Top-pagination, Newsfeed detection - _And more!..._
 
 Available as browser extension or as an userscript. Currently features of browser extension and userscript are generally the same, but the browser extension have the additional capability of allowing you to turn individual features on and off. Browser extension is also my primary focus going forward, and the recommended way to install Flickr Fixr.
 
@@ -11,7 +11,7 @@ Install the _Flickr Fixr_ browser extension:
 * [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in other Chromium based browsers.
 * [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new/upcoming Chromium version of Edge (to be officially released in mid-Januar).
 
-If you prefer using the userscript, the recommended way to install _Stig's Flickr Fixr_, is [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
+If you for some reason prefer using the userscript version, you can install it via [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
 
 Most detailed feature description can currently be found in the Flickr Hacks forum: https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 

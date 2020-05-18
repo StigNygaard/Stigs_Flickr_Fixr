@@ -9,6 +9,9 @@
         div#fixroptionspage>p {margin-left: 1em}
         div#fixroptionspage a:link, div#fixroptionspage a:visited {color: rgb(0,129,240)}
         div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
+        .isFirefox #fixroptions fieldset>div>div>p:first-child {margin-top: 0}
+        .ffo {display: none}
+        .isFirefox .ffo {display: inherit}
         #fixroptions fieldset {position:relative}
         #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
         #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
@@ -34,12 +37,12 @@
         <fieldset style="position:relative"><legend>&nbsp;Toggle features&nbsp;</legend>
             <div><label class="browser-style"><input type="checkbox" id="scaler" /> Always show photos in big size</label>
                 <div>
-                    <p>If this feature is enabled, Flickr Fixr will try to upscale photos when current display-versions are too small to fit
-                        the available space in your browser window. Also when the originally uploaded version of a photo is available (Should
-                        always be available when surfing your own photos), Flickr Fixr will upscale <em>that</em> for best possible quality.</p>
+                    <p>If this feature is enabled, Flickr Fixr will try to upscale photos when current display-versions are too small to fit the
+                        available space in your browser window. Also when the originally uploaded version of a photo is available in this situation
+                        (Should always be available when surfing your own photos), Flickr Fixr will use the original for best possible quality.</p>
                     <p>A note about up-scaling and <a href="https://www.flickr.com/help/forum/en-us/72157668990488722/">photo notes</a>:
-                        Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When a photo
-                        is up-scaled, an icon is shown above photo on the photopage:<br />
+                        Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When upscaling,
+                        an icon is shown above photo on the photopage:<br />
                         <img src="/icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
                         If the icon is green, everything is alright, and you can work with notes directly on the up-scaled photo.<br />
                         <img src="/icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
@@ -94,8 +97,8 @@
                     added in upper right corner of pages. Feeds are detected on the main <a href="https://flickr.com/">flickr.com</a> site,
                     on <a href="https://status.flickr.net/">status.flickr.net</a>, and on the blogs on
                     <a href="https://blog.flickr.net/">blog.flickr.net</a> and <a href="https://code.flickr.net/">code.flickr.net</a>.</p>
-                    <p>Notice, Flickr Fixr does <em>nothing to handle</em> the newsfeeds, it just makes them visible. If you are not using or familar with
-                    newsfeeds, you might not have any reason to have this feature enabled.</p>
+                    <p>Notice, Flickr Fixr does <em>nothing to handle</em> the newsfeeds, it just makes them visible. If you are not using or
+                        familiar with newsfeeds, you might not have any reason to have this feature enabled.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
@@ -126,8 +129,7 @@
     <p>Thanks for using Flickr Fixr. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or
     maybe just want to tell you like Flickr Fixr, then leave a <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/">comment in
     the Flickr Hacks forum</a>.</p>
-
-    <p>Have a great time on Flickr. I hope you, like myself, enjoy Flickr a bit more with Flickr Fixr installed...</p>
+    <p class="tagline ffo">Interested in technical details about photos? Also try <a href="https://addons.mozilla.org/firefox/addon/xifr?src=external-flickrfixr">xIFr</a>, my Exif viewer browser extension that works on pretty much any site!</p>
     <p>/Stig<br />
     <a href="https://www.rockland.dk/">www.rockland.dk</a><br />
     <a href="https://www.flickr.com/photos/stignygaard/">www.flickr.com/photos/stignygaard</a></p>
