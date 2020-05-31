@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to latest version of Flickr Fixr</title>
+  <style>
+    body {
+      background-color: #fff;
+      color: #242424;
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    #all {
+      width: 720px;
+      margin: 4em auto;
+    }
+    img#logo {
+      display: block;
+      float: right;
+      width: 128px;
+      height: 128px;
+      margin: -1.7em 0 -1em 1em;
+      padding: 0;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: rgb(43, 43, 43);
+        color: rgb(249, 249, 249);
+        scrollbar-color: rgb(43, 43, 43) black;
+      }
+      a, a:hover, a:active, a:visited {
+        color: rgb(69, 161, 255);
+      }
+    }
+  </style>
+  <script src="../lib/mozilla/browser-polyfill.js"></script>
+  <script src="onboard.js"></script>
+</head>
+<body>
+
+<div id="all">
+
+  <img src="../icons/fixr256.png" id="logo" alt="" />
+
+  <h1>Congratulations!...</h1>
+
+  <p>You have just installed or updated to Flickr Fixr version <span id="verstr"></span>. If you have any open Flickr-pages already, you need to reload pages to make install/update take effect on these.</p>
+
+  <p>Version 1.9 has an improved photo-location fix. When clicking map-widget on photopages of geotagged photos, Flickr Fixr has for some time been adding the photo you wanted to see the location of,
+    to the actual referred map and the "strip" below the map. Just as you would had expect it would have been anyway. But recently it has been with the trade-off, that Flickr Map would zoom out
+    to a high level view. This should now be fixed by "emulating" seven clicks on the zoom-in button when the map is displayed. I have tested it on a couple of PCs, and it seems to work well. But
+    maybe Flickr Map is presented differently on higher or lower resolution displays, or my "clicks" happens too fast on slower PCs. Please do et me know if it doesn't work well on your PC...</p>
+
+  <p>As always, any feedback can be given in <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/" target="_blank">the Flickr Fixr thread in Flickr Hacks forum</a>.
+    I regularly watch that thread for comments.</p>
+
+  <p>By the way, did you know Flickr Fixr has an <a href="#" id="settings">Options page</a>? Not only it gives you the option to turn each individual feature on or off as you like. It also gives
+    you a nice overview over features of Flickr Fixr.</p>
+
+  <p>I hope you enjoy Flickr with Flickr Fixr...</p>
+
+  <p>/<a href="https://www.rockland.dk/" target="_blank">Stig</a></p>
+
+</div>
+
+</body>
+</html>

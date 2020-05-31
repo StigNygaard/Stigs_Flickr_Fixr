@@ -82,23 +82,25 @@ function messageHandler(request, sender, sendResponse) {
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/onboarding_upboarding_offboarding_best_practices
 // https://discourse.mozilla.org/t/best-way-to-do-install-update-uninstall-pages/40302
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
-function installHandler(details) {
+// https://extensionworkshop.com/documentation/develop/onboard-upboard-offboard-users/
+function installHandler({ reason, temporary, previousVersion }) {
     console.log("Extension version: " + browser.runtime.getManifest().version);
-    console.log("Installation or update! details.reason: " + details.reason);
-    if (typeof details.temporary !== 'undefined') { // Ff55
-        console.log("details.temporary: " + details.temporary); // true/false
+    console.log("Installation or update! details.reason: " + reason);
+    if (typeof temporary !== 'undefined') { // Ff55
+        console.log("details.temporary: " + temporary); // true/false
     }
-    switch(details.reason) {
+    switch(reason) {
+        case 'update':
+            if (typeof previousVersion !== 'undefined') { // Ff55
+                console.log("Updated from details.previousVersion: " + previousVersion);
+            }
+            // break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
             // browser.runtime.getManifest()
             // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Extension_pages
-            break;
-        case 'update':
-            if (typeof details.previousVersion !== 'undefined') { // Ff55
-                console.log("Updated from details.previousVersion: " + details.previousVersion);
-            }
+            browser.tabs.create({ url: "/onboard/onboard.html"});
             break;
         case 'browser_update':
             break;
