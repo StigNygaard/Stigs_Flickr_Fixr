@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2020.05.18.0
+// @version     2020.05.31.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2020.05.18.0', description: 'Fix for missing album column in Chrome when on flickr.com instead of www.flickr.com (cross-domain error)'},
     {version: '2020.01.15.0', description: 'Fix for extra menuitems on pages with the old header design'},
     {version: '2020.01.14.0', description: 'Internal changes: Remove potential unsafe or unnecessary use of innerHTML and insertAdjacentHTML'},
@@ -42,7 +43,7 @@ var changelog = [
     {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
     {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
     {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
-    {version: '2015.08.26.4', description: 'Initial release version. Photo scale/replace, album column and tag-link feature.'}
+    {version: '2015.08.26.4', description: 'Initial userscript release version. Photo scale/replace, album column and tag-link feature.'}
 ];
 
 var DEBUG = false;
@@ -522,8 +523,15 @@ function mapInitializer() {
         if (imgId) {
             const focusImg = document.getElementById('f_img_thumb_' + imgId);
             if (focusImg) {
-                focusImg.click(); // close
-                focusImg.click(); // reopen
+                focusImg.click(); // close and ...
+                focusImg.click(); // reopen to highlight position on map
+            }
+            // Zoom in...
+            const zoomIn = document.getElementById('candy_map_zoom_in');
+            if (zoomIn) {
+                for (let i=0; i<=7; i++) {
+                    setTimeout(function(e){e.click()}, i * 300, zoomIn);
+                }
             }
         }
     }
@@ -542,15 +550,17 @@ function topMenuItems() {
             gid = m.querySelector('a[data-track=You-groups]').parentElement;
         }
         var aad = m.querySelector('a[data-track=gnYouSetsClick]') || m.querySelector('a[data-track=You-sets]');
-        if (aad  && gid) {
+        if (aad && gid) {
             if (gid.hasAttribute('aria-label') && !m.querySelector('li[aria-label=Tags]')) {
                 // latest design
-                gid.insertAdjacentHTML('afterend', '<li class="menuitem" role="menuitem" aria-label="Tags"><a data-track="gnYouTagsClick" href="/photos/me/tags">Tags</a></li>');
-                aad.parentElement.insertAdjacentHTML('afterend', '<li class="menuitem" role="menuitem" aria-label="Collections"><a data-track="gnYouCollectionsClick" href="/photos/me/collections">Collections</a></li><li class="menuitem" role="menuitem" aria-label="Map"><a data-track="gnYouMapClick" href="/photos/me/map">Map</a></li>');
+                gid.insertAdjacentElement('afterend', createRichElement('li',{class: 'menuitem', role: 'menuitem', 'aria-label': 'Tags'},createRichElement('a',{'data-track': 'gnYouTagsClick', href: '/photos/me/tags'}, 'Tags')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'menuitem', role: 'menuitem', 'aria-label': 'Map'}, createRichElement('a', {'data-track': 'gnYouMapClick', href: '/photos/me/map'}, 'Map')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'menuitem', role: 'menuitem', 'aria-label': 'Collections'}, createRichElement('a', {'data-track': 'gnYouCollectionsClick', href: '/photos/me/collections'}, 'Collections')));
             } else if (gid.classList.contains('gn-subnav-item') && !m.querySelector('a[data-track=You-tags]')) {
                 // earlier design
-                gid.insertAdjacentHTML('afterend', '<li class="gn-subnav-item"><a data-track="You-tags" href="/photos/me/tags">Tags</a></li>');
-                aad.parentElement.insertAdjacentHTML('afterend', '<li class="gn-subnav-item"><a data-track="You-collections" href="/photos/me/collections">Collections</a></li><li class="gn-subnav-item"><a data-track="You-map" href="/photos/me/map">Map</a></li>');
+                gid.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a',{'data-track': 'You-tags', href: '/photos/me/tags'}, 'Tags')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {'data-track': 'You-map', href: '/photos/me/map'}, 'Map')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {'data-track': 'You-collections', href: '/photos/me/collections'}, 'Collections')));
             }
         }
     }
@@ -563,12 +573,14 @@ function topMenuItems() {
             m.classList.add('extraitems'); // mark extra items being added (so adjust spacing in style)
             if (gib.id === 'groups' && !m.querySelector('li#tags')) {
                 // latest design
-                gib.insertAdjacentHTML('afterend', '<li id="tags" class="link " role="menuitem"><a href="/photos/' + fixr.context.photographerId + '/tags"><span>Tags</span></a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
-                aab.parentElement.insertAdjacentHTML('afterend', '<li id="collections" class="link " role="menuitem" title="Collections"><a href="/photos/' + fixr.context.photographerId + '/collections"><span>Collections</span></a></li><li id="map" class="link " role="menuitem"><a href="/photos/' + fixr.context.photographerId + '/map"><span>Map</span></a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
+                gib.insertAdjacentElement('afterend', createRichElement('li', {id: 'tags', class: 'link', role: 'menuitem'}, createRichElement('a', {href: '/photos/'+fixr.context.photographerId+'/tags'}, createRichElement('span', {}, 'Tags'))));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {id: 'map', class: 'menuitem', role: 'menuitem'}, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/map'}, createRichElement('span', {}, 'Map'))));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {id: 'collections', class: 'menuitem', role: 'menuitem'}, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/collections'}, createRichElement('span', {}, 'Collections'))));
             } else if (gib.classList.contains('sn-groups') && !m.querySelector('li.sn-tags')) {
                 // earlier design
-                gib.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-tags"><a data-track="YouSubnav-tags" href="/photos/' + fixr.context.photographerId + '/tags">Tags</a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
-                aab.parentElement.insertAdjacentHTML('afterend', '<li class="sn-navitem sn-collections" title="Collections"><a data-track="YouSubnav-collections" href="/photos/' + fixr.context.photographerId + '/collections">Collections</a></li><li class="sn-navitem sn-map"><a data-track="YouSubnav-map" href="/photos/' + fixr.context.photographerId + '/map">Map</a></li>'); // NOTICE, this should be safe. See how fixr.context.photographerId is defined based on an regexp pattern.
+                gib.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-tags'}, createRichElement('a', {'data-track': 'YouSubnav-tags', href: '/photos/' + fixr.context.photographerId + '/tags'}, 'Tags')));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-map'}, createRichElement('a', {'data-track': 'YouSubnav-map', href: '/photos/' + fixr.context.photographerId + '/map'}, 'Map')));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-collections'}, createRichElement('a', {'data-track': 'YouSubnav-collections', href: '/photos/' + fixr.context.photographerId + '/collections'}, 'Collections')));
             }
         }
     }
