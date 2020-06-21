@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2020.06.21.0', description: 'A little bit of cleaning, and "sub-options" for tag-links feature (in webextension version)'},
+    {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
     {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2020.05.18.0', description: 'Fix for missing album column in Chrome when on flickr.com instead of www.flickr.com (cross-domain error)'},
     {version: '2020.01.15.0', description: 'Fix for extra menuitems on pages with the old header design'},
@@ -1634,7 +1634,18 @@ function runEarly() {
 }
 
 function userscriptWarning() {
-    // alert('You are running userscript-version of Flickr Fixr. Did you know that Flickr Fixr is also available as a regular webextension (browser extension) for most webbrowsers?');
+    if (!document.body.classList.contains("flickrfixrwebextension")) { // Skip warning if both versions are installed (There will be another warning from stereotest()).
+        let info = (GM_info ? GM_info : (typeof GM === 'object' && GM !== null && typeof GM.info === 'object' ? GM.info : null) );
+        if (info) {
+            let prevDate = localStorage.getItem("fixr_userscript_warning_timestamp");
+            let prevVersion = localStorage.getItem("fixr_userscript_warning_version");
+            if (!prevVersion) {
+                localStorage.setItem("fixr_userscript_warning_timestamp", Date.now().toString());
+                localStorage.setItem("fixr_userscript_warning_version", info.script.version);
+                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport (and test) of userscript-version is limited and some features might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and (the new Chromium based version of) Edge.\n');
+            }
+        }
+    }
 }
 
 const shared_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features
