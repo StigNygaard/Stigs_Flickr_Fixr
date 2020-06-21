@@ -8,8 +8,8 @@ Available as browser extension or as an userscript. Currently features of browse
 
 Install the _Flickr Fixr_ browser extension:
 * [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github)
-* [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in other Chromium based browsers.
-* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new/upcoming Chromium version of Edge (to be officially released in mid-Januar).
+* [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in many other Chromium based browsers.
+* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new Chromium version of Edge (Currently only partially rolled out to Windows/Edge users).
 
 If you for some reason prefer using the userscript version, you can install it via [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
 
