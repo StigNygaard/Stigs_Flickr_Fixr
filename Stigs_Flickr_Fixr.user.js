@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2020.05.31.0
+// @version     2020.06.21.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2020.06.21.0', description: 'A little bit of cleaning, and "sub-options" for tag-links feature (in webextension version)'},
     {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2020.05.18.0', description: 'Fix for missing album column in Chrome when on flickr.com instead of www.flickr.com (cross-domain error)'},
     {version: '2020.01.15.0', description: 'Fix for extra menuitems on pages with the old header design'},
@@ -722,9 +723,6 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
                 album.commentCount = 0;
             }
         } else {
-            // if (elem) {
-            //     elem.innerHTML = 'Cannot fetch detailed date details on private photos';
-            // }
             log('flickr.photosets.comments.getList returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
         }
 
@@ -1320,7 +1318,8 @@ function albumExtras() { // links to album's map and comments
         mapdiv.style.textAlign = 'center';
         var maplink = document.createElement('a');
         maplink.href= '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
-        maplink.style = 'font-size:14px;color:#FFF';
+        maplink.style.fontSize = '14px';
+        maplink.style.color = '#FFF';
         var mapicon = document.createElement('span');
         mapicon.title = 'Album on map';
         mapicon.className = 'album-map-icon';
@@ -1336,7 +1335,8 @@ function albumExtras() { // links to album's map and comments
         cmdiv.style.textAlign = 'center';
         var cmlink = document.createElement('a');
         cmlink.href = comurl;
-        cmlink.style = 'font-size:14px;color:#FFF';
+        cmlink.style.fontSize = '14px';
+        cmlink.style.color = '#FFF';
         cmlink.id = 'albumCommentsLink';
         var cmicon = document.createElement('span');
         cmicon.title = 'Album comments';
@@ -1377,7 +1377,9 @@ function albumExtras() { // links to album's map and comments
     }
 }
 
-const updateTags_style = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:none;} ul.tags-list>li.tag:hover>a.fixrTag,ul.tags-list>li.autotag:hover>a.fixrTag{display:inline;}';
+const updateTags_style_avatar = 'a.fixrTag>img {width:1em;height:1em;margin:0;padding:0;position:relative;top:3px}';
+const updateTags_style_hover = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:none;} ul.tags-list>li.tag:hover>a.fixrTag,ul.tags-list>li.autotag:hover>a.fixrTag{display:inline;} ' + updateTags_style_avatar;
+const updateTags_style_persist = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:inline;} ' + updateTags_style_avatar;
 function updateTags() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
@@ -1393,19 +1395,18 @@ function updateTags() {
     }
     log('updateTags() med photographerAlias='+fixr.context.photographerAlias+', photographerId='+fixr.context.photographerId+' og photographerName='+fixr.context.photographerName);
     if (document.querySelector('ul.tags-list')) {
-        var tags = document.querySelectorAll('ul.tags-list>li');
+        let tags = document.querySelectorAll('ul.tags-list>li');
         if (tags && tags !== null && tags.length > 0) {
             for (let tag of tags) {
-                var atag = tag.querySelector('a[title][href*="/photos/tags/"],a[title][href*="?tags="],a[title][href*="?q="]');
+                let atag = tag.querySelector('a[title][href*="/photos/tags/"],a[title][href*="?tags="],a[title][href*="?q="]');
                 if (atag) {
-                    var realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
+                    let realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
                     if (!(tag.querySelector('a.fixrTag'))) {
-                        var icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
-                        var avatar = document.createElement('img');
+                        let icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
+                        let avatar = document.createElement('img');
                         avatar.src = icon;
-                        avatar.style = 'width:1em;height:1em;margin:0;padding:0;position:relative;top:3px';
                         avatar.alt = '*';
-                        var taglink = document.createElement('a');
+                        let taglink = document.createElement('a');
                         taglink.className = 'fixrTag';
                         taglink.href = '/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/tags/' + realtag + '/';
                         taglink.title = atag.title + ' by ' + fixr.context.photographerName;
@@ -1500,7 +1501,8 @@ function updateNewsfeedLinks() {
                 var feedsymbol = document.createElement('img');
                 feedsymbol.src = 'https://c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png';
                 feedsymbol.alt = 'Feedlink';
-                feedsymbol.style = 'width:16px;height:16px';
+                feedsymbol.style.width = '16px';
+                feedsymbol.style.height = '16px';
                 feedsymbol.title = link.title;
                 feedlink.appendChild(feedsymbol);
                 feedicons.appendChild(feedlink);
@@ -1631,6 +1633,10 @@ function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
+function userscriptWarning() {
+    // alert('You are running userscript-version of Flickr Fixr. Did you know that Flickr Fixr is also available as a regular webextension (browser extension) for most webbrowsers?');
+}
+
 const shared_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features
 
 function handlerInitFixr(options) { // Webextension init
@@ -1694,7 +1700,11 @@ function handlerInitFixr(options) { // Webextension init
         onStandaloneHandlers.push(mapInitializer);
     }
     if (options.updateTags) {
-        fixr.style.add(updateTags_style);
+        if (options.updateTags_tagmode === 'updateTags_persist') {
+            fixr.style.add(updateTags_style_persist);
+        } else {
+            fixr.style.add(updateTags_style_hover);
+        }
         onPageHandlers.push(updateTagsDelayed);
     }
     fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
@@ -1717,8 +1727,8 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(photoDates_style);
         fixr.style.add(newsfeedLinks_style);
         fixr.style.add(albumTeaser_style);
-        fixr.style.add(updateTags_style);
+        fixr.style.add(updateTags_style_hover);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed, userscriptWarning], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }

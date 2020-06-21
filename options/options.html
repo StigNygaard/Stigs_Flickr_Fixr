@@ -5,25 +5,25 @@
     <title>Flickr Fixr Options</title>
     <script src="/lib/mozilla/browser-polyfill.js"></script>
     <style>
-        div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px; font-family: Verdana, Arial, Helvetica, sans-serif;}
-        div#fixroptionspage>p {margin-left: 1em}
+        div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px}
+        div#fixroptionspage>p {margin-left: 1em; line-height: normal}
         div#fixroptionspage a:link, div#fixroptionspage a:visited {color: rgb(0,129,240)}
         div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
-        .isFirefox #fixroptions fieldset>div>div>p:first-child {margin-top: 0}
         .ffo {display: none}
         .isFirefox .ffo {display: inherit}
+        .isFirefox #fixroptions fieldset>div:first-child {margin-top: 0}
+        #fixroptions fieldset>div>div>p:first-child {margin-top: .7em}
+        .isFirefox #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
         #fixroptions fieldset {position:relative}
         #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
         #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
-        #fixroptions fieldset>div button:hover {color: rgb(0,129,240)}
-        #fixroptions fieldset>div button:active {color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
         #fixroptions fieldset>div label.new::after {content: url(/icons/new27x14.png);margin-left:3px;vertical-align:bottom}
-        #fixroptions fieldset>div {width:45%; margin-top:.5em}
-        #fixroptions fieldset button {margin-top:.7em; margin-bottom:.7em; font-size: 100%; font-family: Verdana, Arial, Helvetica, sans-serif;}
+        #fixroptions fieldset>div {width:45%; padding-top:.3em; padding-bottom:.25em}
         #fixroptions fieldset a {font-style: italic}
+        #fixroptions fieldset>p {font-style: italic}
         @media (prefers-color-scheme: dark) {
             body {background-color: rgb(42, 42, 46); color: rgb(249, 249, 250);}
         }
@@ -56,7 +56,10 @@
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="updateTags" /> Direct tag-links to <em>same</em> photographer's photos</label>
-                <div><p>Adds an extra direct link in tags, pointing to the same photographer's similar tagged photos.</p></div>
+                <div><p>Adds an extra direct link in tags, pointing to the same photographer's similar tagged photos.</p>
+                    <p>You can choose to see the extra link only when hovering a tag, or you can choose link to be shown persistent on all tags for a less "erratic" experience:</p>
+                    <p><label><input type="radio" name="updateTags_tagmode" id="updateTags_hover" value="updateTags_hover" /> Hover only</label> &nbsp; <label><input type="radio" name="updateTags_tagmode" id="updateTags_persist" value="updateTags_persist" /> Persistent</label></p>
+                </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="albumExtras" /> Links to album-map and album-comments</label>
                 <div><p>Adds two extra links in "album headers". One link pointing to a map with current album's photos, and another
@@ -122,8 +125,7 @@
                     already granted by an associated license.</em></p>
                 </div>
             </div>
-            <div><button type="submit" class="browser-style">Save</button></div>
-            <p>You will have to reload any already open Flickr webpages to enable updated settings.</p>
+            <p>You will have to reload any already open Flickr webpages to activate updated settings on these.</p>
         </fieldset>
     </form>
     <p>Thanks for using Flickr Fixr. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or

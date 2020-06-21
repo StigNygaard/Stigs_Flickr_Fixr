@@ -11,7 +11,8 @@ let defaults = {
     exploreCalendar: true,
     albumTeaser: true,
     updateMapLink: true,
-    updateTags: true
+    updateTags: true,
+    updateTags_tagmode: "updateTags_hover"
 };
 
 function saveOptions(e) {
@@ -29,7 +30,8 @@ function saveOptions(e) {
         exploreCalendar: document.querySelector("form#fixroptions #exploreCalendar").checked,
         albumTeaser: document.querySelector("form#fixroptions #albumTeaser").checked,
         updateMapLink: document.querySelector("form#fixroptions #updateMapLink").checked,
-        updateTags: document.querySelector("form#fixroptions #updateTags").checked
+        updateTags: document.querySelector("form#fixroptions #updateTags").checked,
+        updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value
     }); // then ( "saved ok" message? )
 }
 
@@ -61,8 +63,9 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #albumTeaser").checked = options.albumTeaser;
     document.querySelector("form#fixroptions #updateMapLink").checked = options.updateMapLink;
     document.querySelector("form#fixroptions #updateTags").checked = options.updateTags;
+    document.getElementById(options.updateTags_tagmode).checked = true;
     // enable submit:
-    document.querySelector("form#fixroptions").addEventListener("submit", saveOptions);
+    document.querySelector("form#fixroptions").addEventListener("input", saveOptions);
 }
 
 function initializeOptionsPage() {
