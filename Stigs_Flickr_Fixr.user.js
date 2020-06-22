@@ -514,28 +514,21 @@ function insertGMapLinkDelayed() {
         setTimeout(insertGMapLink, 8000); // Triple. Photopage is sometimes very slow building
     }
 }
-// function mapInitializer() {
-//     if (window.location.href.includes('flickr.com/map/?')) {
-//         // https://developer.mozilla.org/en-US/docs/Web/API/URL
-//         const url = new URL(window.location.href);
-//         // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
-//         const imgId = url.searchParams.get('photo');
-//         if (imgId) {
-//             const focusImg = document.getElementById('f_img_thumb_' + imgId);
-//             if (focusImg) {
-//                 focusImg.click(); // close and ...
-//                 focusImg.click(); // reopen to highlight position on map
-//             }
-//             // Zoom in...
-//             const zoomIn = document.getElementById('candy_map_zoom_in');
-//             if (zoomIn) {
-//                 for (let i=0; i<=7; i++) {
-//                     setTimeout(function(e){e.click()}, i * 300, zoomIn);
-//                 }
-//             }
-//         }
-//     }
-// }
+function mapInitializer() {
+    if (window.location.href.includes('flickr.com/map/?')) {
+        // https://developer.mozilla.org/en-US/docs/Web/API/URL
+        const url = new URL(window.location.href);
+        // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+        const imgId = url.searchParams.get('photo');
+        if (imgId) {
+            const focusImg = document.getElementById('f_img_thumb_' + imgId);
+            if (focusImg) {
+                focusImg.click(); // close and ...
+                focusImg.click(); // reopen to highlight position on map
+            }
+        }
+    }
+}
 
 const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !important} .subnav-refresh ul.nav-links.extraitems li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
 function topMenuItems() {
@@ -1707,6 +1700,7 @@ function handlerInitFixr(options) { // Webextension init
     }
     if (options.insertGMapLink) {
         onPageHandlers.push(insertGMapLinkDelayed);
+        onStandaloneHandlers.push(mapInitializer);
     }
     if (options.updateTags) {
         if (options.updateTags_tagmode === 'updateTags_persist') {
@@ -1738,6 +1732,6 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style_hover);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [scaler.run], [], [topMenuItems, newsfeedLinks]);
+        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
