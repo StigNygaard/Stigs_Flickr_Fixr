@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2020.06.21.0
+// @version     2020.06.22.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2020.06.22.0', description: 'Removing map-fix for showing geolocation of a photo. Finally Flickr have made the fix themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
     {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
     {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2020.05.18.0', description: 'Fix for missing album column in Chrome when on flickr.com instead of www.flickr.com (cross-domain error)'},
@@ -477,28 +478,26 @@ function createRichElement(tagName, attributes, ...content) {
     return element;
 }
 
-function updateMapLink() {
+function insertGMapLink() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
     }
-    log('updateMapLink() running at readystate=' + document.readyState + ' and with photoId=' + fixr.context.photoId);
+    log('insertGMapLink() running at readystate=' + document.readyState + ' and with photoId=' + fixr.context.photoId);
     if (fixr.context.photoId) {
         var maplink = fixr.content.querySelector('a.static-maps');
         if (maplink) {
-            if (maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?')) && (!maplink.getAttribute('href').includes('&photo='))) {
-                maplink.setAttribute('href', maplink.getAttribute('href') + '&photo=' + fixr.context.photoId);
-                log('link is updated by updateMapLink() at readystate=' + document.readyState);
+            if (!document.getElementById('googlemapslink') && maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?'))) {
                 try {
                     let lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     let lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    let gmaplink = createRichElement('a', {href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon} , 'Show location on Google Maps');
+                    let gmaplink = createRichElement('a', {href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon, id: 'googlemapslink'} , 'Show location on Google Maps');
                     fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement('beforeend', createRichElement('div', {class: 'location-data-container'}, gmaplink));
                 }
                 catch (e) {
                     log('Failed creating Google Maps link: ' + e);
                 }
             } else {
-                log('link NOT updated by updateMapLink(). Invalid element or already updated. readystate=' + document.readyState);
+                log('link NOT inserted by insertGMapLink(). Invalid element or link already created. readystate=' + document.readyState);
             }
         } else {
             log('NO maplink found at readystate=' + document.readyState + '. Re-try later?');
@@ -507,36 +506,36 @@ function updateMapLink() {
         log('NO photoId found at readystate=' + document.readyState);
     }
 }
-function updateMapLinkDelayed() {
+function insertGMapLinkDelayed() {
     if (fixr.context.pageType === 'PHOTOPAGE') {
-        log('updateMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
-        setTimeout(updateMapLink, 1500); // make maplink work better on photopage
-        setTimeout(updateMapLink, 3500); // Twice. Photopage is sometimes a bit slow building
-        setTimeout(updateMapLink, 8000); // Triple. Photopage is sometimes very slow building
+        log('insertGMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
+        setTimeout(insertGMapLink, 1500); // make maplink work better on photopage
+        setTimeout(insertGMapLink, 3500); // Twice. Photopage is sometimes a bit slow building
+        setTimeout(insertGMapLink, 8000); // Triple. Photopage is sometimes very slow building
     }
 }
-function mapInitializer() {
-    if (window.location.href.includes('flickr.com/map/?')) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/URL
-        const url = new URL(window.location.href);
-        // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
-        const imgId = url.searchParams.get('photo');
-        if (imgId) {
-            const focusImg = document.getElementById('f_img_thumb_' + imgId);
-            if (focusImg) {
-                focusImg.click(); // close and ...
-                focusImg.click(); // reopen to highlight position on map
-            }
-            // Zoom in...
-            const zoomIn = document.getElementById('candy_map_zoom_in');
-            if (zoomIn) {
-                for (let i=0; i<=7; i++) {
-                    setTimeout(function(e){e.click()}, i * 300, zoomIn);
-                }
-            }
-        }
-    }
-}
+// function mapInitializer() {
+//     if (window.location.href.includes('flickr.com/map/?')) {
+//         // https://developer.mozilla.org/en-US/docs/Web/API/URL
+//         const url = new URL(window.location.href);
+//         // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+//         const imgId = url.searchParams.get('photo');
+//         if (imgId) {
+//             const focusImg = document.getElementById('f_img_thumb_' + imgId);
+//             if (focusImg) {
+//                 focusImg.click(); // close and ...
+//                 focusImg.click(); // reopen to highlight position on map
+//             }
+//             // Zoom in...
+//             const zoomIn = document.getElementById('candy_map_zoom_in');
+//             if (zoomIn) {
+//                 for (let i=0; i<=7; i++) {
+//                     setTimeout(function(e){e.click()}, i * 300, zoomIn);
+//                 }
+//             }
+//         }
+//     }
+// }
 
 const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !important} .subnav-refresh ul.nav-links.extraitems li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
 function topMenuItems() {
@@ -1706,9 +1705,8 @@ function handlerInitFixr(options) { // Webextension init
         fixr.style.add(albumTeaser_style);
         onPageHandlers.push(albumTeaserDelayed);
     }
-    if (options.updateMapLink) {
-        onPageHandlers.push(updateMapLinkDelayed);
-        onStandaloneHandlers.push(mapInitializer);
+    if (options.insertGMapLink) {
+        onPageHandlers.push(insertGMapLinkDelayed);
     }
     if (options.updateTags) {
         if (options.updateTags_tagmode === 'updateTags_persist') {
@@ -1740,6 +1738,6 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style_hover);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, updateMapLinkDelayed, updateTagsDelayed, userscriptWarning], [scaler.run], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, scaler.run, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [scaler.run], [], [topMenuItems, newsfeedLinks]);
     }
 }

@@ -10,7 +10,7 @@ let defaults = {
     ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")), // default enabled for firefox
     exploreCalendar: true,
     albumTeaser: true,
-    updateMapLink: true,
+    insertGMapLink: true,
     updateTags: true,
     updateTags_tagmode: "updateTags_hover"
 };
@@ -29,7 +29,7 @@ function saveOptions(e) {
         ctrlClicking: document.querySelector("form#fixroptions #ctrlClicking").checked,
         exploreCalendar: document.querySelector("form#fixroptions #exploreCalendar").checked,
         albumTeaser: document.querySelector("form#fixroptions #albumTeaser").checked,
-        updateMapLink: document.querySelector("form#fixroptions #updateMapLink").checked,
+        insertGMapLink: document.querySelector("form#fixroptions #insertGMapLink").checked,
         updateTags: document.querySelector("form#fixroptions #updateTags").checked,
         updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value
     }); // then ( "saved ok" message? )
@@ -61,7 +61,7 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #ctrlClicking").checked= options.ctrlClicking;
     document.querySelector("form#fixroptions #exploreCalendar").checked = options.exploreCalendar;
     document.querySelector("form#fixroptions #albumTeaser").checked = options.albumTeaser;
-    document.querySelector("form#fixroptions #updateMapLink").checked = options.updateMapLink;
+    document.querySelector("form#fixroptions #insertGMapLink").checked = options.insertGMapLink;
     document.querySelector("form#fixroptions #updateTags").checked = options.updateTags;
     document.getElementById(options.updateTags_tagmode).checked = true;
     // enable submit:
