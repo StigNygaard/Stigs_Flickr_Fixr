@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2020.06.22.0', description: 'Removing map-fix for showing geolocation of a photo. Finally Flickr have made the fix themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
+    {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fexed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
     {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
     {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2020.05.18.0', description: 'Fix for missing album column in Chrome when on flickr.com instead of www.flickr.com (cross-domain error)'},
