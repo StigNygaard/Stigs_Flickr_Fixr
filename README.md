@@ -15,7 +15,7 @@ If for some reason you prefer using the userscript version, you can install it v
 
 Most detailed feature description can currently be found in the Flickr Hacks forum: https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
-The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge. To help with the cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
+The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge. To create a browser extension from repository, simply zip content of WebExtension folder. For easy cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/WebExtension/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
 
 Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Flickr Fixr Options</title>
-    <script src="/lib/mozilla/browser-polyfill.js"></script>
+    <script src="../lib/mozilla/browser-polyfill.js"></script>
     <style>
         div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px}
         div#fixroptionspage>p {margin-left: 1em; line-height: normal}
@@ -20,7 +20,7 @@
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
-        #fixroptions fieldset>div label.new::after {content: url(/icons/new27x14.png);margin-left:3px;vertical-align:bottom}
+        #fixroptions fieldset>div label.new::after {content: url(../icons/new27x14.png);margin-left:3px;vertical-align:bottom}
         #fixroptions fieldset>div {width:45%; padding-top:.3em; padding-bottom:.25em}
         #fixroptions fieldset a {font-style: italic}
         #fixroptions fieldset>p {font-style: italic}
@@ -32,7 +32,7 @@
 <body>
 <div id="fixroptionspage">
     <p style="float:right">Flickr Fixr version <span id="verstr"></span></p>
-    <img src="/icons/fixr256.png" alt="Flickr Fixr" style="width:256px;height:256px;margin:-50px 0 -50px 0" />
+    <img src="../icons/fixr256.png" alt="Flickr Fixr" style="width:256px;height:256px;margin:-50px 0 -50px 0" />
     <form id="fixroptions">
         <fieldset style="position:relative"><legend>&nbsp;Toggle features&nbsp;</legend>
             <div><label class="browser-style"><input type="checkbox" id="scaler" /> Always show photos big on photopages</label>
@@ -43,9 +43,9 @@
                     <p>A note about up-scaling and <a href="https://www.flickr.com/help/forum/en-us/72157668990488722/">photo notes</a>:
                         Sometimes when Flickr Fixr up-scales a photo, the size of the "notes canvas" does not up-scale similarly. When upscaling,
                         an icon is shown above photo on the photopage:<br />
-                        <img src="/icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                        <img src="../icons/scale21-green.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
                         If the icon is green, everything is alright, and you can work with notes directly on the up-scaled photo.<br />
-                        <img src="/icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
+                        <img src="../icons/scale21-orange.png" alt="" style="width:21px;height:21px;margin:0 0 0 .5em;display:block;float:right" />
                         If the icon is orange and you want to work with notes, you should always first click the orange icon to align image size with
                         size of the "notes canvas". Otherwise notes will not be correctly aligned.</p>
                 </div>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
-                <div><p><img src="/icons/feed32.png" alt="" style="width:16px;height:16px;margin:0 0 0 .5em;display:block;float:right" />
+                <div><p><img src="../icons/feed32.png" alt="" style="width:16px;height:16px;margin:0 0 0 .5em;display:block;float:right" />
                     When a newsfeed is detected on a page, an orange feed-icon is added as link to this. The feed-icons are
                     added in upper right corner of pages. Feeds are detected on the main <a href="https://flickr.com/">flickr.com</a> site,
                     on <a href="https://status.flickr.net/">status.flickr.net</a>, and on the blogs on
