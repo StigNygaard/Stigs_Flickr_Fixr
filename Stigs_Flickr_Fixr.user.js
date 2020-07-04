@@ -882,20 +882,23 @@ function albumTeaserDelayed() {
     _timerAlbumTeaserDelayed = setTimeout(albumTeaser, 1500);
 }
 
+const exploreCalendar_style = '#exploreCalendar {border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px} #exploreCalendar div {margin:0 0 .8em 0} #exploreCalendar img.asquare {width:75px;height:59px}';
 function exploreCalendar() {
     if (fixr.context.pageType !== 'EXPLORE') {
         return; // exit if not explore/interestingness
     }
     log('exploreCalendar() running');
-    var dtr = document.querySelector('div.title-row');
+    let dtr = document.querySelector('div.title-row');
     if (!dtr) {
         return;
     }
     log('exploreCalendar found div.photo-list-view');
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
-        var exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/'); // NOTICE, exploreMonth is ultimately derived from a Date() and is safe to insert with insertAdjacentHTML here:
-        dtr.insertAdjacentHTML('afterbegin', '<div id="exploreCalendar" style="border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px"><div style="margin:0 0 .8em 0">Explore more...</div><a href="/explore/interesting/' + exploreMonth + '/"><img src="https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Explore Calendar</div></a><a title="If you are an adventurer and want to explore something different than everybody else..." href="/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200)+'"><img src="https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg" class="asquare" style="width:75px;height:59px" alt="" /><div style="margin:0 0 .8em 0">Fresh uploads</div></a></div>');
+        let exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
+        let explCal = createRichElement('a', {href: '/explore/interesting/' + exploreMonth + '/'}, createRichElement('img', {src: 'https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg', class: 'asquare', alt: ''}), createRichElement('div', {}, 'Explore Calendar'));
+        let freshUpl = createRichElement('a', {href: '/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200), title:'If you are an adventurer and want to explore something different than everybody else...'}, createRichElement('img', {src: 'https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg', class: 'asquare', alt: ''}), createRichElement('div', {}, 'Fresh uploads'));
+        dtr.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'exploreCalendar'}, explCal, freshUpl));
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
@@ -944,7 +947,7 @@ var scaler = {
     hasOriginal: false,
     scaleToWidth: 0,
     scaleToHeight: 0,
-    style: '.unscaleBtn:hover{cursor:pointer}',
+    style: '.unscaleBtn{position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000} .unscaleBtn:hover{cursor:pointer}',
     postAction: function() {
         log('scaler.postAction'); // dummy-function to be replaced
     },
@@ -990,7 +993,8 @@ var scaler = {
             var notesview = document.querySelector('div.photo-notes-scrappy-view');
             if (panel && !panel.querySelector('div.unscaleBtn')) {
                 log('scaler.addUnscaleBtn: adding option to div.height-controller');
-                panel.insertAdjacentHTML('afterbegin', '<div class="unscaleBtn" style="position:absolute;right:20px;top:15px;font-size:16px;margin-right:16px;color:#FFF;z-index:3000"><img id="unscaleBtnId" src="https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png" alt="Un-scale" title="This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area" /></div>');
+                let scaleIcon = createRichElement('img', {id: 'unscaleBtnId', src: 'https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png', alt: 'Un-scale', title: 'This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area'});
+                panel.insertAdjacentElement('afterbegin', createRichElement('div', {class: 'unscaleBtn'}, scaleIcon));
                 log ('scaler.addUnscaleBtn: adding click event listner on div.unscaleBtn');
                 panel.querySelector('div.unscaleBtn').addEventListener('click',unscale, false);
             } else {
@@ -1576,6 +1580,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                         uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0, n);
                     }
                     elem.innerHTML = '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>'; // NOTICE how takenDateStr and uploadDateStr are defined above. This should be safe.
+
                     // elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
                     var withTitle = elem.parentElement.querySelector('span[title]');
                     if (withTitle) {
@@ -1692,6 +1697,7 @@ function handlerInitFixr(options) { // Webextension init
         onPageHandlers.push(ctrlClickingDelayed);
     }
     if (options.exploreCalendar) {
+        fixr.style.add(exploreCalendar_style);
         onPageHandlers.push(exploreCalendarDelayed);
     }
     if (options.albumTeaser) {
@@ -1729,6 +1735,7 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(topMenuItems_style);
         fixr.style.add(photoDates_style);
         fixr.style.add(newsfeedLinks_style);
+        fixr.style.add(exploreCalendar_style);
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style_hover);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
