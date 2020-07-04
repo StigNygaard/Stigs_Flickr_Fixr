@@ -1534,12 +1534,15 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             log("flickr.photos.getInfo returned ok");
             if (obj.photo && obj.photo.id) {
                 var uploadDate = new Date(0);
-                var takenDateStr = '';
                 var debugstr = '';
                 if (obj.photo.dateuploaded) {
                     uploadDate = new Date(obj.photo.dateuploaded * 1000);
                     debugstr = 'UploadDate: ' + uploadDate.toString();
                 }
+                let dateDetail = createRichElement('p', {'x-ms-format-detection': 'none'});
+                let takenLabel = createRichElement('label', {}, 'Taken:');
+                let uploadedLabel = createRichElement('label', {}, 'Uploaded:');
+                let brElem = document.createElement('br');
                 if (obj.photo.dates) {
                     if (obj.photo.dateuploaded !== obj.photo.dates.posted) {
                         log('Unexpected Date difference!');
@@ -1558,13 +1561,14 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                         var dayEnd = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T23:59:59'));
                         var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
                         if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
-                            takenDateStr = '<label>Taken:</label> <a href="/search/?user_id=' + fixr.context.photographerId + '&amp;view_all=1&amp;min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&amp;max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200) + '">' + takenDate.toString().substring(0, takenTimeIndex - 1) + '</a>' + takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"<br />';
+                            let linkElem = createRichElement('a', {href: '/search/?user_id=' + fixr.context.photographerId + '&view_all=1&min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200)}, takenDate.toString().substring(0, takenTimeIndex - 1));
+                            dateDetail.append(takenLabel, ' ', linkElem, takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"', brElem);
                         } else if (obj.photo.dates.takengranularity.toString() === '4') { // 4	Y-m
-                            takenDateStr = '<label>Taken:</label> ' + takenDateTmp.substring(0, 7) + '<br />';
+                            dateDetail.append(takenLabel, ' ' + takenDateTmp.substring(0, 7), brElem);
                         } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
-                            takenDateStr = '<label>Taken:</label> ' + takenDateTmp.substring(0, 4) + '<br />';
+                            dateDetail.append(takenLabel, ' ' + takenDateTmp.substring(0, 4), brElem);
                         } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
-                            takenDateStr = '<label>Taken:</label> Circa ' + takenDateTmp.substring(0, 4) + '<br />';
+                            dateDetail.append(takenLabel, ' Circa ' +  takenDateTmp.substring(0, 4), brElem);
                         } else {
                             log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
@@ -1577,11 +1581,12 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     var uploadDateStr = uploadDate.toString();
                     var n = uploadDateStr.indexOf('(');
                     if (n > 0) {
-                        uploadDateStr = '<label>Uploaded:</label> ' + uploadDateStr.substring(0, n);
+                        dateDetail.append(uploadedLabel, ' ' + uploadDateStr.substring(0, n));
+                    } else {
+                        dateDetail.append(uploadedLabel, ' ' + uploadDateStr);
                     }
-                    elem.innerHTML = '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>'; // NOTICE how takenDateStr and uploadDateStr are defined above. This should be safe.
-
-                    // elem.innerHTML = (DEBUG ? '<p>' + debugstr + '</p>' : '') + '<p x-ms-format-detection="none">' + takenDateStr + uploadDateStr + '</p>';
+                    elem.textContent = '';
+                    elem.append(dateDetail);
                     var withTitle = elem.parentElement.querySelector('span[title]');
                     if (withTitle) {
                         withTitle.removeAttribute('title');
