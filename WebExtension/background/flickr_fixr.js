@@ -63,7 +63,7 @@ var versionnumber = (function Versionnumber() {  // major.minor.revision
 
 })();
 
-function messageHandler(request, sender, sendResponse) {
+function messageHandler(request, sender, sendResponse) { // This is returning a Promise (because using sendResponse() is deprecated)
     // console.log("Message received from the content script: " + JSON.stringify(request));
     if (request.msgtype==="flickrservice") {
         let optstr = Object.entries(request.options).reduce(
@@ -104,7 +104,7 @@ function installHandler({ reason, temporary, previousVersion }) {
             if (typeof previousVersion !== 'undefined') { // Ff55
                 console.log("Updated from details.previousVersion: " + previousVersion);
             }
-            // break;
+            break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
@@ -117,7 +117,7 @@ function installHandler({ reason, temporary, previousVersion }) {
         case 'shared_module_update':
             break;
         default:
-            // other?
+        // other?
     }
 }
 
