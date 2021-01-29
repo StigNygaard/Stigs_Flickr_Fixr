@@ -7,9 +7,9 @@ Show photographer's albums on photostream-pages, Increase display-size of small 
 Available as browser extension or as an userscript. Currently features of browser extension and userscript are generally the same, but the browser extension have the additional capability of allowing you to turn individual features on and off. Browser extension is also my primary focus going forward, and the recommended way to install Flickr Fixr.
 
 Install the _Flickr Fixr_ browser extension:
-* [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github)
+* [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github) - Also installs and works in other Firefox based browsers like f.ex. Waterfox and Tor.  
 * [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in many other Chromium based browsers.
-* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new Chromium version of Edge (Currently only partially rolled out to Windows/Edge users).
+* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new Chromium-based version of Edge.
 
 If for some reason you prefer using the userscript version, you can install it via [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Installing the userscript requires Greasemonkey, Tampermonkey or similar extension installed first for userscript support in the webbrowser.
 
