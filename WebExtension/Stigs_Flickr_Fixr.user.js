@@ -5,8 +5,8 @@
 // @author      Stig Nygaard, https://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
 // @homepageURL https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
-// @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr32.png
-// @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/icons/fixr64.png
+// @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/icons/fixr32.png
+// @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/icons/fixr64.png
 // @match       https://*.flickr.com/*
 // @match       *://*.flickr.net/*
 // @exclude     *://api.flickr.com/*
@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2021.01.17.0
+// @version     2021.01.29.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2021.01.29.0', description: 'Fix broken icon paths which probably prevented userscript installing/updating. I still recommend installing browser extension instead of userscript, I keep forgetting making sure userscript still works.'},
     {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fixed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
     {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
     {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
@@ -1644,7 +1645,7 @@ function userscriptWarning() {
             if (!prevVersion) {
                 localStorage.setItem("fixr_userscript_warning_timestamp", Date.now().toString());
                 localStorage.setItem("fixr_userscript_warning_version", info.script.version);
-                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport (and test) of userscript-version is limited and some features might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and (the new Chromium based version of) Edge.\n');
+                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport (and test) of userscript-version is limited and some features might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
             }
         }
     }
