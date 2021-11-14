@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2021.01.29.0
+// @version     2021.11.14.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2021.11.14.0', description: 'Fix broken tag-feature - and more...'},
     {version: '2021.01.29.0', description: 'Fix broken icon paths which probably prevented userscript installing/updating. I still recommend installing browser extension instead of userscript, I keep forgetting making sure userscript still works.'},
     {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fixed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
     {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
@@ -164,24 +165,24 @@ var fixr = fixr || {
         var elem;
         if (document.querySelector('div.photostream-page-view')) {
             // photostream
-            elem = document.querySelector('div.photostream-page-view div.fluid-photostream-coverphoto-view div.avatar.person');
+            elem = document.querySelector('div.photostream-page-view div.fluid-photostream-coverphoto-view .avatar.person');
         } else if (document.querySelector('div.photo-page-scrappy-view')) {
             // photopage
-            elem = document.querySelector('div.photo-page-scrappy-view div.sub-photo-view div.avatar.person');
+            elem = document.querySelector('div.photo-page-scrappy-view div.sub-photo-view .photo-attribution .avatar.person');
         } else if (document.querySelector('div.photo-page-lightbox-scrappy-view')) {
             // photopage lightbox
-            elem = document.querySelector('div.photo-page-lightbox-scrappy-view div.photo-well-view div.photo-attribution div.avatar.person');
+            elem = document.querySelector('div.photo-page-lightbox-scrappy-view div.photo-well-view .photo-attribution .avatar.person');
         } else if (document.querySelector('div.album-page-view')) {
             // album page
-            elem = document.querySelector('div.album-page-view div.album-container div.album-header-view div.album-attribution div.avatar.person');
-        } else if (document.querySelector('div.coverphoto-content div.avatar.person')) {
+            elem = document.querySelector('div.album-page-view div.album-container div.album-header-view .album-attribution .avatar.person');
+        } else if (document.querySelector('div.coverphoto-content .avatar.person')) {
             // fallback, modern design pages
-            elem = document.querySelector('div.coverphoto-content div.avatar.person');
+            elem = document.querySelector('div.coverphoto-content .avatar.person');
         } else if (document.querySelector('div.subnav-middle div.sn-avatar > img')) {
             // fallback, old design pages
             elem = document.querySelector('div.subnav-middle div.sn-avatar > img');
         } else {
-            log('we do not look for photographerId on this page');
+            log('fixr.initPhotographerId() - We do not look for photographerId on this page');
             return true;
         }
         if (!elem) {
@@ -1394,14 +1395,15 @@ function updateTags() {
     if (document.querySelector('ul.tags-list')) {
         let tags = document.querySelectorAll('ul.tags-list>li');
         if (tags && tags !== null && tags.length > 0) {
+            log('updateTags() Looping ' + tags.length + ' tags...');
+            let iconHref = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
             for (let tag of tags) {
                 let atag = tag.querySelector('a[title][href*="/photos/tags/"],a[title][href*="?tags="],a[title][href*="?q="]');
                 if (atag) {
                     let realtag = (atag.href.match(/((\/tags\/)|(\?tags\=)|(\?q\=))([\S]+)$/i))[5];
                     if (!(tag.querySelector('a.fixrTag'))) {
-                        let icon = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
                         let avatar = document.createElement('img');
-                        avatar.src = icon;
+                        avatar.src = iconHref;
                         avatar.alt = '*';
                         let taglink = document.createElement('a');
                         taglink.className = 'fixrTag';
@@ -1410,13 +1412,15 @@ function updateTags() {
                         taglink.appendChild(avatar);
                         tag.insertBefore(taglink, tag.firstChild);
                     }
+                } else {
+                    log('updateTags(): atag not matched.');
                 }
             }
         } else {
-            log('no tags defined (yet?)');
+            log('updateTags(): No tags defined (yet?)');
         }
     } else {
-        log('taglist container not found');
+        log('updateTags(): taglist container not found');
     }
 }
 function updateTagsDelayed() {
