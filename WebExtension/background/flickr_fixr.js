@@ -104,7 +104,7 @@ function installHandler({ reason, temporary, previousVersion }) {
             if (typeof previousVersion !== 'undefined') { // Ff55
                 console.log("Updated from details.previousVersion: " + previousVersion);
             }
-            break;
+            // break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
