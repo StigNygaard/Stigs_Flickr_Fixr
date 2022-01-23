@@ -24,6 +24,7 @@
         #fixroptions fieldset>div {width:45%; padding-top:.3em; padding-bottom:.25em}
         #fixroptions fieldset a {font-style: italic}
         #fixroptions fieldset>p {font-style: italic}
+        #fixroptions fieldset>div>div #slideshowSpeedControl_value {width: calc(100% - 1em)}
         @media (prefers-color-scheme: dark) {
             body {background-color: rgb(42, 42, 46); color: rgb(249, 249, 250);}
         }
@@ -101,6 +102,12 @@
                     <a href="https://blog.flickr.net/">blog.flickr.net</a> and <a href="https://code.flickr.net/">code.flickr.net</a>.</p>
                     <p>Notice, Flickr Fixr does <em>nothing to handle</em> the newsfeeds, it just makes them visible. If you are not using or
                         familiar with newsfeeds, you might not have any reason to have this feature enabled.</p>
+                </div>
+            </div>
+            <div><label class="browser-style new"><input type="checkbox" id="slideshowSpeedControl" /> Slideshow speed control</label>
+                <div><p>Set the speed of Flickr slideshows. How many seconds do you want each image to be shown?</p>
+                    <p><label for="slideshowSpeedControl_value"><span id="slideshowSpeed">5</span> seconds pr. image
+                        <br /><input type="range" id="slideshowSpeedControl_value" name="slideshowSpeedControl_value" min="1" max="60"></label></p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>

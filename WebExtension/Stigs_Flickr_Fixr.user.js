@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2021.11.14.0
+// @version     2022.01.23.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2022.01.23.0', description: 'Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
     {version: '2021.11.14.0', description: 'Fix broken tag-feature - and more...'},
     {version: '2021.01.29.0', description: 'Fix broken icon paths which probably prevented userscript installing/updating. I still recommend installing browser extension instead of userscript, I keep forgetting making sure userscript still works.'},
     {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fixed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
@@ -1514,6 +1515,20 @@ function updateNewsfeedLinks() {
     }
 }
 
+function initSlideshowSpeedHook() {
+    let timeoutScript = document.createElement('script');
+    timeoutScript.src = browser.runtime.getURL('inject/timeout.js');
+    timeoutScript.onload = function() {
+        this.remove();
+    };
+    (document.head || document.documentElement).appendChild(timeoutScript);
+}
+
+let slideshowSpeed = '5'; // Flickr default (seconds)
+function initSlideshowSpeed() {
+    document.body.setAttribute('data-slideshowspeed', slideshowSpeed);
+}
+
 var _wsGetPhotoInfoLock = 0;
 function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     var diff = Date.now() - _wsGetPhotoInfoLock;
@@ -1725,6 +1740,11 @@ function handlerInitFixr(options) { // Webextension init
             fixr.style.add(updateTags_style_hover);
         }
         onPageHandlers.push(updateTagsDelayed);
+    }
+    if (options.slideshowSpeedControl) {
+        slideshowSpeed = options.slideshowSpeedControl_value;
+        runNow.push(initSlideshowSpeedHook);
+        onPageHandlers.push(initSlideshowSpeed);
     }
     fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
 }

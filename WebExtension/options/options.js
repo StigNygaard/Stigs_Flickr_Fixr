@@ -12,7 +12,9 @@ let defaults = {
     albumTeaser: true,
     insertGMapLink: true,
     updateTags: true,
-    updateTags_tagmode: "updateTags_hover"
+    updateTags_tagmode: "updateTags_hover",
+    slideshowSpeedControl: true,
+    slideshowSpeedControl_value: '5'
 };
 
 function saveOptions(e) {
@@ -31,7 +33,9 @@ function saveOptions(e) {
         albumTeaser: document.querySelector("form#fixroptions #albumTeaser").checked,
         insertGMapLink: document.querySelector("form#fixroptions #insertGMapLink").checked,
         updateTags: document.querySelector("form#fixroptions #updateTags").checked,
-        updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value
+        updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value,
+        slideshowSpeedControl: document.querySelector("form#fixroptions #slideshowSpeedControl").checked,
+        slideshowSpeedControl_value: document.querySelector('form#fixroptions input#slideshowSpeedControl_value').value
     }); // then ( "saved ok" message? )
 }
 
@@ -46,6 +50,10 @@ function withOptionsDo(handler) {
     }
     var getting = browser.storage.local.get();
     getting.then(setCurrentChoice, onError).then(handler);
+}
+
+function displaySlideshowSpeed() {
+    document.getElementById('slideshowSpeed').innerText = document.querySelector("form#fixroptions #slideshowSpeedControl_value").value;
 }
 
 function handlerInitOptionsPage(options) {
@@ -64,6 +72,10 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #insertGMapLink").checked = options.insertGMapLink;
     document.querySelector("form#fixroptions #updateTags").checked = options.updateTags;
     document.getElementById(options.updateTags_tagmode).checked = true;
+    document.querySelector("form#fixroptions #slideshowSpeedControl").checked = options.slideshowSpeedControl;
+    document.querySelector("form#fixroptions #slideshowSpeedControl_value").value = options.slideshowSpeedControl_value;
+
+    displaySlideshowSpeed();
     // enable submit:
     document.querySelector("form#fixroptions").addEventListener("input", saveOptions);
 }
@@ -71,6 +83,7 @@ function handlerInitOptionsPage(options) {
 function initializeOptionsPage() {
     if (document.querySelector('div#fixroptionspage form#fixroptions')) { // Only run if Options page
         document.querySelector('div#fixroptionspage #verstr').textContent = browser.runtime.getManifest().version;
+        document.getElementById('slideshowSpeedControl_value').addEventListener('input', displaySlideshowSpeed)
         if ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")) { // if firefox...
             document.body.classList.add("isFirefox");
         }
