@@ -16,7 +16,7 @@
 (function() {
     let _setTimeout = window.setTimeout;
     window.setTimeout = function(...argslist) {
-        if (document.body.dataset.slideshowspeed && argslist.length === 2 && argslist[0].name === 'bound handlePhotoChange' && argslist[1] == 5000) {
+        if (document && document.body && document.body.dataset.slideshowspeed && argslist.length === 2 && argslist[0].name === 'bound handlePhotoChange' && argslist[1] == 5000) {
             argslist[1] = parseInt(document.body.dataset.slideshowspeed, 10) * 1000; // get value from DOM attribute
             // console.log("SetTimeout function: " + argslist[0].name + ", " + argslist[1]);
         }

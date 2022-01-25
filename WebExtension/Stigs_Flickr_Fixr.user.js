@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.01.23.0
+// @version     2022.01.25.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -1526,7 +1526,9 @@ function initSlideshowSpeedHook() {
 
 let slideshowSpeed = '5'; // Flickr default (seconds)
 function initSlideshowSpeed() {
-    document.body.setAttribute('data-slideshowspeed', slideshowSpeed);
+    if (document.body) {
+        document.body.setAttribute('data-slideshowspeed', slideshowSpeed);
+    }
 }
 
 var _wsGetPhotoInfoLock = 0;
