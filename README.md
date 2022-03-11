@@ -2,9 +2,9 @@
 
 A browser extension to enhance the Flickr experience in your desktop web-browser.
 
-Show photographer's albums on photostream-pages, Increase display-size of small photos, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!), Top-pagination, Newsfeed detection - _And more!..._
+Show photographer's albums on photostream-pages, Control speed of slideshows, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!), Top-pagination, Newsfeed detection - _And more!..._
 
-Available as browser extension or as an userscript. Currently features of browser extension and userscript are generally the same, but the browser extension have the additional capability of allowing you to turn individual features on and off. Browser extension is also my primary focus going forward, and the recommended way to install Flickr Fixr.
+Available as a browser extension or as an userscript. Currently features of browser extension and userscript are almost the same, but browser extension is my primary focus going forward, and the recommended way to install Flickr Fixr.
 
 Install the _Flickr Fixr_ browser extension:
 * [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github) - Also installs and works in other Firefox based browsers like f.ex. Waterfox and Tor.  
