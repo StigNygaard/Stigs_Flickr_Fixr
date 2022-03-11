@@ -11,9 +11,8 @@
         div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
         .ffo {display: none}
         .isFirefox .ffo {display: inherit}
-        .isFirefox #fixroptions fieldset>div:first-child {margin-top: 0}
         #fixroptions fieldset>div>div>p:first-child {margin-top: .7em}
-        .isFirefox #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
+        #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
         #fixroptions fieldset {position:relative}
         #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
         #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
@@ -69,7 +68,8 @@
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="insertGMapLink" /> Improved map displaying for geotagged photos</label>
-                <div><p>1) Makes sure geoposition of photo is highlighted when following link to Flickr Map from a geotagged photo.<br />2) On the photopage for a geotagged photo, also adds a link to show geoposition of photo directly on <em>Google Maps</em>.</p>
+                <div><p>1) Makes sure geoposition of photo is highlighted when following link to Flickr Map from a geotagged photo.
+                    <br />2) On the photopage for a geotagged photo, also adds a link to show geoposition of photo directly on <em>Google Maps</em>.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="topPagination" /> Top-pagination for fast an easy navigation</label>
@@ -90,8 +90,7 @@
             <div><label class="browser-style"><input type="checkbox" id="photoDates" /> Extended date &amp; time info on photopages</label>
                 <div><p>Via mouseover, show both Taken and Upload dates in detail when available. Taken date will also work as a
                     link to more photos from the same photographer.</p>
-                    <p>Notice, Flickr Fixr can only find the extended date &amp; time information on
-                    <em>public</em> photos.</p>
+                    <p>Notice, Flickr Fixr can only find the extended date &amp; time information on <em>public</em> photos.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
@@ -112,21 +111,23 @@
             </div>
             <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
                 <div><p>When browsing a photostream in <em>Date taken</em> order, a subtle visual hint will be shown to warn you that latest added photos
-                    might not be on top of photostream.</p>
+                    might not be on top of the photostream.</p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="ctrlClicking" /> <em>Open in New Tab</em> fix for Firefox</label>
-                <div><p>If you have your Firefox webbrowser configured to open tabs in the <em>background</em> when ctrl-clicking links, you may have
+                <div><p>If you have your Firefox browser configured to open tabs in the <em>background</em> when ctrl-clicking links, you may have
                     seen Flickr overriding this preference on search result pages (including the Trending Tags pages) and bring
                     immediately focus to new tabs instead. This feature should prevent Flickr overriding your open tabs preferences.
                     I have only seen the problem when using Firefox, so feature is default disabled for other webbrowsers.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="shootingSpaceballs" /> Allow image context menu on "All sizes" pages</label>
-                <div><p>Removes layer over images on "All sizes" pages, so you can use your browser's context menu for images.</p>
-                    <p>I have been silent about this feature, because I don't want Flickr Fixr to be a tool for people who want to use
-                    other peoples photos without permission. But I have image tools like "Search Similar image" and "EXIF viewer"
-                    which I would like to access via the context menu.</p>
+            <div><label class="browser-style"><input type="checkbox" id="shootingSpaceballs" /> Fix image context menu on "All sizes" pages</label>
+                <div><p>Removes layer over images on "All sizes" pages, to prevent missing or disfunctioning actions in browser's (right-click) context-menu.</p>
+                    <p>Unless photos are Creative Commons licensed (or your own), Flickr usually adds an invisible layer above photos on the "All Sizes"
+                        pages, presumable to prevent image stealing.</p>
+                    <p>I have never promoted this Flickr Fixr feature much, because I don't want Flickr Fixr to be a tool for people who want to use other people's
+                    photos without permission. But I have image tools like "Search Similar image" and "EXIF viewer" which I would like to be able
+                    to use via the browser's context menu.</p>
                     <p><em>Please respect ownership of images, and remember to ask permission for any public use of other peoples photos, if not
                     already granted by an associated license.</em></p>
                 </div>
