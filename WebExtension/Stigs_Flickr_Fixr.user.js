@@ -967,7 +967,7 @@ var scaler = {
         var unscale = function () {
             log('Unscale button clicked!...');
             // sizes (and position?) from div.photo-notes-scrappy-view
-            var dims = document.querySelector('div.photo-notes-scrappy-view');
+            var dims = document.querySelector('div.photo-notes-scrappy-view-OLD') || document.querySelector('div.photo-notes-scrappy-view');
             scaler.mf.width = parseInt(dims.style.width,10);
             scaler.mf.height = parseInt(dims.style.height,10);
             // unscale/rest, and...
@@ -992,8 +992,8 @@ var scaler = {
                 // return;
             }
             log('scaler.addUnscaleBtn() running');
-            var panel = document.querySelector('div.photo-well-media-scrappy-view');
-            var notesview = document.querySelector('div.photo-notes-scrappy-view');
+            var panel = document.querySelector('div.photo-well-media-scrappy-view-OLD') || document.querySelector('div.photo-well-media-scrappy-view');
+            var notesview = document.querySelector('div.photo-notes-scrappy-view-OLD') || document.querySelector('div.photo-notes-scrappy-view');
             if (panel && !panel.querySelector('div.unscaleBtn')) {
                 log('scaler.addUnscaleBtn: adding option to div.height-controller');
                 let scaleIcon = createRichElement('img', {id: 'unscaleBtnId', src: 'https://farm9.staticflickr.com/8566/28150041264_a8b591c2a6_o.png', alt: 'Un-scale', title: 'This photo has been up-scaled by Flickr Fixr. Click here to be sure image-size is aligned with notes area'});
@@ -1184,7 +1184,7 @@ var scaler = {
             roomPaddingHeight += (parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-top'), 10) + parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-bottom'), 10));
             roomPaddingWidth += (parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-left'), 10) + parseInt(window.getComputedStyle(hc, null).getPropertyValue('padding-right'), 10));
         }
-        var pwmsv = document.querySelector('div.photo-well-media-scrappy-view'); // photo container+ on standard photopage
+        var pwmsv = document.querySelector('div.photo-well-media-scrappy-view-OLD') || document.querySelector('div.photo-well-media-scrappy-view'); // photo container+ on standard photopage
         if (pwmsv) {
             log('[scaler] div.photo-well-media-scrappy-view: height=' + pwmsv.clientHeight + ' (padding=70?), width=' + pwmsv.clientWidth + ' (padding=80?).'); // pwmsv.style.padding: 20px 40px 50px
             if (roomHeight === 0) {
@@ -1663,10 +1663,10 @@ function userscriptWarning() {
         if (info) {
             let prevDate = localStorage.getItem("fixr_userscript_warning_timestamp");
             let prevVersion = localStorage.getItem("fixr_userscript_warning_version");
-            if (!prevVersion) {
+            if (!prevVersion || prevVersion !== info.script.version) {
                 localStorage.setItem("fixr_userscript_warning_timestamp", Date.now().toString());
                 localStorage.setItem("fixr_userscript_warning_version", info.script.version);
-                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport (and test) of userscript-version is limited and some features might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
+                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport and test of userscript-version is limited, and some features are not available or might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
             }
         }
     }
