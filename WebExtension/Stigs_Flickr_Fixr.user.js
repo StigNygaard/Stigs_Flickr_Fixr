@@ -614,12 +614,12 @@ function topMenuItems() {
                 }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/tags'}, createRichElement('span', {}, 'Tags'))));
                 aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
                     id: 'map',
-                    class: 'menuitem',
+                    class: 'link',
                     role: 'menuitem'
                 }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/map'}, createRichElement('span', {}, 'Map'))));
                 aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
                     id: 'collections',
-                    class: 'menuitem',
+                    class: 'link',
                     role: 'menuitem'
                 }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/collections'}, createRichElement('span', {}, 'Collections'))));
             } else if (gib.classList.contains('sn-groups') && !m.querySelector('li.sn-tags')) {
