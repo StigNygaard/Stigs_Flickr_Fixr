@@ -1,5 +1,4 @@
 let defaults = {
-    scaler: true,
     albumExtras: true,
     topPagination: true,
     shootingSpaceballs: true,
@@ -20,7 +19,6 @@ let defaults = {
 function saveOptions(e) {
     e.preventDefault();
     browser.storage.local.set({
-        scaler: document.querySelector("form#fixroptions #scaler").checked,
         albumExtras: document.querySelector("form#fixroptions #albumExtras").checked,
         topPagination: document.querySelector("form#fixroptions #topPagination").checked,
         shootingSpaceballs: document.querySelector("form#fixroptions #shootingSpaceballs").checked,
@@ -58,7 +56,6 @@ function displaySlideshowSpeed() {
 
 function handlerInitOptionsPage(options) {
     // restore options:
-    document.querySelector("form#fixroptions #scaler").checked = options.scaler;
     document.querySelector("form#fixroptions #albumExtras").checked = options.albumExtras;
     document.querySelector("form#fixroptions #topPagination").checked = options.topPagination;
     document.querySelector("form#fixroptions #shootingSpaceballs").checked = options.shootingSpaceballs;
