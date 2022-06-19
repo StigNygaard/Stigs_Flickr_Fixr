@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.03.11.0
+// @version     2022.06.19.0
 // @run-at      document-start
 // @grant       none
 // @noframes
