@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2022.06.xx.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). And was lots of ugly code :-/ '},
+    {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
     {version: '2022.03.11.0', description: 'Adapt to Flickr changes, to fix issue on photopages.'},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
     {version: '2021.01.29.0', description: 'Fix broken icon paths which probably prevented userscript installing/updating. I still recommend installing browser extension instead of userscript, I keep forgetting making sure userscript still works.'},
@@ -44,24 +44,40 @@ var changelog = [
 ];
 
 var DEBUG = false;
+
 function log(s) {
     if (DEBUG && console) {
         console.log(s);
     }
 }
+
 if (DEBUG) {
     if ('loading' === document.readyState) {
         log("This script is running at document-start time.");
     } else {
         log("This script is running with document.readyState: " + document.readyState);
     }
-    window.addEventListener('DOMContentLoaded', function(){log('(onDOMContentLoaded)');}, false);
-    window.addEventListener('focus', function(){log('(onfocus)');}, false);
-    window.addEventListener('load', function(){log('(onload)');}, false);
-    window.addEventListener('pageshow', function(){log('(onpageshow)');}, false);
-    window.addEventListener('resize', function(){log('(onresize)');}, false);
-    window.addEventListener('hashchange', function(){log('(onhashchange)');}, false);
-    window.addEventListener('blur', function(){log('(onblur)');}, false);
+    window.addEventListener('DOMContentLoaded', function () {
+        log('(onDOMContentLoaded)');
+    }, false);
+    window.addEventListener('focus', function () {
+        log('(onfocus)');
+    }, false);
+    window.addEventListener('load', function () {
+        log('(onload)');
+    }, false);
+    window.addEventListener('pageshow', function () {
+        log('(onpageshow)');
+    }, false);
+    window.addEventListener('resize', function () {
+        log('(onresize)');
+    }, false);
+    window.addEventListener('hashchange', function () {
+        log('(onhashchange)');
+    }, false);
+    window.addEventListener('blur', function () {
+        log('(onblur)');
+    }, false);
 }
 
 
@@ -87,8 +103,8 @@ var fixr = fixr || {
     onResizeHandlers: [],
     onFocusHandlers: [],
     onStandaloneHandlers: [],
-    runningDirty: function() { // In-development and extra experiments enabled?
-        return (DEBUG && (fixr.context.userId==='10259776@N00'));
+    runningDirty: function () { // In-development and extra experiments enabled?
+        return (DEBUG && (fixr.context.userId === '10259776@N00'));
     },
     timer: {
         _test: 0 // TODO
@@ -100,7 +116,10 @@ var fixr = fixr || {
         },
         init() {
             if (!document.getElementById('fixrStyle')) {
-                let styleElem = createRichElement('style', {type: 'text/css', id: 'fixrStyle'}, fixr.style._declarations);
+                let styleElem = createRichElement('style', {
+                    type: 'text/css',
+                    id: 'fixrStyle'
+                }, fixr.style._declarations);
                 document.getElementsByTagName('head')[0].appendChild(styleElem);
                 log('fixrStyle has been ADDED');
             } else {
@@ -122,19 +141,19 @@ var fixr = fixr || {
             return this._pst;
         },
         pst: function () { // yyyy-mm-dd tt:mm PST
-            return (this._pst || this.tick()).toISOString().substring(0,16).replace('T',' ')+' PST';
+            return (this._pst || this.tick()).toISOString().substring(0, 16).replace('T', ' ') + ' PST';
         },
         explore: function () { // yyyy-mm-dd tt:mm Explore beat!
-            if (this._explore===null) {
+            if (this._explore === null) {
                 this.tick();
             }
-            return this._explore.toISOString().substring(0,16).replace('T',' ')+' Explore beat!';
+            return this._explore.toISOString().substring(0, 16).replace('T', ' ') + ' Explore beat!';
         }
     },
-    isWebExtension: function() {
+    isWebExtension: function () {
         return (typeof GM_info === 'undefined') && (typeof GM === 'undefined');
     },
-    isUserscript: function() {
+    isUserscript: function () {
         return !fixr.isWebExtension();
     },
     initUserId: function () {
@@ -183,8 +202,6 @@ var fixr = fixr || {
             return false;
         } // re-run a little later???
         log('fixr.initPhotographerId() - Attribution elem found');
-        // (div.avatar.person).style.backgroundImage=url(https://s.yimg.com/pw/images/buddyicon07_r.png#44504567@N00)
-        //                    .style.backgroundImage=url(//c4.staticflickr.com/8/7355/buddyicons/10259776@N00_r.jpg?1372021232#10259776@N00)
         var result;
         if (elem.tagName.toUpperCase() === 'IMG' && elem.src) {
             result = elem.src.match(/https:(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
@@ -217,7 +234,7 @@ var fixr = fixr || {
             fixr.context.photographerAlias = result[1];
             return true;
         } else {
-            log('*** initPhotoId() returnerer false! reg-pattern fandt ikke match i pathname='+window.location.pathname);
+            log('*** initPhotoId() returnerer false! reg-pattern fandt ikke match i pathname=' + window.location.pathname);
         }
         return false;
     },
@@ -264,18 +281,18 @@ var fixr = fixr || {
             if (fixr.content.querySelector('div.vr-overlay-view') && fixr.content.querySelector('div.vr-overlay-view').hasChildNodes()) {
                 fixr.context.pageSubType = 'VR'; // maybe I can find a better way to detect, not sure how reliable this is?
             } else if (fixr.content.querySelector('div.videoplayer')) {
-                fixr.context.pageSubType='VIDEO';
+                fixr.context.pageSubType = 'VIDEO';
             } else {
-                fixr.context.pageSubType='PHOTO';
+                fixr.context.pageSubType = 'PHOTO';
             }
         } else if (fixr.content.querySelector('div.photo-page-lightbox-scrappy-view')) {
             fixr.context.pageType = 'PHOTOPAGE LIGHTBOX';
             if (fixr.content.querySelector('div.vr-overlay-view') && fixr.content.querySelector('div.vr-overlay-view').hasChildNodes()) {
-                fixr.context.pageSubType='VR'; // VR-mode currently not supported in lightbox?
+                fixr.context.pageSubType = 'VR'; // VR-mode currently not supported in lightbox?
             } else if (fixr.content.querySelector('div.videoplayer')) {
-                fixr.context.pageSubType='VIDEO';
+                fixr.context.pageSubType = 'VIDEO';
             } else {
-                fixr.context.pageSubType='PHOTO';
+                fixr.context.pageSubType = 'PHOTO';
             }
         } else if (fixr.content.querySelector('div.albums-list-page-view')) {
             fixr.context.pageType = 'ALBUMSLIST';
@@ -306,9 +323,9 @@ var fixr = fixr || {
         }
 
         log('fixr.context.pageType = ' + fixr.context.pageType);
-        log('fixr.context.pageSubType = '+fixr.context.pageSubType);
+        log('fixr.context.pageSubType = ' + fixr.context.pageSubType);
         if (fixr.initUserId()) {
-            log('fixr.initUserId() returned with succes: '+fixr.context.userId);
+            log('fixr.initUserId() returned with succes: ' + fixr.context.userId);
         } else {
             log('fixr.initUserId() returned FALSE!');
         }
@@ -454,10 +471,10 @@ var fixr = fixr || {
 // FIXR page-tracker end
 
 
-const fkey="9b8140dc97b93a5c80751a9dad552bd4"; // This api key is for Flickr Fixr only. Get your own key for free at https://www.flickr.com/services/apps/create/
+const fkey = "9b8140dc97b93a5c80751a9dad552bd4"; // This api key is for Flickr Fixr only. Get your own key for free at https://www.flickr.com/services/apps/create/
 
 function escapeHTML(str) {
-    return str.replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
+    return str.replace(/[&"'<>]/g, (m) => ({"&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;"})[m]);
 }
 
 function createRichElement(tagName, attributes, ...content) {
@@ -485,10 +502,12 @@ function insertGMapLink() {
                 try {
                     let lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
                     let lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    let gmaplink = createRichElement('a', {href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon, id: 'googlemapslink'} , 'Show location on Google Maps');
+                    let gmaplink = createRichElement('a', {
+                        href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon,
+                        id: 'googlemapslink'
+                    }, 'Show location on Google Maps');
                     fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement('beforeend', createRichElement('div', {class: 'location-data-container'}, gmaplink));
-                }
-                catch (e) {
+                } catch (e) {
                     log('Failed creating Google Maps link: ' + e);
                 }
             } else {
@@ -501,6 +520,7 @@ function insertGMapLink() {
         log('NO photoId found at readystate=' + document.readyState);
     }
 }
+
 function insertGMapLinkDelayed() {
     if (fixr.context.pageType === 'PHOTOPAGE') {
         log('insertGMapLinkDelayed() running... with pageType=' + fixr.context.pageType);
@@ -509,6 +529,7 @@ function insertGMapLinkDelayed() {
         setTimeout(insertGMapLink, 8000); // Triple. Photopage is sometimes very slow building
     }
 }
+
 function mapInitializer() {
     if (window.location.href.includes('flickr.com/map/?')) {
         // https://developer.mozilla.org/en-US/docs/Web/API/URL
@@ -526,6 +547,7 @@ function mapInitializer() {
 }
 
 const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !important} .subnav-refresh ul.nav-links.extraitems li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
+
 function topMenuItems() {
     // User dropdown menu
     var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
@@ -541,14 +563,38 @@ function topMenuItems() {
         if (aad && gid) {
             if (gid.hasAttribute('aria-label') && !m.querySelector('li[aria-label=Tags]')) {
                 // latest design
-                gid.insertAdjacentElement('afterend', createRichElement('li',{class: 'menuitem', role: 'menuitem', 'aria-label': 'Tags'},createRichElement('a',{'data-track': 'gnYouTagsClick', href: '/photos/me/tags'}, 'Tags')));
-                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'menuitem', role: 'menuitem', 'aria-label': 'Map'}, createRichElement('a', {'data-track': 'gnYouMapClick', href: '/photos/me/map'}, 'Map')));
-                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'menuitem', role: 'menuitem', 'aria-label': 'Collections'}, createRichElement('a', {'data-track': 'gnYouCollectionsClick', href: '/photos/me/collections'}, 'Collections')));
+                gid.insertAdjacentElement('afterend', createRichElement('li', {
+                    class: 'menuitem',
+                    role: 'menuitem',
+                    'aria-label': 'Tags'
+                }, createRichElement('a', {'data-track': 'gnYouTagsClick', href: '/photos/me/tags'}, 'Tags')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
+                    class: 'menuitem',
+                    role: 'menuitem',
+                    'aria-label': 'Map'
+                }, createRichElement('a', {'data-track': 'gnYouMapClick', href: '/photos/me/map'}, 'Map')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
+                    class: 'menuitem',
+                    role: 'menuitem',
+                    'aria-label': 'Collections'
+                }, createRichElement('a', {
+                    'data-track': 'gnYouCollectionsClick',
+                    href: '/photos/me/collections'
+                }, 'Collections')));
             } else if (gid.classList.contains('gn-subnav-item') && !m.querySelector('a[data-track=You-tags]')) {
                 // earlier design
-                gid.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a',{'data-track': 'You-tags', href: '/photos/me/tags'}, 'Tags')));
-                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {'data-track': 'You-map', href: '/photos/me/map'}, 'Map')));
-                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {'data-track': 'You-collections', href: '/photos/me/collections'}, 'Collections')));
+                gid.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {
+                    'data-track': 'You-tags',
+                    href: '/photos/me/tags'
+                }, 'Tags')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {
+                    'data-track': 'You-map',
+                    href: '/photos/me/map'
+                }, 'Map')));
+                aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {
+                    'data-track': 'You-collections',
+                    href: '/photos/me/collections'
+                }, 'Collections')));
             }
         }
     }
@@ -561,14 +607,35 @@ function topMenuItems() {
             m.classList.add('extraitems'); // mark extra items being added (so adjust spacing in style)
             if (gib.id === 'groups' && !m.querySelector('li#tags')) {
                 // latest design
-                gib.insertAdjacentElement('afterend', createRichElement('li', {id: 'tags', class: 'link', role: 'menuitem'}, createRichElement('a', {href: '/photos/'+fixr.context.photographerId+'/tags'}, createRichElement('span', {}, 'Tags'))));
-                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {id: 'map', class: 'menuitem', role: 'menuitem'}, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/map'}, createRichElement('span', {}, 'Map'))));
-                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {id: 'collections', class: 'menuitem', role: 'menuitem'}, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/collections'}, createRichElement('span', {}, 'Collections'))));
+                gib.insertAdjacentElement('afterend', createRichElement('li', {
+                    id: 'tags',
+                    class: 'link',
+                    role: 'menuitem'
+                }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/tags'}, createRichElement('span', {}, 'Tags'))));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
+                    id: 'map',
+                    class: 'menuitem',
+                    role: 'menuitem'
+                }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/map'}, createRichElement('span', {}, 'Map'))));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
+                    id: 'collections',
+                    class: 'menuitem',
+                    role: 'menuitem'
+                }, createRichElement('a', {href: '/photos/' + fixr.context.photographerId + '/collections'}, createRichElement('span', {}, 'Collections'))));
             } else if (gib.classList.contains('sn-groups') && !m.querySelector('li.sn-tags')) {
                 // earlier design
-                gib.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-tags'}, createRichElement('a', {'data-track': 'YouSubnav-tags', href: '/photos/' + fixr.context.photographerId + '/tags'}, 'Tags')));
-                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-map'}, createRichElement('a', {'data-track': 'YouSubnav-map', href: '/photos/' + fixr.context.photographerId + '/map'}, 'Map')));
-                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-collections'}, createRichElement('a', {'data-track': 'YouSubnav-collections', href: '/photos/' + fixr.context.photographerId + '/collections'}, 'Collections')));
+                gib.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-tags'}, createRichElement('a', {
+                    'data-track': 'YouSubnav-tags',
+                    href: '/photos/' + fixr.context.photographerId + '/tags'
+                }, 'Tags')));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-map'}, createRichElement('a', {
+                    'data-track': 'YouSubnav-map',
+                    href: '/photos/' + fixr.context.photographerId + '/map'
+                }, 'Map')));
+                aab.parentElement.insertAdjacentElement('afterend', createRichElement('li', {class: 'sn-navitem sn-collections'}, createRichElement('a', {
+                    'data-track': 'YouSubnav-collections',
+                    href: '/photos/' + fixr.context.photographerId + '/collections'
+                }, 'Collections')));
             }
         }
     }
@@ -580,102 +647,9 @@ var album = { // cache to avoid repeating requests
     comment: [],
     description: ''
 };
-// function updateAlbumCommentCount() {
-//     var _reqAlbumComments = null;
-//     if (window.XMLHttpRequest) {
-//         _reqAlbumComments = new XMLHttpRequest();
-//         if (typeof _reqAlbumComments.overrideMimeType !== 'undefined') {
-//             _reqAlbumComments.overrideMimeType('text/html');
-//         }
-//         _reqAlbumComments.onreadystatechange = function () {
-//             if (_reqAlbumComments.readyState === 4 && _reqAlbumComments.status === 200) {
-//                 log('_reqAlbumComments returned status=' + _reqAlbumComments.status);
-//                 var doc = document.implementation.createHTMLDocument("sizeDoc");
-//                 doc.documentElement.innerHTML = _reqAlbumComments.responseText;
-//                 album.albumId = fixr.context.albumId;
-//                 album.commentCount = -1;
-//                 var e = doc.body.querySelectorAll('span.LinksNew b.Here');
-//                 if (e && e.length === 1) {
-//                     var n = parseInt(e[0].innerText, 10);
-//                     if (Number.isNaN(n)) {
-//                         album.commentCount = 0;
-//                     } else {
-//                         album.commentCount = n;
-//                     }
-//                 } else {
-//                     album.commentCount = -1;
-//                     log('b.Here??? ');
-//                 }
-//                 if (document.getElementById('albumCommentCount')) {
-//                     if (album.commentCount === -1) {
-//                         document.getElementById('albumCommentCount').innerText = '?';
-//                     } else {
-//                         document.getElementById('albumCommentCount').innerText = String(album.commentCount);
-//                     }
-//                 } else {
-//                     log('albumCommentCount element not found');
-//                 }
-//             } else {
-//                 // wait for the call to complete
-//             }
-//         };
-//         if (fixr.context.albumId === album.albumId && fixr.context.albumId !== '' && album.commentCount !== -1) {
-//             log('Usinging CACHED album count!...');
-//             document.getElementById('albumCommentCount').innerText = String(album.commentCount);
-//         } else if (fixr.context.albumId !== '') {
-//             var url = 'https://www.flickr.com/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/sets/' + fixr.context.albumId + '/comments/'; // /sets/* urls works, /albums/* urls doesn't currently work
-//             _reqAlbumComments.open('GET', url, true);
-//             _reqAlbumComments.send(null);
-//         } else {
-//             log('albumId not initialized');
-//         }
-//     } else {
-//         log('understøtter ikke XMLHttpRequest');
-//     }
-// }
-//
-// var _wsGetPhotosetInfoLock = 0;
-// function wsGetPhotosetInfo() {
-//     var diff = Date.now() - _wsGetPhotosetInfoLock;
-//     if ((_wsGetPhotosetInfoLock > 0) && (diff < 50)) {
-//         log('Skipping wsGetPhotosetInfo() because already running?: ' + diff);
-//         // *** maybe add a check to see if we are still on same album?!
-//         return;
-//     }
-//     _wsGetPhotosetInfoLock = Date.now();
-//     function handleResponse(response) {
-//         if (response.ok) {
-//             if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
-//                 return response.json()
-//             }
-//             throw new Error('Response was not in expected json format.');
-//         }
-//         throw new Error('Network response was not ok.');
-//     }
-//     function handleResult(obj) {
-//         if (obj.stat === "ok") {
-//             if (obj.photoset && obj.photoset && obj.photoset.description) {
-//
-//                 document.getElementById('albumDescription').innerHTML = obj.photoset.description._content.replace(/\n/g, '<br />');
-//
-//             }
-//         } else {
-//             log('flickr.photosets.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
-//         }
-//     }
-//     function handleError(error) {
-//         console.log('There has been a problem with your fetch operation: ', error.message);
-//         log('There has been a problem with your fetch operation: ' + error);
-//     }
-//     if (fixr.isWebExtension()) {
-//         // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-//         browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.getInfo", fkey: fkey, options: {photoset_id: fixr.context.albumId, user_id: fixr.context.photographerId}}).then(handleResult).catch(handleError);
-//     } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
-//         fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.getInfo&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&user_id=' + fixr.context.photographerId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
-//     }
-// }
 
 var _wsGetPhotosetCommentsLock = 0;
+
 function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
     var diff = Date.now() - _wsGetPhotosetCommentsLock;
     if ((_wsGetPhotosetCommentsLock > 0) && (diff < 50)) {
@@ -694,6 +668,7 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
         }
         throw new Error('Network response was not ok.');
     }
+
     function handleResult(obj) {
 
         album.albumId = fixr.context.albumId;
@@ -723,18 +698,9 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
             log('albumCommentCount element not found');
         }
 
-        // if (obj.comments.comment) {
-        //     let comments = '';
-        //     for (let comment of obj.comments.comment) {
-        //         comments += '<hr /><div><p class="comment-author"><a href="/photos/' + comment.author + '/">' + comment.authorname + '</a> ' + (new Date(comment.datecreate * 1000)).toString().replace(/\([^\\)]+\)/, '') + '</p><p>' + comment._content.replace(/\n/g, '<br />').replace(/http:\/\/farm\d+\.static\.flickr\.com/g, 'https://live.staticflickr.com').replace(/http:\/\/(www\.)?flickr\.com/g, 'https://www.flickr.com') + '</p></div>';
-        //     }
-        //     if (document.getElementById('albumComments')) { // Todo: id="albumComments" doesn't yet exist!!!
-        //         document.getElementById('albumComments').innerHTML = comments;
-        //     }
-        // }
-
         _wsGetPhotosetCommentsLock = 0;
     }
+
     function handleError(error) {
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
@@ -742,7 +708,12 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
 
     if (fixr.isWebExtension()) {
         // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photosets.comments.getList", fkey: fkey, options: {photoset_id: fixr.context.albumId}}).then(handleResult).catch(handleError);
+        browser.runtime.sendMessage({
+            msgtype: "flickrservice",
+            method: "flickr.photosets.comments.getList",
+            fkey: fkey,
+            options: {photoset_id: fixr.context.albumId}
+        }).then(handleResult).catch(handleError);
     } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
         fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.comments.getList&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
     }
@@ -754,6 +725,7 @@ var albums = { // cache albums to avoid repeating requests
     column: '',
     count: 0
 };
+
 function getAlbumlist() {
     var _reqAlbumlist = null;
     if (window.XMLHttpRequest) {
@@ -778,7 +750,7 @@ function getAlbumlist() {
                         columnhead.textContent = "Albums";
                         albums.column.appendChild(columnhead);
                         albums.count = alist.length;
-                        for (let e of alist.slice(0,10)) {
+                        for (let e of alist.slice(0, 10)) {
                             var imgUrl = '';
                             //log(e.outerHTML);
                             // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
@@ -810,7 +782,7 @@ function getAlbumlist() {
                             albums.column.appendChild(columnhead);
                         }
                     } else {
-                        log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText );
+                        log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText);
                     }
                     var foot = document.createElement("div");
                     var cursive = document.createElement("i");
@@ -829,13 +801,6 @@ function getAlbumlist() {
             }
         };
 
-        // if (fixr.context.photographerId === albums.ownerId && fixr.context.photographerId !== '') { // todo: Cache functionality currently not working it seems!?
-        //
-        //     log('Using CACHED albumlist!...');
-        //     document.getElementById('albumTeaser').appendChild(albums.column);
-        //     // document.getElementById('albumTeaser').innerHTML = '<div style="margin:0 0 .8em 0">Albums</div>' + albums.column + '<div><i><a href="/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums/">' + (albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '')) + '</a></i></div>';
-        //
-        // } else
         if (fixr.context.photographerId) {
             var url = 'https://' + window.location.hostname + '/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums';
             _reqAlbumlist.open('GET', url, true);
@@ -849,6 +814,7 @@ function getAlbumlist() {
 }
 
 const albumTeaser_style = 'div#albumTeaser {border:none;margin:0;padding:0;position:absolute;top:0;right:-120px;width:100px}';
+
 function albumTeaser() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
         return; // exit if not photostream
@@ -867,7 +833,9 @@ function albumTeaser() {
         getAlbumlist();  // også check på fixr.context.photographerId ?
     }
 }
+
 var _timerAlbumTeaserDelayed;
+
 function albumTeaserDelayed() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
         return; // exit if not photostream
@@ -878,6 +846,7 @@ function albumTeaserDelayed() {
 }
 
 const exploreCalendar_style = '#exploreCalendar {border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px} #exploreCalendar div {margin:0 0 .8em 0} #exploreCalendar img.asquare {width:75px;height:59px}';
+
 function exploreCalendar() {
     if (fixr.context.pageType !== 'EXPLORE') {
         return; // exit if not explore/interestingness
@@ -890,15 +859,28 @@ function exploreCalendar() {
     log('exploreCalendar found div.photo-list-view');
     if (!document.getElementById('exploreCalendar')) {
         dtr.style.position = "relative";
-        let exploreMonth = fixr.clock.explore().substring(0,7).replace('-','/');
-        let explCal = createRichElement('a', {href: '/explore/interesting/' + exploreMonth + '/'}, createRichElement('img', {src: 'https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg', class: 'asquare', alt: ''}), createRichElement('div', {}, 'Explore Calendar'));
-        let freshUpl = createRichElement('a', {href: '/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date='+(Math.floor(Date.now()/1000)-7200), title:'If you are an adventurer and want to explore something different than everybody else...'}, createRichElement('img', {src: 'https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg', class: 'asquare', alt: ''}), createRichElement('div', {}, 'Fresh uploads'));
+        let exploreMonth = fixr.clock.explore().substring(0, 7).replace('-', '/');
+        let explCal = createRichElement('a', {href: '/explore/interesting/' + exploreMonth + '/'}, createRichElement('img', {
+            src: 'https://c2.staticflickr.com/2/1701/24895062996_78719dec15_o.jpg',
+            class: 'asquare',
+            alt: ''
+        }), createRichElement('div', {}, 'Explore Calendar'));
+        let freshUpl = createRichElement('a', {
+            href: '/search/?text=&view_all=1&media=photos&content_type=1&dimension_search_mode=min&height=640&width=640&safe_search=2&sort=date-posted-desc&min_upload_date=' + (Math.floor(Date.now() / 1000) - 7200),
+            title: 'If you are an adventurer and want to explore something different than everybody else...'
+        }, createRichElement('img', {
+            src: 'https://c2.staticflickr.com/2/1617/25534100345_b4a3fe78f1_o.jpg',
+            class: 'asquare',
+            alt: ''
+        }), createRichElement('div', {}, 'Fresh uploads'));
         dtr.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'exploreCalendar'}, explCal, freshUpl));
         log('San Francisco PST UTC-8: ' + fixr.clock.pst());
         log('Explore Beat (Yesterday, UTC-4): ' + fixr.clock.explore());
     }
 }
+
 var _timerExploreCalendarDelayed;
+
 function exploreCalendarDelayed() {
     if (fixr.context.pageType !== 'EXPLORE') {
         return; // exit if not explore/interestingness
@@ -910,22 +892,25 @@ function exploreCalendarDelayed() {
 
 function ctrlClick(e) {
     var elem, evt = e ? e : event;
-    if (evt.srcElement)  elem = evt.srcElement;
+    if (evt.srcElement) elem = evt.srcElement;
     else if (evt.target) elem = evt.target;
     if (evt.ctrlKey) {
         log('Ctrl clicked. Further scripted click-event handling canceled. Allow the default ctrl-click handling in my browser.');
         evt.stopPropagation();
     }
 }
+
 function ctrlClicking() {
     var plv = document.querySelectorAll('div.photo-list-view');
     for (var i = 0; i < plv.length; i++) {
-        log('ctrlClicking(): plv['+i+'] found!');
+        log('ctrlClicking(): plv[' + i + '] found!');
         // Allow me to open tabs in background by ctrl-click in Firefox:
         plv[i].parentNode.addEventListener('click', ctrlClick, true);
     }
 }
+
 var _timerCtrlClicking;
+
 function ctrlClickingDelayed() {
     log('ctrlClickingDelayed() running...');
     clearTimeout(_timerCtrlClicking);
@@ -933,6 +918,7 @@ function ctrlClickingDelayed() {
 }
 
 const topPagination_style = '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block}';
+
 function topPagination() {
     log('topPagination()');
     var bottomPagination = document.querySelector('.pagination-view');
@@ -940,7 +926,7 @@ function topPagination() {
         bottomPagination = document.querySelector('.explore-pagination');
     }
     if (bottomPagination && !document.getElementById('topPagination')) {
-        if (bottomPagination.childElementCount>0) {
+        if (bottomPagination.childElementCount > 0) {
             var topPagination = bottomPagination.cloneNode(true);
             topPagination.id = 'topPagination';
             var topPaginationContainer = document.createElement('div');
@@ -959,6 +945,7 @@ function topPagination() {
 }
 
 const albumExtras_style = '.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://c1.staticflickr.com/5/4816/46041390622_f8a0cf0148_o.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
+
 function albumExtras() { // links to album's map and comments
     if (fixr.context.pageType !== 'ALBUM') {
         return; // exit if not albumpage
@@ -977,7 +964,7 @@ function albumExtras() { // links to album's map and comments
         mapdiv.title = 'Album on map';
         mapdiv.style.textAlign = 'center';
         var maplink = document.createElement('a');
-        maplink.href= '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
+        maplink.href = '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
         maplink.style.fontSize = '14px';
         maplink.style.color = '#FFF';
         var mapicon = document.createElement('span');
@@ -1006,54 +993,28 @@ function albumExtras() { // links to album's map and comments
         cmdiv.appendChild(cmlink);
         elist.appendChild(cmdiv);
 
-        // Sorry, album comments are currently not available to view
-        // document.getElementById('albumCommentsLink').addEventListener('click', () => alert('Sorry, album comments are currently not visible on Flickr'));
-
-        // updateAlbumCommentCount();
-
-        // // create overlay lightbox  // NEW?!...
-        // let infobox = document.createElement('div');
-        // let description = document.createElement('div');
-        // let comments = document.createElement('div');
-        // infobox.style = 'display:none;position:absolute;top:2em;left:4em;right:4em;z-index:500;border:none;padding:2rem;background-color:#000';
-        // infobox.id = 'albumInfobox';
-        // infobox.innerHTML = '<h2>Album description and comments</h2>';
-        // description.id = 'albumDescription';
-        // description.innerHTML = '[description]';
-        // comments.id = 'albumComments';
-        // comments.innerHTML = '[comments]';
-        // infobox.appendChild(description);
-        // infobox.appendChild(comments);
-        // let header = document.querySelector('div.album-header-content');
-        // if (header) {
-        //     header.style.position = 'relative';
-        //     header.appendChild(infobox);
-        //     // infobox.style.display = 'block';
-        //     document.getElementById('albumCommentsLink').addEventListener('click', function(evt){evt.preventDefault();evt.stopPropagation();infobox.style.display = 'block';return false}, false);
-        // }
-        wsGetPhotosetComments();  // (NEW!)
-        // wsGetPhotosetInfo();  // NEW?!
-
+        wsGetPhotosetComments();
     }
 }
 
 const updateTags_style_avatar = 'a.fixrTag>img {width:1em;height:1em;margin:0;padding:0;position:relative;top:3px}';
 const updateTags_style_hover = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:none;} ul.tags-list>li.tag:hover>a.fixrTag,ul.tags-list>li.autotag:hover>a.fixrTag{display:inline;} ' + updateTags_style_avatar;
 const updateTags_style_persist = 'ul.tags-list>li.tag>a.fixrTag,ul.tags-list>li.autotag>a.fixrTag{display:inline;} ' + updateTags_style_avatar;
+
 function updateTags() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
     }
-    if (fixr.context.photographerAlias==='') {
+    if (fixr.context.photographerAlias === '') {
         fixr.initPhotoId();
     }
-    if (fixr.context.photographerId==='') {
+    if (fixr.context.photographerId === '') {
         fixr.initPhotographerId();
     }
-    if (fixr.context.photographerName==='') {
+    if (fixr.context.photographerName === '') {
         fixr.initPhotographerName();
     }
-    log('updateTags() med photographerAlias='+fixr.context.photographerAlias+', photographerId='+fixr.context.photographerId+' og photographerName='+fixr.context.photographerName);
+    log('updateTags() med photographerAlias=' + fixr.context.photographerAlias + ', photographerId=' + fixr.context.photographerId + ' og photographerName=' + fixr.context.photographerName);
     if (document.querySelector('ul.tags-list')) {
         let tags = document.querySelectorAll('ul.tags-list>li');
         if (tags && tags !== null && tags.length > 0) {
@@ -1085,6 +1046,7 @@ function updateTags() {
         log('updateTags(): taglist container not found');
     }
 }
+
 function updateTagsDelayed() {
     log('updateTagsDelayed() running... with pageType=' + fixr.context.pageType);
     if (fixr.context.pageType === 'PHOTOPAGE') {
@@ -1095,6 +1057,7 @@ function updateTagsDelayed() {
 }
 
 const photoDates_style = '.has-date-info {position:relative} .date-info{z-index:10;padding:0 .5em 0 .5em;display:none;position:absolute;top:30px;left:-40px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .has-date-info:hover .date-info{display:block;} .date-info label {display:inline-block; min-width: 5em;}';
+
 function photoDates() {
     var elem = document.querySelector('div.view.sub-photo-date-view');
     if (elem && !elem.classList.contains('has-date-info')) {
@@ -1103,6 +1066,7 @@ function photoDates() {
         wsGetPhotoInfo(); // get dates
     }
 }
+
 function photoDatesDelayed() {
     log('photoDates() running... with pageType=' + fixr.context.pageType);
     if (fixr.context.pageType === 'PHOTOPAGE') {
@@ -1116,19 +1080,28 @@ function shootingSpaceballs() {
     // This is *not* meant as a tool for unauthorized copying and distribution of other peoples photos.
     // Please respect image ownership and copyrights!
     if (fixr.context.pageType === 'SIZES') {
-        var trash = document.querySelector('div.spaceball');
-        while (trash && trash.parentNode) {
-            trash.parentNode.removeChild(trash);
-            trash = document.querySelector('div.spaceball');
+        function trashing() {
+            let trash = document.querySelector('div.spaceball');
+            while (trash && trash.parentNode) {
+                trash.parentNode.removeChild(trash);
+                trash = document.querySelector('div.spaceball');
+            }
         }
+        let asp = document.querySelector('#allsizes-photo');
+        if (asp) {
+            document.body.addEventListener('click', trashing, false);
+            asp.click();
+        }
+        // document.body.style.backgroundColor = "#cfc";
     }
 }
 
 const orderwarning_style = '.filter-sort.warning p {animation:wink 3s ease 1s 1;} @keyframes wink {0% {background-color:transparent;} 50% {background-color:rgba(255,250,150,0.9);} 100% {background-color:transparent;}} .filter-sort.warning:after{content:"You are looking at this photostream in Date-taken order. Change order to Date-uploaded, to be sure to see latest uploads in the top of photostreams.";z-index:10;padding:.5em;display:none;position:relative;top:-2px;right:-50px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .filter-sort.warning:hover:after{display:block;}';
+
 function orderWarning() {
     if (fixr.context.pageType === 'PHOTOSTREAM') {
         var e = document.querySelector('.dropdown-link.filter-sort');
-        if(e) {
+        if (e) {
             if (['Date taken', 'Fecha de captura', 'Aufnahmedatum', 'Date de prise de vue', 'Data dello scatto', 'Tirada na data', 'Ngày chụp', 'Tanggal pengambilan', '拍攝日期', '촬영 날짜'].includes(e.innerText.trim())) {
                 e.classList.add('warning');
             } else {
@@ -1139,6 +1112,7 @@ function orderWarning() {
 }
 
 const newsfeedLinks_style = 'div#feedlinks {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px} ul.gn-tools>div#feedlinks {right:-120px} div#gn-wrap>div#feedlinks, div.header-wrap>div#feedlinks, header#branding>div#feedlinks {right:-120px} div#feedlinks>a {display:block;float:left;margin:10px 8px 0 0;width:16px} div#feedlinks>a>img {display:block;width:16px;height:16px} ul.gn-tools>div#feedlinks>a {margin-top:2px}';
+
 function newsfeedLinks() {
     var elem = document.getElementById('feedlinks');
     if (elem) {
@@ -1146,6 +1120,7 @@ function newsfeedLinks() {
     }
     setTimeout(updateNewsfeedLinks, 500); // give Flickr time to update link tags in head
 }
+
 function updateNewsfeedLinks() {
     var feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
     log('Number of feed links found: ' + feedlinks.length);
@@ -1179,7 +1154,7 @@ function updateNewsfeedLinks() {
 function initSlideshowSpeedHook() {
     let timeoutScript = document.createElement('script');
     timeoutScript.src = browser.runtime.getURL('inject/timeout.js');
-    timeoutScript.onload = function() {
+    timeoutScript.onload = function () {
         this.remove();
     };
     (document.head || document.documentElement).appendChild(timeoutScript);
@@ -1193,6 +1168,7 @@ function initSlideshowSpeed() {
 }
 
 var _wsGetPhotoInfoLock = 0;
+
 function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     var diff = Date.now() - _wsGetPhotoInfoLock;
     if ((_wsGetPhotoInfoLock > 0) && (diff < 50)) {
@@ -1211,6 +1187,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         }
         throw new Error('Network response was not ok.');
     }
+
     function handleResult(obj) {
         var elem = document.querySelector('.date-info');
         if (obj.stat === "ok") {
@@ -1251,7 +1228,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                         } else if (obj.photo.dates.takengranularity.toString() === '6') { // 6	Y
                             dateDetail.append(takenLabel, ' ' + takenDateTmp.substring(0, 4), brElem);
                         } else if (obj.photo.dates.takengranularity.toString() === '8') { // 8	Circa...
-                            dateDetail.append(takenLabel, ' Circa ' +  takenDateTmp.substring(0, 4), brElem);
+                            dateDetail.append(takenLabel, ' Circa ' + takenDateTmp.substring(0, 4), brElem);
                         } else {
                             log('Unexpected value for photo.dates.takengranularity: ' + obj.photo.dates.takengranularity);
                         }
@@ -1284,6 +1261,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         }
         _wsGetPhotoInfoLock = 0;
     }
+
     function handleError(error) {
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
@@ -1295,7 +1273,12 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
 
     if (fixr.isWebExtension()) {
         // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({msgtype: "flickrservice", method: "flickr.photos.getInfo", fkey: fkey, options: {photo_id: fixr.context.photoId}}).then(handleResult).catch(handleError);
+        browser.runtime.sendMessage({
+            msgtype: "flickrservice",
+            method: "flickr.photos.getInfo",
+            fkey: fkey,
+            options: {photo_id: fixr.context.photoId}
+        }).then(handleResult).catch(handleError);
     } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
         fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
     }
@@ -1320,7 +1303,7 @@ function runEarly() {
 
 function userscriptWarning() {
     if (!document.body.classList.contains("flickrfixrwebextension")) { // Skip warning if both versions are installed (There will be another warning from stereotest()).
-        let info = (GM_info ? GM_info : (typeof GM === 'object' && GM !== null && typeof GM.info === 'object' ? GM.info : null) );
+        let info = (GM_info ? GM_info : (typeof GM === 'object' && GM !== null && typeof GM.info === 'object' ? GM.info : null));
         if (info) {
             let prevDate = localStorage.getItem("fixr_userscript_warning_timestamp");
             let prevVersion = localStorage.getItem("fixr_userscript_warning_version");
