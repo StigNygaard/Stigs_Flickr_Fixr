@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.10.29.0
+// @version     2022.10.29.1
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
-    {version: '2022.10.29.0', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
+    {version: '2022.10.29.1', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
     {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
     {version: '2022.03.11.0', description: 'Adapt to Flickr changes, to fix issue on photopages.'},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
@@ -1456,6 +1456,6 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(updateTags_style_hover);
         fixr.style.add(collapsibleSidebar_style);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning, collapsibleSidebar], [], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }
