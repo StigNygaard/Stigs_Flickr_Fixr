@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.06.19.0
+// @version     2022.10.29.0
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,6 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 var changelog = [
+    {version: '2022.10.29.0', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
     {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
     {version: '2022.03.11.0', description: 'Adapt to Flickr changes, to fix issue on photopages.'},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
@@ -318,6 +319,12 @@ var fixr = fixr || {
             fixr.context.pageType = 'ACTIVITYFEED'; // aka. front page -> UPDATES ?
         } else if (fixr.content.querySelector('div#allsizes-photo')) {
             fixr.context.pageType = 'SIZES'; // View all sizes - page
+        } else if (fixr.content.querySelector('div.search-photos-unified-page-view')) {
+            fixr.context.pageType = 'SEARCHRESULTPHOTOS';
+        } else if (fixr.content.querySelector('div.search-people-page-view')) {
+            fixr.context.pageType = 'SEARCHRESULTPEOPLE';
+        } else if (fixr.content.querySelector('div.search-groups-page-view')) {
+            fixr.context.pageType = 'SEARCHRESULTGROUPS';
         } else {
             // fixr.context.pageType = ''; // unknown
         }
@@ -879,6 +886,40 @@ function exploreCalendar() {
     }
 }
 
+// SIMPLE
+// const collapsibleSidebar_style = "#search-unified-content {position: relative} #sidebartoggle {position: absolute; right: 0; top: 5em; width: 3em; height: 1.5em; background-color: #CFC; margin-right:-2em; z-index: 10} body.searchsidebar_closed .sidebar-column {display:none}";
+// BETTER
+const collapsibleSidebar_style = "body.searchsidebar_closed .search-container-w-sidebar .sidebar-column {width: 0px !important; margin-left: 0 !important} body.searchsidebar_closed .sidebar-content-container > div:not(#sidebartoggle) {overflow:hidden; display:none} .sidebar-content-container, #search-unified-content {position: relative} #sidebartoggle {position: absolute; right: -1.7em; top: 6em; display: flex; justify-content: center; align-items: center; width: 2em; height: 2em; color: #128fdc; border: 2px solid #128fdc; border-radius: 50%; background-color: #FFF; z-index: 10; cursor: pointer; transition: all 0.3s; }  body.searchsidebar_closed #sidebartoggle {transform: rotate(180deg);}";
+function collapsibleSidebar() {
+    if (['SEARCHRESULTPHOTOS', 'SEARCHRESULTPEOPLE', 'SEARCHRESULTGROUPS'].includes(fixr.context.pageType)) {
+        // SIMPLE:
+        // var cnt = document.querySelector('#search-unified-content');
+        // if (cnt) {
+        //     var toggle = createRichElement('div', {id: 'sidebartoggle'}, '❯');
+        //     cnt.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'sidebartoggle'}, '[<->]'));
+        //     ...
+        // BETTER:
+        var cnt = document.querySelector('.sidebar-content-container');
+        if (cnt) {
+            if (!document.getElementById('sidebartoggle')) {
+                var toggle = createRichElement('div', {id: 'sidebartoggle'}, '❯');
+                cnt.insertAdjacentElement('afterbegin', toggle);
+                setTimeout(function () {
+                    window.dispatchEvent(new Event('resize', {'cancelable': true}))
+                }, 100);
+                toggle.addEventListener('click', function (e) {
+                    document.body.classList.toggle('searchsidebar_closed');
+                    setTimeout(function () {
+                        window.dispatchEvent(new Event('resize', {'cancelable': true}))
+                    }, 100);
+                })
+            }
+        } else {
+            setTimeout(collapsibleSidebar, 2000);
+        }
+    }
+}
+
 var _timerExploreCalendarDelayed;
 
 function exploreCalendarDelayed() {
@@ -1087,6 +1128,7 @@ function shootingSpaceballs() {
                 trash = document.querySelector('div.spaceball');
             }
         }
+
         let asp = document.querySelector('#allsizes-photo');
         if (asp) {
             document.body.addEventListener('click', trashing, false);
@@ -1382,6 +1424,10 @@ function handlerInitFixr(options) { // Webextension init
         }
         onPageHandlers.push(updateTagsDelayed);
     }
+    if (options.searchresultsCollapsibleSidebar) {
+        fixr.style.add(collapsibleSidebar_style);
+        onPageHandlers.push(collapsibleSidebar);
+    }
     if (options.slideshowSpeedControl) {
         slideshowSpeed = options.slideshowSpeedControl_value;
         runNow.push(initSlideshowSpeedHook);
@@ -1408,7 +1454,8 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(exploreCalendar_style);
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style_hover);
+        fixr.style.add(collapsibleSidebar_style);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning, collapsibleSidebar], [], [], [topMenuItems, newsfeedLinks, mapInitializer]);
     }
 }

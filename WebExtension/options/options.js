@@ -13,7 +13,8 @@ let defaults = {
     updateTags: true,
     updateTags_tagmode: "updateTags_hover",
     slideshowSpeedControl: true,
-    slideshowSpeedControl_value: '5'
+    slideshowSpeedControl_value: '5',
+    searchresultsCollapsibleSidebar: false
 };
 
 function saveOptions(e) {
@@ -33,7 +34,8 @@ function saveOptions(e) {
         updateTags: document.querySelector("form#fixroptions #updateTags").checked,
         updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value,
         slideshowSpeedControl: document.querySelector("form#fixroptions #slideshowSpeedControl").checked,
-        slideshowSpeedControl_value: document.querySelector('form#fixroptions input#slideshowSpeedControl_value').value
+        slideshowSpeedControl_value: document.querySelector('form#fixroptions input#slideshowSpeedControl_value').value,
+        searchresultsCollapsibleSidebar: document.querySelector("form#fixroptions #searchresultsCollapsibleSidebar").checked
     }); // then ( "saved ok" message? )
 }
 
@@ -71,6 +73,7 @@ function handlerInitOptionsPage(options) {
     document.getElementById(options.updateTags_tagmode).checked = true;
     document.querySelector("form#fixroptions #slideshowSpeedControl").checked = options.slideshowSpeedControl;
     document.querySelector("form#fixroptions #slideshowSpeedControl_value").value = options.slideshowSpeedControl_value;
+    document.querySelector("form#fixroptions #searchresultsCollapsibleSidebar").checked = options.searchresultsCollapsibleSidebar;
 
     displaySlideshowSpeed();
     // enable submit:
