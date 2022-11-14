@@ -2,18 +2,28 @@
 
 A browser extension to enhance the Flickr experience in your desktop web-browser.
 
-Show photographer's albums on photostream-pages, Control speed of slideshows, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!), Top-pagination, Newsfeed detection - _And more!..._
+Show photographer's albums on photostream-pages, Control speed of slideshows, Photographer's other photos by tag-links,
+Links to album-map and album-comments, Actually show a geotagged photo on the associated map (or on Google Maps!),
+Top-pagination, Newsfeed detection - _And more!..._
 
 Install the _Flickr Fixr_ browser extension:
-* [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github) - Also installs and works in other Firefox based browsers like f.ex. Waterfox and Tor.  
-* [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) - Also installs and works in many other Chromium based browsers.
-* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) - For the new Chromium-based version of Edge.
+* [Mozilla Firefox Addons](https://addons.mozilla.org/addon/flickr-fixr?src=external-github) -
+ Also installs and works in other Firefox based browsers like f.ex. Waterfox and Tor.  
+* [Google Chrome Web Store](https://chrome.google.com/webstore/detail/flickr-fixr/ledhkkpililplmmfcfnhkgifmcnboonb) -
+ Also installs and works in many other Chromium based browsers.
+* [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ieinimkepkfmmpeakdgnoikimokffneh) -
+ For the new Chromium-based version of Edge.
 
-If for some reason you prefer to install a _deprecated_ userscript version of this, you can install it via [via GreaseFork](https://greasyfork.org/scripts/12008-stig-s-flickr-fixr). Note however, that I plan to stop updating and supporting the userscript version soon (late 2022 or early 2023). If possible, you should definitely install the browser extension. Also the Options page and some features are only available in the browser extension.
+Most detailed feature description can currently be found in the Flickr Hacks forum:
+https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
-Most detailed feature description can currently be found in the Flickr Hacks forum: https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
-
-The browser extension is "cross-browser compatible". It is the exact [same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge. To create a browser extension from repository, simply zip content of WebExtension folder. For easy cross-browser compatibility, Flickr Fixr is using [browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/WebExtension/lib/mozilla) from Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/lib/mozilla/LICENSE) licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
+The browser extension is "cross-browser compatible". It is the exact
+[same plugin (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox,
+Chrome and Edge. To create a browser extension from repository, simply zip content of WebExtension folder.
+For easy cross-browser compatibility, Flickr Fixr is using
+[browser-polyfill.js](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/master/WebExtension/lib/mozilla) from
+Mozilla's [MPL 2](https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/lib/mozilla/LICENSE)
+licensed [webextension-polyfill project](https://github.com/mozilla/webextension-polyfill).
 
 Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
 
