@@ -14,7 +14,7 @@ let defaults = {
     updateTags_tagmode: "updateTags_hover",
     slideshowSpeedControl: true,
     slideshowSpeedControl_value: '5',
-    searchresultsCollapsibleSidebar: false
+    searchresultsCollapsibleSidebar: true
 };
 
 function saveOptions(e) {
