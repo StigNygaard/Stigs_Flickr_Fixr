@@ -48,7 +48,7 @@ function withOptionsDo(handler) {
         // Merge default with loaded values:
         return Object.assign(defaults, result);
     }
-    var getting = browser.storage.local.get();
+    let getting = browser.storage.local.get();
     getting.then(setCurrentChoice, onError).then(handler);
 }
 

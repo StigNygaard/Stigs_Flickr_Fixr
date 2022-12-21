@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Stig's Flickr Fixr
 // @namespace   dk.rockland.userscript.flickr.fixr
-// @description Show photographer's albums on photostream-pages, Increase display-size and quality of "old" uploads, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more to come?...
+// @description Show photographer's albums on photostream-pages, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more...
 // @author      Stig Nygaard, https://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
 // @homepageURL https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
 // @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
@@ -14,22 +14,20 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.10.29.1
+// @version     2022.12.xx.0
 // @run-at      document-start
 // @grant       none
 // @noframes
 // ==/UserScript==
 
 // CHANGELOG - The most recent or important updates/versions:
-var changelog = [
+const changelog = [
+    {version: '2022.12.xx.0', description: 'Final version of the userscript (probably). You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
     {version: '2022.10.29.1', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
     {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
-    {version: '2022.03.11.0', description: 'Adapt to Flickr changes, to fix issue on photopages.'},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
-    {version: '2021.01.29.0', description: 'Fix broken icon paths which probably prevented userscript installing/updating. I still recommend installing browser extension instead of userscript, I keep forgetting making sure userscript still works.'},
     {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fixed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
     {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
-    {version: '2020.05.31.0', description: 'Improved fix to show location of geotagged photo (Zoom in). Some code cleaning...'},
     {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
     {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
     {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
@@ -44,11 +42,11 @@ var changelog = [
     {version: '2015.08.26.4', description: 'Initial userscript release version. Photo scale/replace, album column and tag-link feature.'}
 ];
 
-var DEBUG = false;
+const DEBUG = false;
 
-function log(s) {
+function log(...s) {
     if (DEBUG && console) {
-        console.log(s);
+        console.log(...s);
     }
 }
 
@@ -158,7 +156,7 @@ var fixr = fixr || {
         return !fixr.isWebExtension();
     },
     initUserId: function () {
-        if (window.auth && window.auth.user && window.auth.user.nsid) {
+        if (window.auth?.user?.nsid) {
             fixr.context.userId = window.auth.user.nsid;
             return true;
         }
@@ -175,7 +173,7 @@ var fixr = fixr || {
 
         // todo: This needs a rewrite some day...
 
-        var elem;
+        let elem;
         if (document.querySelector('div.photostream-page-view')) {
             // photostream
             elem = document.querySelector('div.photostream-page-view div.fluid-photostream-coverphoto-view .avatar.person');
@@ -203,7 +201,7 @@ var fixr = fixr || {
             return false;
         } // re-run a little later???
         log('fixr.initPhotographerId() - Attribution elem found');
-        var result;
+        let result;
         if (elem.tagName.toUpperCase() === 'IMG' && elem.src) {
             result = elem.src.match(/https:(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
         } else if (elem.style.backgroundImage) {
@@ -226,8 +224,8 @@ var fixr = fixr || {
     },
     initPhotoId: function () { // Photo Id
         //  *flickr.com/photos/user/PId/*
-        var pattern = /^\/photos\/([^\/]+)\/([\d]{2,})/i;
-        var result = window.location.pathname.match(pattern);
+        const pattern = /^\/photos\/([^\/]+)\/([\d]{2,})/i;
+        const result = window.location.pathname.match(pattern);
         if (result) {
             log('url match med photoId=' + result[2]);
             log('url match med photographerAlias=' + result[1]);
@@ -242,8 +240,8 @@ var fixr = fixr || {
     initAlbumId: function () {
         //  *flickr.com/photos/user/albums/AId/*
         //  *flickr.com/photos/user/sets/AId/*
-        var pattern = /^\/photos\/([^\/]+)\/albums\/([\d]{2,})/i;
-        var result = window.location.pathname.match(pattern);
+        let pattern = /^\/photos\/([^\/]+)\/albums\/([\d]{2,})/i;
+        let result = window.location.pathname.match(pattern);
         if (!result) {
             pattern = /^\/photos\/([^\/]+)\/sets\/([\d]{2,})/i;
             result = window.location.pathname.match(pattern);
@@ -266,7 +264,7 @@ var fixr = fixr || {
             return;
         }
         fixr.pageactionsCount++;
-        for (var p in fixr.context) {  // reset context on new page
+        for (let p in fixr.context) {  // reset context on new page
             if (fixr.context.hasOwnProperty(p)) {
                 fixr.context[p] = '';
             }
@@ -358,9 +356,9 @@ var fixr = fixr || {
         }
 
         // Now run the page handlers....
-        if (fixr.onPageHandlers && fixr.onPageHandlers !== null && fixr.onPageHandlers.length) {
+        if (fixr.onPageHandlers && fixr.onPageHandlers.length) {
             log('We have ' + fixr.onPageHandlers.length + ' onPage handlers starting now...');
-            for (var f = 0; f < fixr.onPageHandlers.length; f++) {
+            for (let f = 0; f < fixr.onPageHandlers.length; f++) {
                 fixr.onPageHandlers[f]();
             }
         }
@@ -371,7 +369,7 @@ var fixr = fixr || {
         } else if (document.getElementById('main')) {
             fixr.content = document.getElementById('main');    // frontpage
         }
-        if (fixr.content && fixr.content.id) {
+        if (fixr.content?.id) {
             log('fixr.content.id = ' + fixr.content.id);
         } else {
             log('content or main element NOT found!');
@@ -393,9 +391,9 @@ var fixr = fixr || {
     runIfStandalonePage: function () {
         if (fixr.content === null && fixr.pageactionsCount === 0) { // if really looks like a "standalone page"...
             // Now run the standalone handlers
-            if (fixr.onStandaloneHandlers && fixr.onStandaloneHandlers !== null && fixr.onStandaloneHandlers.length) {
+            if (fixr.onStandaloneHandlers && fixr.onStandaloneHandlers.length) {
                 log('We have ' + fixr.onStandaloneHandlers.length + ' standalone handlers starting now...');
-                for (var f = 0; f < fixr.onStandaloneHandlers.length; f++) {
+                for (let f = 0; f < fixr.onStandaloneHandlers.length; f++) {
                     fixr.onStandaloneHandlers[f]();
                 }
             }
@@ -406,8 +404,8 @@ var fixr = fixr || {
         setTimeout(fixr.runIfStandalonePage, 500);
     },
     resizeActions: function () {
-        if (fixr.onResizeHandlers && fixr.onResizeHandlers !== null && fixr.onResizeHandlers.length) {
-            for (var f = 0; f < fixr.onResizeHandlers.length; f++) {
+        if (fixr.onResizeHandlers  && fixr.onResizeHandlers.length) {
+            for (let f = 0; f < fixr.onResizeHandlers.length; f++) {
                 fixr.onResizeHandlers[f]();
             }
         }
@@ -417,8 +415,8 @@ var fixr = fixr || {
         fixr.timerResizeActionDelayed = setTimeout(fixr.resizeActions, 250);
     },
     focusActions: function () {
-        if (fixr.onFocusHandlers && fixr.onFocusHandlers !== null && fixr.onFocusHandlers.length) {
-            for (var f = 0; f < fixr.onFocusHandlers.length; f++) {
+        if (fixr.onFocusHandlers && fixr.onFocusHandlers.length) {
+            for (let f = 0; f < fixr.onFocusHandlers.length; f++) {
                 fixr.onFocusHandlers[f]();
             }
         }
@@ -431,7 +429,7 @@ var fixr = fixr || {
             return;
         }
         // create an observer instance
-        var observer = new MutationObserver(function (mutations) {
+        let observer = new MutationObserver(function (mutations) {
             log('NEW PAGE MUTATION!');
             //mutations.forEach(function(mutation) {
             //  log('MO: '+mutation.type); // might check for specific type of "mutations" (MutationRecord)
@@ -439,7 +437,7 @@ var fixr = fixr || {
             fixr.pageActions();
         }); // MutationObserver end
         // configuration of the observer:
-        var config = {attributes: false, childList: true, subtree: false, characterData: false};
+        let config = {attributes: false, childList: true, subtree: false, characterData: false};
         observer.observe(fixr.content, config);
         log('fixr.setupObserve INITIALIZATION DONE');
     },
@@ -452,24 +450,24 @@ var fixr = fixr || {
         window.addEventListener('load', fixr.runDelayedPageActionsIfMissed, false); // Page on load
         window.addEventListener('resize', fixr.resizeActionsDelayed, false); // også på resize
         window.addEventListener('focus', fixr.focusActions, false);
-        if (onPageHandlerArray && onPageHandlerArray !== null && onPageHandlerArray.length) {
+        if (onPageHandlerArray && onPageHandlerArray.length) {
             fixr.onPageHandlers = onPageHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
         fixr.onPageHandlers.push(fixr.style.init); //  styles
-        if (onResizeHandlerArray && onResizeHandlerArray !== null && onResizeHandlerArray.length) {
+        if (onResizeHandlerArray && onResizeHandlerArray.length) {
             fixr.onResizeHandlers = onResizeHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
-        if (onFocusHandlerArray && onFocusHandlerArray !== null && onFocusHandlerArray.length) {
+        if (onFocusHandlerArray && onFocusHandlerArray.length) {
             fixr.onFocusHandlers = onFocusHandlerArray;
         }
-        if (onStandaloneHandlerArray && onStandaloneHandlerArray !== null && onStandaloneHandlerArray.length) { // on standalone pages, not part of "single page application"
+        if (onStandaloneHandlerArray && onStandaloneHandlerArray.length) { // on standalone pages, not part of "single page application"
             fixr.onStandaloneHandlers = onStandaloneHandlerArray;
             fixr.onStandaloneHandlers.push(fixr.style.init); //  styles
         }
 
         if (runNow && runNow.length) {
             log('We have ' + runNow.length + ' early running methods starting now at document.readyState = ' + document.readyState);
-            for (var f = 0; f < runNow.length; f++) {
+            for (let f = 0; f < runNow.length; f++) {
                 runNow[f]();
             }
         }
@@ -491,7 +489,7 @@ function createRichElement(tagName, attributes, ...content) {
             element.setAttribute(attr, value);
         }
     }
-    if (content && content.length) {
+    if (content?.length) {
         element.append(...content);
     }
     return element;
@@ -503,7 +501,7 @@ function insertGMapLink() {
     }
     log('insertGMapLink() running at readystate=' + document.readyState + ' and with photoId=' + fixr.context.photoId);
     if (fixr.context.photoId) {
-        var maplink = fixr.content.querySelector('a.static-maps');
+        let maplink = fixr.content.querySelector('a.static-maps');
         if (maplink) {
             if (!document.getElementById('googlemapslink') && maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?'))) {
                 try {
@@ -557,16 +555,16 @@ const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !imp
 
 function topMenuItems() {
     // User dropdown menu
-    var m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
+    let m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
     if (m) {
-        var gid = null;
+        let gid = null;
         if (m.querySelector('a[data-track=gnYouGroupsClick]')) {
             gid = m.querySelector('a[data-track=gnYouGroupsClick]').parentElement;
         }
         if (!gid && m.querySelector('a[data-track=You-groups]')) {
             gid = m.querySelector('a[data-track=You-groups]').parentElement;
         }
-        var aad = m.querySelector('a[data-track=gnYouSetsClick]') || m.querySelector('a[data-track=You-sets]');
+        let aad = m.querySelector('a[data-track=gnYouSetsClick]') || m.querySelector('a[data-track=You-sets]');
         if (aad && gid) {
             if (gid.hasAttribute('aria-label') && !m.querySelector('li[aria-label=Tags]')) {
                 // latest design
@@ -608,8 +606,8 @@ function topMenuItems() {
     // Photographer menu bar
     m = document.querySelector('ul.links[role=menubar]') || document.querySelector('ul.nav-links');
     if (m) {
-        var gib = m.querySelector('li#groups') || m.querySelector('li.sn-groups');
-        var aab = m.querySelector('li#albums a') || m.querySelector('li.sn-navitem-sets a');
+        let gib = m.querySelector('li#groups') || m.querySelector('li.sn-groups');
+        let aab = m.querySelector('li#albums a') || m.querySelector('li.sn-navitem-sets a');
         if (aab && gib) {
             m.classList.add('extraitems'); // mark extra items being added (so adjust spacing in style)
             if (gib.id === 'groups' && !m.querySelector('li#tags')) {
@@ -648,17 +646,17 @@ function topMenuItems() {
     }
 }
 
-var album = { // cache to avoid repeating requests
+let album = { // cache to avoid repeating requests
     albumId: '',
     commentCount: 0,
     comment: [],
     description: ''
 };
 
-var _wsGetPhotosetCommentsLock = 0;
+let _wsGetPhotosetCommentsLock = 0;
 
 function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
-    var diff = Date.now() - _wsGetPhotosetCommentsLock;
+    let diff = Date.now() - _wsGetPhotosetCommentsLock;
     if ((_wsGetPhotosetCommentsLock > 0) && (diff < 50)) {
         log('Skipping wsGetPhotosetComments() because already running?: ' + diff);
         // *** maybe add a check to see if we are still on same album?!
@@ -683,10 +681,10 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
 
         if (obj.stat === "ok") {
             log("flickr.photosets.comments.getList returned ok");
-            if (obj.comments && obj.comments.photoset_id) {
+            if (obj.comments?.photoset_id) {
                 album.albumId = obj.comments.photoset_id;
             }
-            if (obj.comments && obj.comments.comment) {
+            if (obj.comments?.comment) {
                 album.commentCount = obj.comments.comment.length;
             } else {
                 album.commentCount = 0;
@@ -727,15 +725,15 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
 }
 
 
-var albums = { // cache albums to avoid repeating requests
+let albums = { // cache albums to avoid repeating requests
     ownerId: '',
     column: '',
     count: 0
 };
 
 function getAlbumlist() {
-    var _reqAlbumlist = null;
-    if (window.XMLHttpRequest) {
+    let _reqAlbumlist = null;
+    if (window.XMLHttpRequest) { // TODO: Surprised to see I'm still using XMLHttpRequest !
         _reqAlbumlist = new XMLHttpRequest();
         if (typeof _reqAlbumlist.overrideMimeType !== 'undefined') {
             _reqAlbumlist.overrideMimeType('text/html');
@@ -744,24 +742,24 @@ function getAlbumlist() {
         _reqAlbumlist.onreadystatechange = function () {
             if (_reqAlbumlist.readyState === 4 && _reqAlbumlist.status === 200) {
                 log('_reqAlbumlist returned status=' + _reqAlbumlist.status); // + ', \ntext:\n' + _reqAlbumlist.responseText);
-                var doc = document.implementation.createHTMLDocument("sizeDoc");
+                let doc = document.implementation.createHTMLDocument("sizeDoc");
                 doc.documentElement.innerHTML = _reqAlbumlist.responseText; // NOTICE, this is NOT inserted directly into HTML-document! In the following DOM-content of doc is being analyzed...
                 albums.ownerId = fixr.context.photographerId;
                 albums.column = new DocumentFragment();
                 albums.count = 0;
-                var alist = Array.from(doc.body.querySelectorAll('div.photo-list-album-view'));
-                var imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
-                var columnhead = createRichElement('div', {style: 'margin:0 0 .8em 0'});
+                const alist = Array.from(doc.body.querySelectorAll('div.photo-list-album-view'));
+                const imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
+                let columnhead = createRichElement('div', {style: 'margin:0 0 .8em 0'});
                 if (document.getElementById('albumTeaser')) {
                     if (alist && alist.length > 0) {
                         columnhead.textContent = "Albums";
                         albums.column.appendChild(columnhead);
                         albums.count = alist.length;
                         for (let e of alist.slice(0, 10)) {
-                            var imgUrl = '';
+                            let imgUrl = '';
                             //log(e.outerHTML);
                             // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
-                            var result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
+                            let result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
                             if (result) {
                                 // imgUrl = result[1].replace(/_[a-z]$/, '') + '_s' + result[2];
                                 imgUrl = result[1].replace(/_[a-z]$/, '') + '_q' + result[2];
@@ -770,10 +768,10 @@ function getAlbumlist() {
                                 log('No match on imgPattern');
                             }
                             var a = e.querySelector('a[href][title]'); // sub-element
-                            if (a && a !== null) {
+                            if (a) {
                                 log('Album title: ' + a.title);
                                 log('Album url: ' + a.getAttribute('href'));
-                                var album = document.createElement("div");
+                                let album = document.createElement("div");
                                 let thumbnail = createRichElement('img', {src: imgUrl, class: 'asquare', alt: ''});
                                 let albumtitle = createRichElement('div', {style: 'margin:0 0 .8em 0'}, a.title);
                                 let anchor = createRichElement('a', {href: a.getAttribute('href')}, thumbnail, albumtitle);
@@ -791,9 +789,9 @@ function getAlbumlist() {
                     } else {
                         log('(e Undefined) Problem reading albums or no albums??? : ' + _reqAlbumlist.responseText);
                     }
-                    var foot = document.createElement("div");
-                    var cursive = document.createElement("i");
-                    var moreanchor = document.createElement("a");
+                    let foot = document.createElement("div");
+                    let cursive = document.createElement("i");
+                    let moreanchor = document.createElement("a");
                     moreanchor.href = "/photos/" + (fixr.context.photographerAlias || fixr.context.photographerId) + "/albums/";
                     moreanchor.textContent = albums.count > 10 ? 'More albums...' : (albums.count === 0 ? 'No albums found...' : '');
                     cursive.appendChild(moreanchor);
@@ -809,7 +807,7 @@ function getAlbumlist() {
         };
 
         if (fixr.context.photographerId) {
-            var url = 'https://' + window.location.hostname + '/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums';
+            const url = 'https://' + window.location.hostname + '/photos/' + (fixr.context.photographerAlias || fixr.context.photographerId) + '/albums';
             _reqAlbumlist.open('GET', url, true);
             _reqAlbumlist.send(null);
         } else {
@@ -827,7 +825,7 @@ function albumTeaser() {
         return; // exit if not photostream
     }
     log('albumTeaser() running');
-    var dpc = document.querySelector('div.photolist-container');
+    let dpc = document.querySelector('div.photolist-container');
     if (!dpc) {
         return;
     }
@@ -841,7 +839,7 @@ function albumTeaser() {
     }
 }
 
-var _timerAlbumTeaserDelayed;
+let _timerAlbumTeaserDelayed;
 
 function albumTeaserDelayed() {
     if (fixr.context.pageType !== 'PHOTOSTREAM') {
@@ -899,10 +897,10 @@ function collapsibleSidebar() {
         //     cnt.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'sidebartoggle'}, '[<->]'));
         //     ...
         // BETTER:
-        var cnt = document.querySelector('.sidebar-content-container');
+        let cnt = document.querySelector('.sidebar-content-container');
         if (cnt) {
             if (!document.getElementById('sidebartoggle')) {
-                var toggle = createRichElement('div', {id: 'sidebartoggle'}, '❯');
+                let toggle = createRichElement('div', {id: 'sidebartoggle'}, '❯');
                 cnt.insertAdjacentElement('afterbegin', toggle);
                 setTimeout(function () {
                     window.dispatchEvent(new Event('resize', {'cancelable': true}))
@@ -920,7 +918,7 @@ function collapsibleSidebar() {
     }
 }
 
-var _timerExploreCalendarDelayed;
+let _timerExploreCalendarDelayed;
 
 function exploreCalendarDelayed() {
     if (fixr.context.pageType !== 'EXPLORE') {
@@ -932,7 +930,7 @@ function exploreCalendarDelayed() {
 }
 
 function ctrlClick(e) {
-    var elem, evt = e ? e : event;
+    let elem, evt = e ? e : event;
     if (evt.srcElement) elem = evt.srcElement;
     else if (evt.target) elem = evt.target;
     if (evt.ctrlKey) {
@@ -942,15 +940,15 @@ function ctrlClick(e) {
 }
 
 function ctrlClicking() {
-    var plv = document.querySelectorAll('div.photo-list-view');
-    for (var i = 0; i < plv.length; i++) {
+    let plv = document.querySelectorAll('div.photo-list-view');
+    for (let i = 0; i < plv.length; i++) {
         log('ctrlClicking(): plv[' + i + '] found!');
         // Allow me to open tabs in background by ctrl-click in Firefox:
         plv[i].parentNode.addEventListener('click', ctrlClick, true);
     }
 }
 
-var _timerCtrlClicking;
+let _timerCtrlClicking;
 
 function ctrlClickingDelayed() {
     log('ctrlClickingDelayed() running...');
@@ -962,18 +960,18 @@ const topPagination_style = '#topPaginationContainer{width:250px;height:40px;mar
 
 function topPagination() {
     log('topPagination()');
-    var bottomPagination = document.querySelector('.pagination-view');
+    let bottomPagination = document.querySelector('.pagination-view');
     if (!bottomPagination) {
         bottomPagination = document.querySelector('.explore-pagination');
     }
     if (bottomPagination && !document.getElementById('topPagination')) {
         if (bottomPagination.childElementCount > 0) {
-            var topPagination = bottomPagination.cloneNode(true);
+            let topPagination = bottomPagination.cloneNode(true);
             topPagination.id = 'topPagination';
-            var topPaginationContainer = document.createElement('div');
+            let topPaginationContainer = document.createElement('div');
             topPaginationContainer.id = 'topPaginationContainer';
             topPaginationContainer.appendChild(topPagination);
-            var topbar = document.querySelector('.fluid-magic-tools-view');
+            let topbar = document.querySelector('.fluid-magic-tools-view');
             if (!topbar) topbar = document.querySelector('.album-toolbar-content');
             if (!topbar) topbar = document.querySelector('.group-pool-subheader-view');
             if (!topbar) topbar = document.querySelector('.title-row');
@@ -997,36 +995,36 @@ function albumExtras() { // links to album's map and comments
         log('Exit albumsExtra(). Mangler albumId');
         return;
     }
-    var elist = document.querySelector('div.album-engagement-view');
+    let elist = document.querySelector('div.album-engagement-view');
     if (elist && !document.getElementById('albumCommentCount')) {
         // map-link:
-        var mapdiv = document.createElement('div');
+        let mapdiv = document.createElement('div');
         mapdiv.className = 'create-book-container';
         mapdiv.title = 'Album on map';
         mapdiv.style.textAlign = 'center';
-        var maplink = document.createElement('a');
+        let maplink = document.createElement('a');
         maplink.href = '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
         maplink.style.fontSize = '14px';
         maplink.style.color = '#FFF';
-        var mapicon = document.createElement('span');
+        let mapicon = document.createElement('span');
         mapicon.title = 'Album on map';
         mapicon.className = 'album-map-icon';
         maplink.appendChild(mapicon);
         mapdiv.appendChild(maplink);
         elist.appendChild(mapdiv);
         // comments-link:
-        var comurl = '/photos/' + fixr.context.photographerAlias + '/sets/' + fixr.context.albumId + '/comments/';  // /sets/* urls works, /albums/* urls currently doesn't work (yet?)
+        let comurl = '/photos/' + fixr.context.photographerAlias + '/sets/' + fixr.context.albumId + '/comments/';  // /sets/* urls works, /albums/* urls currently doesn't work (yet?)
         // var comurl = '#'; // NEW?!
-        var cmdiv = document.createElement('div');
+        let cmdiv = document.createElement('div');
         cmdiv.className = 'create-book-container';
         cmdiv.title = 'Comments';
         cmdiv.style.textAlign = 'center';
-        var cmlink = document.createElement('a');
+        let cmlink = document.createElement('a');
         cmlink.href = comurl;
         cmlink.style.fontSize = '14px';
         cmlink.style.color = '#FFF';
         cmlink.id = 'albumCommentsLink';
-        var cmicon = document.createElement('span');
+        let cmicon = document.createElement('span');
         cmicon.title = 'Album comments';
         cmicon.className = 'album-comments-icon';
         cmicon.id = 'albumCommentCount';
@@ -1058,7 +1056,7 @@ function updateTags() {
     log('updateTags() med photographerAlias=' + fixr.context.photographerAlias + ', photographerId=' + fixr.context.photographerId + ' og photographerName=' + fixr.context.photographerName);
     if (document.querySelector('ul.tags-list')) {
         let tags = document.querySelectorAll('ul.tags-list>li');
-        if (tags && tags !== null && tags.length > 0) {
+        if (tags && tags.length > 0) {
             log('updateTags() Looping ' + tags.length + ' tags...');
             let iconHref = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
             for (let tag of tags) {
@@ -1100,7 +1098,7 @@ function updateTagsDelayed() {
 const photoDates_style = '.has-date-info {position:relative} .date-info{z-index:10;padding:0 .5em 0 .5em;display:none;position:absolute;top:30px;left:-40px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .has-date-info:hover .date-info{display:block;} .date-info label {display:inline-block; min-width: 5em;}';
 
 function photoDates() {
-    var elem = document.querySelector('div.view.sub-photo-date-view');
+    let elem = document.querySelector('div.view.sub-photo-date-view');
     if (elem && !elem.classList.contains('has-date-info')) {
         elem.classList.add('has-date-info');
         elem.insertAdjacentElement('beforeend', createRichElement('div', {class: 'date-info'}, 'Date info!'));
@@ -1142,7 +1140,7 @@ const orderwarning_style = '.filter-sort.warning p {animation:wink 3s ease 1s 1;
 
 function orderWarning() {
     if (fixr.context.pageType === 'PHOTOSTREAM') {
-        var e = document.querySelector('.dropdown-link.filter-sort');
+        let e = document.querySelector('.dropdown-link.filter-sort');
         if (e) {
             if (['Date taken', 'Fecha de captura', 'Aufnahmedatum', 'Date de prise de vue', 'Data dello scatto', 'Tirada na data', 'Ngày chụp', 'Tanggal pengambilan', '拍攝日期', '촬영 날짜'].includes(e.innerText.trim())) {
                 e.classList.add('warning');
@@ -1156,7 +1154,7 @@ function orderWarning() {
 const newsfeedLinks_style = 'div#feedlinks {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px} ul.gn-tools>div#feedlinks {right:-120px} div#gn-wrap>div#feedlinks, div.header-wrap>div#feedlinks, header#branding>div#feedlinks {right:-120px} div#feedlinks>a {display:block;float:left;margin:10px 8px 0 0;width:16px} div#feedlinks>a>img {display:block;width:16px;height:16px} ul.gn-tools>div#feedlinks>a {margin-top:2px}';
 
 function newsfeedLinks() {
-    var elem = document.getElementById('feedlinks');
+    let elem = document.getElementById('feedlinks');
     if (elem) {
         elem.textContent = '';
     }
@@ -1164,21 +1162,21 @@ function newsfeedLinks() {
 }
 
 function updateNewsfeedLinks() {
-    var feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
+    let feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
     log('Number of feed links found: ' + feedlinks.length);
-    var dgnc = document.querySelector('div.global-nav-container ul.gn-tools') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') || document.querySelector('div.header-wrap') || document.querySelector('header#branding') || document.querySelector('div.custom-header-container>div>div');
+    let dgnc = document.querySelector('div.global-nav-container ul.gn-tools') || document.querySelector('div#gn-wrap') || document.querySelector('div#global-nav') || document.querySelector('div.header-wrap') || document.querySelector('header#branding') || document.querySelector('div.custom-header-container>div>div');
     if (dgnc) {
         if (!document.getElementById('feedlinks')) {
             dgnc.style.position = "relative";
             dgnc.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'feedlinks'}));
         }
-        var elem = document.getElementById('feedlinks');
+        let elem = document.getElementById('feedlinks');
         if (elem) {
-            var feedicons = new DocumentFragment();
+            let feedicons = new DocumentFragment();
             for (const link of feedlinks) {
-                var feedlink = document.createElement('a');
+                let feedlink = document.createElement('a');
                 feedlink.href = link.href;
-                var feedsymbol = document.createElement('img');
+                let feedsymbol = document.createElement('img');
                 feedsymbol.src = 'https://c1.staticflickr.com/5/4869/32220441998_601de47e20_o.png';
                 feedsymbol.alt = 'Feedlink';
                 feedsymbol.style.width = '16px';
@@ -1209,10 +1207,10 @@ function initSlideshowSpeed() {
     }
 }
 
-var _wsGetPhotoInfoLock = 0;
+let _wsGetPhotoInfoLock = 0;
 
 function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
-    var diff = Date.now() - _wsGetPhotoInfoLock;
+    let diff = Date.now() - _wsGetPhotoInfoLock;
     if ((_wsGetPhotoInfoLock > 0) && (diff < 50)) {
         log('Skipping wsGetPhotoInfo() because already running?: ' + diff);
         // *** maybe add a check to see if we are still on same photo?!
@@ -1231,12 +1229,12 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     }
 
     function handleResult(obj) {
-        var elem = document.querySelector('.date-info');
+        let elem = document.querySelector('.date-info');
         if (obj.stat === "ok") {
             log("flickr.photos.getInfo returned ok");
-            if (obj.photo && obj.photo.id) {
-                var uploadDate = new Date(0);
-                var debugstr = '';
+            if (obj.photo?.id) {
+                let uploadDate = new Date(0);
+                let debugstr = '';
                 if (obj.photo.dateuploaded) {
                     uploadDate = new Date(obj.photo.dateuploaded * 1000);
                     debugstr = 'UploadDate: ' + uploadDate.toString();
@@ -1257,11 +1255,11 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     }
                     if (obj.photo.dates.taken && obj.photo.dates.takenunknown.toString() === '0') {
                         debugstr += '<br />TakenDate: ' + obj.photo.dates.taken + ' (granularity=' + obj.photo.dates.takengranularity + ')';
-                        var takenDateTmp = obj.photo.dates.taken.replace(/[^\d-:\s]/g, ''); // "2018-03-30 00:35:44" (Remove any unexpected characters)
-                        var takenDate = new Date(Date.parse(takenDateTmp.replace(' ', 'T')));
-                        var dayStart = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T00:00:00'));
-                        var dayEnd = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T23:59:59'));
-                        var takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
+                        let takenDateTmp = obj.photo.dates.taken.replace(/[^\d-:\s]/g, ''); // "2018-03-30 00:35:44" (Remove any unexpected characters)
+                        let takenDate = new Date(Date.parse(takenDateTmp.replace(' ', 'T')));
+                        let dayStart = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T00:00:00'));
+                        let dayEnd = new Date(Date.parse(takenDateTmp.substring(0, 10) + 'T23:59:59'));
+                        let takenTimeIndex = takenDate.toString().search(/\d{2}[:\.]\d{2}[:\.]\d{2}/);
                         if (obj.photo.dates.takengranularity.toString() === '0') { // 0	Y-m-d H:i:s - full datetime
                             let linkElem = createRichElement('a', {href: '/search/?user_id=' + fixr.context.photographerId + '&view_all=1&min_taken_date=' + (Math.floor(dayStart.getTime() / 1000) - 43200) + '&max_taken_date=' + (Math.floor(dayEnd.getTime() / 1000) + 43200)}, takenDate.toString().substring(0, takenTimeIndex - 1));
                             dateDetail.append(takenLabel, ' ', linkElem, takenDate.toString().substring(takenTimeIndex - 1, takenTimeIndex + 8) + ' "Camera Time"', brElem);
@@ -1280,8 +1278,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     }
                 }
                 if (elem) {
-                    var uploadDateStr = uploadDate.toString();
-                    var n = uploadDateStr.indexOf('(');
+                    let uploadDateStr = uploadDate.toString();
+                    let n = uploadDateStr.indexOf('(');
                     if (n > 0) {
                         dateDetail.append(uploadedLabel, ' ' + uploadDateStr.substring(0, n));
                     } else {
@@ -1289,7 +1287,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     }
                     elem.textContent = '';
                     elem.append(dateDetail);
-                    var withTitle = elem.parentElement.querySelector('span[title]');
+                    let withTitle = elem.parentElement.querySelector('span[title]');
                     if (withTitle) {
                         withTitle.removeAttribute('title');
                     }
@@ -1307,7 +1305,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     function handleError(error) {
         console.log('There has been a problem with your fetch operation: ', error.message);
         log('There has been a problem with your fetch operation: ' + error);
-        var elem = document.querySelector('.date-info');
+        let elem = document.querySelector('.date-info');
         if (elem) {
             elem.textContent = 'There was an error fetching detailed date details...';
         }
@@ -1327,8 +1325,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
 }
 
 function stereotest() {
-    var self = "flickrfixruserscript";
-    var other = "flickrfixrwebextension";
+    let self = "flickrfixruserscript";
+    let other = "flickrfixrwebextension";
     if (fixr.isWebExtension()) {
         self = "flickrfixrwebextension";
         other = "flickrfixruserscript";
@@ -1352,7 +1350,7 @@ function userscriptWarning() {
             if (!prevVersion || prevVersion !== info.script.version) {
                 localStorage.setItem("fixr_userscript_warning_timestamp", Date.now().toString());
                 localStorage.setItem("fixr_userscript_warning_version", info.script.version);
-                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. Did you know that Flickr Fixr is also available as a regular browser extension for most webbrowsers? \n\nSupport and test of userscript-version is limited, and some features are not available or might stop working. It is highly recommended to use the regular browser extensions instead. \n\nYou can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
+                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. \n\nThis userscript version of Flickr Fixr is not supported anymore, and probably wont be upgraded even if a Flickr update breaks this userscript. \n\nFor continued support and updates, make the switch to the Flickr Fixr browser-extension. You can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
             }
         }
     }
@@ -1433,16 +1431,23 @@ function handlerInitFixr(options) { // Webextension init
         runNow.push(initSlideshowSpeedHook);
         onPageHandlers.push(initSlideshowSpeed);
     }
-    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
+    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers); // WebExtension
 }
 
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
     if (fixr.isWebExtension()) {
+
+        // WEBEXTENSION SETUP with options
+
         log('WebExtension - init with options...');
         withOptionsDo(handlerInitFixr); // Load selected features and run fixr.init with them...
+
     } else {
+
+        // USERSCRIPT SETUP
+
         log('Userscript - fixr.init...');
         fixr.style.add(shared_style);
         fixr.style.add(albumExtras_style);
@@ -1454,8 +1459,8 @@ if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
         fixr.style.add(exploreCalendar_style);
         fixr.style.add(albumTeaser_style);
         fixr.style.add(updateTags_style_hover);
-        fixr.style.add(collapsibleSidebar_style);
         // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [], [], [topMenuItems, newsfeedLinks, mapInitializer]);
+        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [], [], [topMenuItems, newsfeedLinks, mapInitializer]); // Userscript
+
     }
 }

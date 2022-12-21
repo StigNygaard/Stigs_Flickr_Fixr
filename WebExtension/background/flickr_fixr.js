@@ -1,10 +1,11 @@
 var versionnumber = (function Versionnumber() {  // major.minor.revision
     function current() {
-        if (browser && browser.runtime) { // webextension versionnumber
+        if (browser?.runtime) { // webextension versionnumber
             return browser.runtime.getManifest().version;
         }
         // undefined
     }
+
     function compare(v1, v2) {
         if (typeof v2 === 'undefined') {
             v2 = v1;
@@ -23,28 +24,34 @@ var versionnumber = (function Versionnumber() {  // major.minor.revision
         }
         return 0;
     }
+
     function parts(v, n) {
         if (typeof n === 'undefined') {
             n = v;
             v = current();
         }
         let vparts = v.split('.', n);
-        vparts.map( function(item) {return String(parseInt(item.trim(),10))});
+        vparts.map(function (item) {
+            return String(parseInt(item.trim(), 10))
+        });
         while (vparts.length < n) vparts.push('0');
         return vparts.join('.');
     }
+
     function major(v) {
         if (typeof v === 'undefined') {
             v = current();
         }
         return parts(v, 1);
     }
+
     function minor(v) {
         if (typeof v === 'undefined') {
             v = current();
         }
         return parts(v, 2);
     }
+
     function revision(v) {
         if (typeof v === 'undefined') {
             v = current();
@@ -63,19 +70,19 @@ var versionnumber = (function Versionnumber() {  // major.minor.revision
 
 })();
 
-function messageHandler(request, sender, sendResponse) { // This is returning a Promise (because using sendResponse() is deprecated)
+function messageHandler(request, sender, sendResponse) {
     // console.log("Message received from the content script: " + JSON.stringify(request));
-    if (request.msgtype==="flickrservice") {
+    if (request.msgtype === "flickrservice") {
         let optstr = Object.entries(request.options).reduce(
-            function(acc, v) {
-                acc.push(v[0]+'='+v[1]); // key/value
+            function (acc, v) {
+                acc.push(v[0] + '=' + v[1]); // key/value
                 return acc;
             },
             []
         ).join('&');
-        return fetch('https://api.flickr.com/services/rest/?method=' + request.method + '&api_key=' + request.fkey + '&format=json&nojsoncallback=1&' + optstr, { credentials: 'include' }).then(function (response) {
+        return fetch('https://api.flickr.com/services/rest/?method=' + request.method + '&api_key=' + request.fkey + '&format=json&nojsoncallback=1&' + optstr, {credentials: 'include'}).then(function (response) {
             if (response.ok) {
-                if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+                if (response.headers.get('content-type')?.includes('application/json')) {
                     return response.json();
                 }
                 throw new Error('Response was not in expected json format.');
@@ -83,8 +90,8 @@ function messageHandler(request, sender, sendResponse) { // This is returning a 
             throw new Error('Network response was not ok.');
         });
     } else {
-        console.log("ERROR in messageHandler. Unexpected msgtype="+request.msgtype);
-        throw new Error("ERROR in messageHandler. Unexpected msgtype="+request.msgtype);
+        console.log("ERROR in messageHandler. Unexpected msgtype=" + request.msgtype);
+        throw new Error("ERROR in messageHandler. Unexpected msgtype=" + request.msgtype);
     }
 }
 
@@ -93,24 +100,24 @@ function messageHandler(request, sender, sendResponse) { // This is returning a 
 // https://discourse.mozilla.org/t/best-way-to-do-install-update-uninstall-pages/40302
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
 // https://extensionworkshop.com/documentation/develop/onboard-upboard-offboard-users/
-function installHandler({ reason, temporary, previousVersion }) {
+function installHandler({reason, temporary, previousVersion}) {
     console.log("Extension version: " + browser.runtime.getManifest().version);
     console.log("Installation or update! details.reason: " + reason);
     if (typeof temporary !== 'undefined') { // Ff55
         console.log("details.temporary: " + temporary); // true/false
     }
-    switch(reason) {
+    switch (reason) {
         case 'update':
             if (typeof previousVersion !== 'undefined') { // Ff55
                 console.log("Updated from details.previousVersion: " + previousVersion);
             }
-            // break;
+        // break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
             // browser.runtime.getManifest()
             // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Extension_pages
-            browser.tabs.create({ url: "/onboard/onboard.html"});
+            browser.tabs.create({url: "/onboard/onboard.html"});
             break;
         case 'browser_update':
             break;

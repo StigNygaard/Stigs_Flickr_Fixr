@@ -20,14 +20,14 @@
     "128": "icons/fixr128.png",
     "256": "icons/fixr256.png"
   },
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
-      "strict_min_version": "52.0"
+      "strict_min_version": "102.0"
     }
   },
-  "minimum_chrome_version": "67.0",
-  "minimum_opera_version": "56.0",
-  "minimum_edge_version": "79.0",
+  "minimum_chrome_version": "105.0",
+  "minimum_edge_version": "105.0",
+  "minimum_opera_version": "91.0",
   "background": {
     "scripts": ["lib/mozilla/browser-polyfill.js", "background/flickr_fixr.js"],
     "persistent": false

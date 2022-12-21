@@ -1,22 +1,7 @@
-// (function() {
-//     var _setTimeout = window.setTimeout;
-//     window.setTimeout = function(...argslist) {
-//         if(console) console.log("SetTimeout: ", ...argslist);
-//         return _setTimeout.apply(this, argslist);  // <-- (null or this?)
-//     };
-// })();
-// (function() {
-//     var _setInterval = window.setInterval;
-//     window.setInterval = function(...argslist) {
-//         if(console) console.log("SetInterval: ", ...argslist);
-//         return _setInterval.apply(this, argslist);  // <-- (null or this?)
-//     };
-// })();
-
 (function() {
     let _setTimeout = window.setTimeout;
     window.setTimeout = function(...argslist) {
-        if (document && document.body && document.body.dataset.slideshowspeed && argslist.length === 2 && argslist[0].name === 'bound handlePhotoChange' && argslist[1] == 5000) {
+        if (document?.body?.dataset?.slideshowspeed && argslist.length === 2 && argslist[0].name === 'bound handlePhotoChange' && argslist[1] == 5000) {
             argslist[1] = parseInt(document.body.dataset.slideshowspeed, 10) * 1000; // get value from DOM attribute
             // console.log("SetTimeout function: " + argslist[0].name + ", " + argslist[1]);
         }
