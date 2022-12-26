@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 const changelog = [
-    {version: '2022.12.xx.0', description: 'Final version of the userscript (probably). You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
+    {version: '2022.12.26.0', description: 'Last version of the userscript. You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
     {version: '2022.10.29.1', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
     {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
@@ -1341,16 +1341,27 @@ function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
+function weekNo(dt) {
+    let date = dt || new Date();
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    // January 4 is always in week 1.
+    let week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
 function userscriptWarning() {
     if (!document.body.classList.contains("flickrfixrwebextension")) { // Skip warning if both versions are installed (There will be another warning from stereotest()).
         let info = (GM_info ? GM_info : (typeof GM === 'object' && GM !== null && typeof GM.info === 'object' ? GM.info : null));
         if (info) {
-            let prevDate = localStorage.getItem("fixr_userscript_warning_timestamp");
+            let prevWeekNo = localStorage.getItem("fixr_userscript_warning_weekno");
             let prevVersion = localStorage.getItem("fixr_userscript_warning_version");
-            if (!prevVersion || prevVersion !== info.script.version) {
-                localStorage.setItem("fixr_userscript_warning_timestamp", Date.now().toString());
+            if (!prevVersion || prevVersion !== info.script.version || !prevWeekNo || prevWeekNo != weekNo()) {
+                localStorage.setItem("fixr_userscript_warning_weekno", weekNo());
                 localStorage.setItem("fixr_userscript_warning_version", info.script.version);
-                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. \n\nThis userscript version of Flickr Fixr is not supported anymore, and probably wont be upgraded even if a Flickr update breaks this userscript. \n\nFor continued support and updates, make the switch to the Flickr Fixr browser-extension. You can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
+                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. \n\nUserscript version of Flickr Fixr is not supported anymore, and probably wont be upgraded even if a Flickr update breaks this userscript. \n\nFor continued support and updates, make the switch to the Flickr Fixr browser-extension. You can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
             }
         }
     }
