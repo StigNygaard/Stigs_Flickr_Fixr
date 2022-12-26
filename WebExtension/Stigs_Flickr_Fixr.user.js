@@ -14,7 +14,7 @@
 // @exclude     *://*.flickr.com/signin/*
 // @exclude     *://*.flickr.com/signup/*
 // @exclude     *://*.flickr.com/account/*
-// @version     2022.12.26.0
+// @version     2022.12.26.1
 // @run-at      document-start
 // @grant       none
 // @noframes
@@ -22,7 +22,7 @@
 
 // CHANGELOG - The most recent or important updates/versions:
 const changelog = [
-    {version: '2022.12.26.0', description: 'Last version of the userscript. You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
+    {version: '2022.12.26.1', description: 'Last version of the userscript. You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
     {version: '2022.10.29.1', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
     {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
     {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
