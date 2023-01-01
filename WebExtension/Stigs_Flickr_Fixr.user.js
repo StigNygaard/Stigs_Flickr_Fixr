@@ -1,46 +1,3 @@
-// ==UserScript==
-// @name        Stig's Flickr Fixr
-// @namespace   dk.rockland.userscript.flickr.fixr
-// @description Show photographer's albums on photostream-pages, Photographer's other photos by tag-links, Links to album-map and album-comments, Actually show a geotagged photo on the associated map, Top-pagers - And more...
-// @author      Stig Nygaard, https://www.rockland.dk, https://www.flickr.com/photos/stignygaard/
-// @homepageURL https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
-// @supportURL  https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/
-// @icon        https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/icons/fixr32.png
-// @icon64      https://raw.githubusercontent.com/StigNygaard/Stigs_Flickr_Fixr/master/WebExtension/icons/fixr64.png
-// @match       https://*.flickr.com/*
-// @match       *://*.flickr.net/*
-// @exclude     *://api.flickr.com/*
-// @exclude     *://identify.flickr.com/*
-// @exclude     *://*.flickr.com/signin/*
-// @exclude     *://*.flickr.com/signup/*
-// @exclude     *://*.flickr.com/account/*
-// @version     2022.12.26.1
-// @run-at      document-start
-// @grant       none
-// @noframes
-// ==/UserScript==
-
-// CHANGELOG - The most recent or important updates/versions:
-const changelog = [
-    {version: '2022.12.26.1', description: 'Last version of the userscript. You should make the switch to the "native" browser-extension versions instead, which is available for Chrome, Edge and Firefox compatible webbrowsers.'},
-    {version: '2022.10.29.1', description: 'For webextension, optionally make sidebar in searchresults collapsible. Collapsible sidebar feature not available in userscript version.'},
-    {version: '2022.06.19.0', description: 'Remove the photo upscale feature. Not so relevant/important anymore, and very was very unreliable (sensitive to site changes). Lots of old ugly code I got rid of there... '},
-    {version: '2022.01.23.0', description: 'New feature: Control slideshow speed (Supported in webextension - not supported in userscript version of Flickr Fixr)'},
-    {version: '2020.06.22.0', description: 'Removing 90% of map-fix for showing geolocation of a photo. Finally Flickr has mostly fixed issue themselves. Restoring insertion of Google Maps link which broke by the Flickr update.'},
-    {version: '2020.06.21.0', description: 'A little bit of cleaning, a warning to userscript users - and "sub-options" for the tag-links feature (in webextension version)'},
-    {version: '2019.10.19.0', description: 'Adjusting to Flickr 2019 updates.'},
-    {version: '2018.11.29.0', description: 'New feature: Show available RSS/Atom newsfeeds on pages.'},
-    {version: '2018.10.15.1', description: 'Add Options page to Firefox and Chrome browser extensions, to enable or disable individual features of Flickr Fixr (Userscript version is still all or nothing).'},
-    {version: '2018.10.15.0', description: 'New feature: Added Collections and Map to topmenus.'},
-    {version: '2018.08.19.0', description: 'New features: Added link leading to Tags page in topmenus. Added display of full Taken and Upload time, plus link for photographer\'s other photos from (approx.) same day.'},
-    {version: '2018.05.20.0', description: 'New feature: Added a subtle warning if photostreams are shown in Date-taken order instead of Date-uploaded order.'},
-    {version: '2017.07.31.0', description: 'New feature: Adding a Google Maps link on geotagged photos. Also: Removing unused code. Development code now in GitHub repository: https://github.com/StigNygaard/Stigs_Flickr_Fixr'},
-    {version: '2016.03.11.1', description: 'New features: A link to "recent uploads page" added on the Explore page. Ctrl-click fix for opening tabs in background on search pages (Firefox-only problem?).'},
-    {version: '2016.02.09.0', description: 'New feature: Link to Explore Calendar added to Explore page.'},
-    {version: '2016.02.06.2', description: 'New feature: Top-pagers! Hover the mouse in the center just above photostreams to show a pagination-bar.'},
-    {version: '2015.11.28.1', description: 'New feature: Album-headers are now updated with links to album-map and album-comments.'},
-    {version: '2015.08.26.4', description: 'Initial userscript release version. Photo scale/replace, album column and tag-link feature.'}
-];
 
 const DEBUG = false;
 
@@ -711,17 +668,12 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
         log('There has been a problem with your fetch operation: ' + error);
     }
 
-    if (fixr.isWebExtension()) {
-        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({
-            msgtype: "flickrservice",
-            method: "flickr.photosets.comments.getList",
-            fkey: fkey,
-            options: {photoset_id: fixr.context.albumId}
-        }).then(handleResult).catch(handleError);
-    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
-        fetch('https://api.flickr.com/services/rest/?method=flickr.photosets.comments.getList&api_key=' + fkey + '&photoset_id=' + fixr.context.albumId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
-    }
+    browser.runtime.sendMessage({
+        msgtype: "flickrservice",
+        method: "flickr.photosets.comments.getList",
+        fkey: fkey,
+        options: {photoset_id: fixr.context.albumId}
+    }).then(handleResult).catch(handleError);
 }
 
 
@@ -1311,17 +1263,12 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
         }
     }
 
-    if (fixr.isWebExtension()) {
-        // Call fetch() from background-script in WebExtensions, because changes in Chrome/Chromium https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-        browser.runtime.sendMessage({
-            msgtype: "flickrservice",
-            method: "flickr.photos.getInfo",
-            fkey: fkey,
-            options: {photo_id: fixr.context.photoId}
-        }).then(handleResult).catch(handleError);
-    } else { // Userscript (So far it still works, also on Chrome/Tampermonkey...)
-        fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=' + fkey + '&photo_id=' + fixr.context.photoId + '&format=json&nojsoncallback=1').then(handleResponse).then(handleResult).catch(handleError);
-    }
+    browser.runtime.sendMessage({
+        msgtype: "flickrservice",
+        method: "flickr.photos.getInfo",
+        fkey: fkey,
+        options: {photo_id: fixr.context.photoId}
+    }).then(handleResult).catch(handleError);
 }
 
 function stereotest() {
@@ -1333,7 +1280,7 @@ function stereotest() {
     }
     document.body.classList.add(self);
     if (document.body.classList.contains(other)) {
-        alert("It looks like you are running both Stigs Flickr Fixr userscript and Flickr Fixr browser extension at once. Please uninstall or disable one of them to avoid errors and unpredictable behaviors!");
+        alert("It looks like you are running both Stigs Flickr Fixr userscript and Flickr Fixr browser extension at once. Please uninstall userscript to avoid unpredictable behaviors!");
     }
 }
 
@@ -1448,30 +1395,6 @@ function handlerInitFixr(options) { // Webextension init
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
-    if (fixr.isWebExtension()) {
-
-        // WEBEXTENSION SETUP with options
-
-        log('WebExtension - init with options...');
-        withOptionsDo(handlerInitFixr); // Load selected features and run fixr.init with them...
-
-    } else {
-
-        // USERSCRIPT SETUP
-
-        log('Userscript - fixr.init...');
-        fixr.style.add(shared_style);
-        fixr.style.add(albumExtras_style);
-        fixr.style.add(topPagination_style);
-        fixr.style.add(orderwarning_style);
-        fixr.style.add(topMenuItems_style);
-        fixr.style.add(photoDates_style);
-        fixr.style.add(newsfeedLinks_style);
-        fixr.style.add(exploreCalendar_style);
-        fixr.style.add(albumTeaser_style);
-        fixr.style.add(updateTags_style_hover);
-        // FIXR fixr.init([runNow], [onPageHandlers], [onResizeHandlers], [onFocusHandlers], [onStandaloneHandlers])
-        fixr.init([/* runEarly */], [stereotest, topMenuItems, ctrlClicking, albumExtras, topPagination, shootingSpaceballs, orderWarning, newsfeedLinks, photoDatesDelayed, ctrlClickingDelayed, exploreCalendarDelayed, albumTeaserDelayed, insertGMapLinkDelayed, updateTagsDelayed, userscriptWarning], [], [], [topMenuItems, newsfeedLinks, mapInitializer]); // Userscript
-
-    }
+    log('WebExtension - init with options...');
+    withOptionsDo(handlerInitFixr); // Load selected features and run fixr.init with them...
 }
