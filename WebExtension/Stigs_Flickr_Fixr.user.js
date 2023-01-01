@@ -855,12 +855,12 @@ function collapsibleSidebar() {
                 let toggle = createRichElement('div', {id: 'sidebartoggle'}, '❯');
                 cnt.insertAdjacentElement('afterbegin', toggle);
                 setTimeout(function () {
-                    window.dispatchEvent(new Event('resize', {'cancelable': true}))
+                    window.dispatchEvent(new UIEvent('resize', {'cancelable': true}))
                 }, 100);
                 toggle.addEventListener('click', function (e) {
                     document.body.classList.toggle('searchsidebar_closed');
                     setTimeout(function () {
-                        window.dispatchEvent(new Event('resize', {'cancelable': true}))
+                        window.dispatchEvent(new UIEvent('resize', {'cancelable': true}))
                     }, 100);
                 })
             }
