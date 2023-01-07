@@ -1,3 +1,5 @@
+/* This script-file started as an userscript (hence the filename). */
+/* But today it only works as contentscript in the webextension.   */
 
 const DEBUG = false;
 
@@ -105,12 +107,6 @@ var fixr = fixr || {
             }
             return this._explore.toISOString().substring(0, 16).replace('T', ' ') + ' Explore beat!';
         }
-    },
-    isWebExtension: function () {
-        return (typeof GM_info === 'undefined') && (typeof GM === 'undefined');
-    },
-    isUserscript: function () {
-        return !fixr.isWebExtension();
     },
     initUserId: function () {
         if (window.auth?.user?.nsid) {
@@ -1272,12 +1268,8 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
 }
 
 function stereotest() {
-    let self = "flickrfixruserscript";
-    let other = "flickrfixrwebextension";
-    if (fixr.isWebExtension()) {
-        self = "flickrfixrwebextension";
-        other = "flickrfixruserscript";
-    }
+    let self = "flickrfixrwebextension";
+    let other = "flickrfixruserscript";
     document.body.classList.add(self);
     if (document.body.classList.contains(other)) {
         alert("It looks like you are running both Stigs Flickr Fixr userscript and Flickr Fixr browser extension at once. Please uninstall userscript to avoid unpredictable behaviors!");
