@@ -101,17 +101,13 @@ function messageHandler(request, sender, sendResponse) {
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
 // https://extensionworkshop.com/documentation/develop/onboard-upboard-offboard-users/
 function installHandler({reason, temporary, previousVersion}) {
-    console.log("Extension version: " + browser.runtime.getManifest().version);
+    console.log("Flickr Fixr extension version: " + browser.runtime.getManifest().version);
     console.log("Installation or update! details.reason: " + reason);
-    if (typeof temporary !== 'undefined') { // Ff55
-        console.log("details.temporary: " + temporary); // true/false
-    }
+    console.log("details.temporary: " + temporary);
     switch (reason) {
         case 'update':
-            if (typeof previousVersion !== 'undefined') { // Ff55
-                console.log("Updated from details.previousVersion: " + previousVersion);
-            }
-        // break;
+            console.log("Updated from details.previousVersion: " + previousVersion);
+            break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
