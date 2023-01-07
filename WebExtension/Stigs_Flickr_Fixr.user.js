@@ -309,7 +309,7 @@ var fixr = fixr || {
         }
 
         // Now run the page handlers....
-        if (fixr.onPageHandlers && fixr.onPageHandlers.length) {
+        if (fixr.onPageHandlers?.length) {
             log('We have ' + fixr.onPageHandlers.length + ' onPage handlers starting now...');
             for (let f = 0; f < fixr.onPageHandlers.length; f++) {
                 fixr.onPageHandlers[f]();
@@ -344,7 +344,7 @@ var fixr = fixr || {
     runIfStandalonePage: function () {
         if (fixr.content === null && fixr.pageactionsCount === 0) { // if really looks like a "standalone page"...
             // Now run the standalone handlers
-            if (fixr.onStandaloneHandlers && fixr.onStandaloneHandlers.length) {
+            if (fixr.onStandaloneHandlers?.length) {
                 log('We have ' + fixr.onStandaloneHandlers.length + ' standalone handlers starting now...');
                 for (let f = 0; f < fixr.onStandaloneHandlers.length; f++) {
                     fixr.onStandaloneHandlers[f]();
@@ -357,7 +357,7 @@ var fixr = fixr || {
         setTimeout(fixr.runIfStandalonePage, 500);
     },
     resizeActions: function () {
-        if (fixr.onResizeHandlers  && fixr.onResizeHandlers.length) {
+        if (fixr.onResizeHandlers?.length) {
             for (let f = 0; f < fixr.onResizeHandlers.length; f++) {
                 fixr.onResizeHandlers[f]();
             }
@@ -368,7 +368,7 @@ var fixr = fixr || {
         fixr.timerResizeActionDelayed = setTimeout(fixr.resizeActions, 250);
     },
     focusActions: function () {
-        if (fixr.onFocusHandlers && fixr.onFocusHandlers.length) {
+        if (fixr.onFocusHandlers?.length) {
             for (let f = 0; f < fixr.onFocusHandlers.length; f++) {
                 fixr.onFocusHandlers[f]();
             }
@@ -403,22 +403,23 @@ var fixr = fixr || {
         window.addEventListener('load', fixr.runDelayedPageActionsIfMissed, false); // Page on load
         window.addEventListener('resize', fixr.resizeActionsDelayed, false); // også på resize
         window.addEventListener('focus', fixr.focusActions, false);
-        if (onPageHandlerArray && onPageHandlerArray.length) {
+        if (onPageHandlerArray?.length) {
             fixr.onPageHandlers = onPageHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
         fixr.onPageHandlers.push(fixr.style.init); //  styles
-        if (onResizeHandlerArray && onResizeHandlerArray.length) {
+        if (onResizeHandlerArray?.length) {
             fixr.onResizeHandlers = onResizeHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
         }
-        if (onFocusHandlerArray && onFocusHandlerArray.length) {
+        if (onFocusHandlerArray?.length) {
             fixr.onFocusHandlers = onFocusHandlerArray;
         }
-        if (onStandaloneHandlerArray && onStandaloneHandlerArray.length) { // on standalone pages, not part of "single page application"
+        if (onStandaloneHandlerArray?.length) { // on standalone pages, not part of "single page application"
             fixr.onStandaloneHandlers = onStandaloneHandlerArray;
             fixr.onStandaloneHandlers.push(fixr.style.init); //  styles
         }
 
-        if (runNow && runNow.length) {
+        console.log(`Flickr Fixr started at ${(new Date).toLocaleTimeString()} from ${window.location.href}. \nRunning fixr.init() with document.readyState=${document.readyState}...`);
+        if (runNow?.length) {
             log('We have ' + runNow.length + ' early running methods starting now at document.readyState = ' + document.readyState);
             for (let f = 0; f < runNow.length; f++) {
                 runNow[f]();
@@ -699,7 +700,7 @@ function getAlbumlist() {
                 const imgPattern = /url\([\'\"]*([^\)\'\"]+)(\.[jpgtifn]{3,4})[\'\"]*\)/i;
                 let columnhead = createRichElement('div', {style: 'margin:0 0 .8em 0'});
                 if (document.getElementById('albumTeaser')) {
-                    if (alist && alist.length > 0) {
+                    if (alist?.length) {
                         columnhead.textContent = "Albums";
                         albums.column.appendChild(columnhead);
                         albums.count = alist.length;
@@ -1004,7 +1005,7 @@ function updateTags() {
     log('updateTags() med photographerAlias=' + fixr.context.photographerAlias + ', photographerId=' + fixr.context.photographerId + ' og photographerName=' + fixr.context.photographerName);
     if (document.querySelector('ul.tags-list')) {
         let tags = document.querySelectorAll('ul.tags-list>li');
-        if (tags && tags.length > 0) {
+        if (tags?.length) {
             log('updateTags() Looping ' + tags.length + ' tags...');
             let iconHref = fixr.context.photographerIcon.match(/^([^_]+)(_\w)?\.[jpgntif]{3,4}$/)[1] + String(fixr.context.photographerIcon.match(/^[^_]+(_\w)?(\.[jpgntif]{3,4})$/)[2]); // do we know for sure it is square?
             for (let tag of tags) {
@@ -1069,7 +1070,7 @@ function shootingSpaceballs() {
     if (fixr.context.pageType === 'SIZES') {
         function trashing() {
             let trash = document.querySelector('div.spaceball');
-            while (trash && trash.parentNode) {
+            while (trash?.parentNode) {
                 trash.parentNode.removeChild(trash);
                 trash = document.querySelector('div.spaceball');
             }
