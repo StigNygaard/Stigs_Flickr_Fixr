@@ -396,12 +396,15 @@ var fixr = fixr || {
     },
     init: function (runNow, onPageHandlerArray, onResizeHandlerArray, onFocusHandlerArray, onStandaloneHandlerArray) {
         // General page-change observer setup:
-        if (document.readyState === 'interactive') { // already late?
+        if (['interactive', 'complete'].includes(document.readyState)) { // Already late?
             fixr.setupObserver();
+            if (document.readyState === 'complete') {
+                fixr.runDelayedPageActionsIfMissed();
+            }
         }
-        window.addEventListener('DOMContentLoaded', fixr.setupObserver, false); // Page on DOMContentLoaded
-        window.addEventListener('load', fixr.runDelayedPageActionsIfMissed, false); // Page on load
-        window.addEventListener('resize', fixr.resizeActionsDelayed, false); // også på resize
+        window.addEventListener('DOMContentLoaded', fixr.setupObserver, false); // When readyState changes from 'loading' to 'interactive'
+        window.addEventListener('load', fixr.runDelayedPageActionsIfMissed, false); // When readyState changes from 'interactive' to 'complete'
+        window.addEventListener('resize', fixr.resizeActionsDelayed, false);
         window.addEventListener('focus', fixr.focusActions, false);
         if (onPageHandlerArray?.length) {
             fixr.onPageHandlers = onPageHandlerArray; // Replace by adding with a one-by-one by "helper" for flexibility?
@@ -418,7 +421,7 @@ var fixr = fixr || {
             fixr.onStandaloneHandlers.push(fixr.style.init); //  styles
         }
 
-        console.log(`Flickr Fixr started at ${(new Date).toLocaleTimeString()} from ${window.location.href}. \nRunning fixr.init() with document.readyState=${document.readyState}...`);
+        console.log(`Flickr Fixr ${browser.runtime.getManifest().version} started at ${(new Date).toLocaleTimeString()} from ${window.location.href}. \nRunning fixr.init() with readyState=${document.readyState}...`);
         if (runNow?.length) {
             log('We have ' + runNow.length + ' early running methods starting now at document.readyState = ' + document.readyState);
             for (let f = 0; f < runNow.length; f++) {
