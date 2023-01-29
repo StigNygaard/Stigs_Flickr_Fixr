@@ -40,7 +40,7 @@
     {
       "matches": ["https://*.flickr.com/*", "*://*.flickr.net/*"],
       "exclude_matches": ["*://api.flickr.com/*", "*://identity.flickr.com/*", "*://*.flickr.com/signin/*", "*://*.flickr.com/signup/*", "*://*.flickr.com/account/*"],
-      "js": ["lib/mozilla/browser-polyfill.js", "options/options.js", "Stigs_Flickr_Fixr.user.js"],
+      "js": ["options/options.js", "Stigs_Flickr_Fixr.user.js"],
       "run_at": "document_start"
     }
   ],

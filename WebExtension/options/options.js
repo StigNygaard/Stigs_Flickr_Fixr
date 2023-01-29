@@ -1,3 +1,5 @@
+globalThis.browser = globalThis.browser || globalThis.chrome;
+
 let defaults = {
     albumExtras: true,
     topPagination: true,

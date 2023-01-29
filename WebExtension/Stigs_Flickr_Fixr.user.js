@@ -1,6 +1,8 @@
 /* This script-file started as an userscript (hence the filename). */
 /* But today it only works as contentscript in the webextension.   */
 
+globalThis.browser = globalThis.browser || globalThis.chrome;
+
 const DEBUG = false;
 
 function log(...s) {

@@ -1,3 +1,5 @@
+globalThis.browser = globalThis.browser || globalThis.chrome;
+
 function isFirefox() {
     return !!((typeof browser !== 'undefined') && browser.runtime && browser.runtime?.getURL("./").startsWith("moz-extension://"));
 }

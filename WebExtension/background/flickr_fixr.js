@@ -1,4 +1,4 @@
-import '/lib/mozilla/browser-polyfill.js';
+globalThis.browser = globalThis.browser || globalThis.chrome;
 
 let versionnumber = (function Versionnumber() {  // major.minor.revision
     function current() {
