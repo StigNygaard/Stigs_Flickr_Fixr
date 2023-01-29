@@ -621,22 +621,12 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
     }
     _wsGetPhotosetCommentsLock = Date.now();
 
-    function handleResponse(response) {
-        if (response.ok) {
-            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
-                return response.json()
-            }
-            throw new Error('Response was not in expected json format.');
-        }
-        throw new Error('Network response was not ok.');
-    }
-
     function handleResult(obj) {
 
         album.albumId = fixr.context.albumId;
         album.commentCount = -1;
 
-        if (obj.stat === "ok") {
+        if (obj?.stat === "ok") {
             log("flickr.photosets.comments.getList returned ok");
             if (obj.comments?.photoset_id) {
                 album.albumId = obj.comments.photoset_id;
@@ -647,7 +637,7 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
                 album.commentCount = 0;
             }
         } else {
-            log('flickr.photosets.comments.getList returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
+            console.error('flickr.photosets.comments.getList returned an ERROR: obj.stat=' + obj?.stat + ', obj.code=' + obj?.code + ', obj.message=' + obj?.message);
         }
 
         if (document.getElementById('albumCommentCount')) {
@@ -664,8 +654,7 @@ function wsGetPhotosetComments() { // Call Flickr REST API to get album comments
     }
 
     function handleError(error) {
-        console.log('There has been a problem with your fetch operation: ', error.message);
-        log('There has been a problem with your fetch operation: ' + error);
+        console.error('wsGetPhotosetComments - There has been a problem with your fetch operation: ', error.message);
     }
 
     browser.runtime.sendMessage({
@@ -1170,19 +1159,9 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
     }
     _wsGetPhotoInfoLock = Date.now();
 
-    function handleResponse(response) {
-        if (response.ok) {
-            if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
-                return response.json()
-            }
-            throw new Error('Response was not in expected json format.');
-        }
-        throw new Error('Network response was not ok.');
-    }
-
     function handleResult(obj) {
         let elem = document.querySelector('.date-info');
-        if (obj.stat === "ok") {
+        if (obj?.stat === "ok") {
             log("flickr.photos.getInfo returned ok");
             if (obj.photo?.id) {
                 let uploadDate = new Date(0);
@@ -1249,14 +1228,13 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             if (elem) {
                 elem.textContent = 'Cannot fetch detailed date details on private photos';
             }
-            log('flickr.photos.getInfo returned an ERROR: obj.stat=' + obj.stat + ', obj.code=' + obj.code + ', obj.message=' + obj.message);
+            console.error('flickr.photos.getInfo returned an ERROR: obj.stat=' + obj?.stat + ', obj.code=' + obj?.code + ', obj.message=' + obj?.message);
         }
         _wsGetPhotoInfoLock = 0;
     }
 
     function handleError(error) {
-        console.log('There has been a problem with your fetch operation: ', error.message);
-        log('There has been a problem with your fetch operation: ' + error);
+        console.error('wsGetPhotoInfo - There has been a problem with your fetch operation: ', error.message);
         let elem = document.querySelector('.date-info');
         if (elem) {
             elem.textContent = 'There was an error fetching detailed date details...';
@@ -1294,20 +1272,6 @@ function weekNo(dt) {
     // Adjust to Thursday in week 1 and count number of weeks from date to week1.
     return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
         - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-function userscriptWarning() {
-    if (!document.body.classList.contains("flickrfixrwebextension")) { // Skip warning if both versions are installed (There will be another warning from stereotest()).
-        let info = (GM_info ? GM_info : (typeof GM === 'object' && GM !== null && typeof GM.info === 'object' ? GM.info : null));
-        if (info) {
-            let prevWeekNo = localStorage.getItem("fixr_userscript_warning_weekno");
-            let prevVersion = localStorage.getItem("fixr_userscript_warning_version");
-            if (!prevVersion || prevVersion !== info.script.version || !prevWeekNo || prevWeekNo != weekNo()) {
-                localStorage.setItem("fixr_userscript_warning_weekno", weekNo());
-                localStorage.setItem("fixr_userscript_warning_version", info.script.version);
-                alert('\nYou are running the userscript-version of Flickr Fixr via ' + info.scriptHandler + '. \n\nUserscript version of Flickr Fixr is not supported anymore, and probably wont be upgraded even if a Flickr update breaks this userscript. \n\nFor continued support and updates, make the switch to the Flickr Fixr browser-extension. You can find Flickr Fixr browser extension in the Add-on webstores for Chrome, Firefox and Edge.\n');
-            }
-        }
-    }
 }
 
 const shared_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features

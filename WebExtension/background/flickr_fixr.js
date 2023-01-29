@@ -1,4 +1,4 @@
-var versionnumber = (function Versionnumber() {  // major.minor.revision
+let versionnumber = (function Versionnumber() {  // major.minor.revision
     function current() {
         if (browser?.runtime) { // webextension versionnumber
             return browser.runtime.getManifest().version;
@@ -71,26 +71,47 @@ var versionnumber = (function Versionnumber() {  // major.minor.revision
 })();
 
 function messageHandler(request, sender, sendResponse) {
-    // console.log("Message received from the content script: " + JSON.stringify(request));
     if (request.msgtype === "flickrservice") {
-        let optstr = Object.entries(request.options).reduce(
-            function (acc, v) {
-                acc.push(v[0] + '=' + v[1]); // key/value
-                return acc;
-            },
-            []
-        ).join('&');
-        return fetch('https://api.flickr.com/services/rest/?method=' + request.method + '&api_key=' + request.fkey + '&format=json&nojsoncallback=1&' + optstr, {credentials: 'include'}).then(function (response) {
-            if (response.ok) {
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    return response.json();
-                }
-                throw new Error('Response was not in expected json format.');
+        const url = new URL('https://api.flickr.com/services/rest/');
+        url.searchParams.append('method', request.method);
+        url.searchParams.append('api_key', request.fkey);
+        url.searchParams.append('format', 'json');
+        url.searchParams.append('nojsoncallback', '1');
+        for (const [name, value] of Object.entries(request.options)) {
+            if (value instanceof Array) {
+                value.forEach(function(v) {
+                    url.searchParams.append(name, v);
+                });
+            } else {
+                url.searchParams.append(name, value);
             }
-            throw new Error('Network response was not ok.');
-        });
+        }
+        fetch(url.href, {credentials: 'include'})
+            .then(function (response) {
+                if (response.ok) {
+                    if (response.headers.get('content-type')?.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        console.error('Response was not in expected json format: ' + response.headers.get('content-type'));
+                        throw new Error('Response was not in expected json format.');
+                    }
+                } else {
+                    console.error('Network response was not ok.');
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(
+                function (content) {
+                    // It's on purpose we use sendResponse() here. Seems to make it easier to work
+                    // with Chrome (in future MV3 implementation without using browser-polyfill.js)...
+                    // https://developer.chrome.com/docs/extensions/reference/runtime/#example-content-msg
+                    // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage#addlistener_syntax
+                    sendResponse(content);
+                }
+            );
+        return true; // Important to tell the browser that we will use the sendResponse argument (in async above) after this listener (messageHandler) has returned
     } else {
-        console.log("ERROR in messageHandler. Unexpected msgtype=" + request.msgtype);
+        console.error("ERROR in messageHandler. Unexpected msgtype=" + request.msgtype);
         throw new Error("ERROR in messageHandler. Unexpected msgtype=" + request.msgtype);
     }
 }
@@ -107,7 +128,7 @@ function installHandler({reason, temporary, previousVersion}) {
     switch (reason) {
         case 'update':
             console.log("Updated from details.previousVersion: " + previousVersion);
-            break;
+            break; // Show onboarding when updating or not?...
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
