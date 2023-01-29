@@ -39,6 +39,6 @@ Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
  
 ![Screenshot4](https://c2.staticflickr.com/2/1464/24542608253_4668534b77_z.jpg)
  
-![Screenshot5](https://c1.staticflickr.com/5/4323/35889673300_b36f445f4b_z.jpg)
+![Screenshot5](https://live.staticflickr.com/4323/35889673300_b36f445f4b_z.jpg)
 
 ![Screenshot6](https://live.staticflickr.com/65535/51838054391_d30fa02d99_z.jpg)
