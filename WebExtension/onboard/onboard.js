@@ -4,7 +4,11 @@ function isFirefox() {
 
 function init() {
     if (document.getElementById('verstr')) document.getElementById('verstr').textContent = browser.runtime.getManifest().version;
-    if (document.getElementById('ffo') && isFirefox()) document.getElementById('ffo').style.display = 'block';
+    if (isFirefox()) {
+        document.querySelectorAll('.ffo').forEach((elm) => {
+            elm.style.display = 'block';
+        });
+    }
     document.querySelectorAll('.settings').forEach((elm) => {
         elm.addEventListener('click', () => browser.runtime.openOptionsPage())
     });
