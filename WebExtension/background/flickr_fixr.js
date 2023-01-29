@@ -1,3 +1,5 @@
+import '/lib/mozilla/browser-polyfill.js';
+
 let versionnumber = (function Versionnumber() {  // major.minor.revision
     function current() {
         if (browser?.runtime) { // webextension versionnumber
@@ -102,8 +104,7 @@ function messageHandler(request, sender, sendResponse) {
             })
             .then(
                 function (content) {
-                    // It's on purpose we use sendResponse() here. Seems to make it easier to work
-                    // with Chrome (in future MV3 implementation without using browser-polyfill.js)...
+                    // It's on purpose we use sendResponse() here. Makes it easier to work with Chrome it seems...
                     // https://developer.chrome.com/docs/extensions/reference/runtime/#example-content-msg
                     // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage#addlistener_syntax
                     sendResponse(content);

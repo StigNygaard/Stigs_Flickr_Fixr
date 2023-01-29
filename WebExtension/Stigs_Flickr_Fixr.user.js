@@ -1349,7 +1349,7 @@ function handlerInitFixr(options) { // Webextension init
         runNow.push(initSlideshowSpeedHook);
         onPageHandlers.push(initSlideshowSpeed);
     }
-    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers); // WebExtension
+    fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
 }
 
 if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {

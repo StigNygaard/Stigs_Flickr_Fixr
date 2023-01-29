@@ -1,16 +1,20 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Flickr Fixr",
   "short_name": "Flickr Fixr",
   "description": "Makes Flickr almost awesome - while waiting for SmugMug to fully fix it ;-)",
-  "version": "1.15.2",
+  "version": "2.0.0",
   "author": "Stig Nygaard",
   "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
   "permissions": [
-    "https://*.flickr.com/*",
     "storage"
   ],
-  "content_security_policy": "script-src 'self'; object-src 'none'",
+  "host_permissions": [
+    "https://*.flickr.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
   "icons": {
     "16": "icons/fr16.png",
     "32": "icons/fixr32.png",
@@ -20,17 +24,17 @@
     "128": "icons/fixr128.png",
     "256": "icons/fixr256.png"
   },
-  "browser_specific_settings": {
+  "applications": {
     "gecko": {
-      "strict_min_version": "102.0"
+      "strict_min_version": "109.0"
     }
   },
   "minimum_chrome_version": "109.0",
   "minimum_edge_version": "109.0",
   "minimum_opera_version": "95.0",
   "background": {
-    "scripts": ["lib/mozilla/browser-polyfill.js", "background/flickr_fixr.js"],
-    "persistent": false
+    "service_worker": "background/flickr_fixr.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -40,11 +44,15 @@
       "run_at": "document_start"
     }
   ],
-  "web_accessible_resources": ["inject/timeout.js"],
+  "web_accessible_resources": [
+    {
+      "resources": [ "inject/timeout.js" ],
+      "matches": [ "https://*.flickr.com/*" ]
+    }
+  ],
   "options_ui": {
     "page": "options/options.html",
     "browser_style": true,
-    "chrome_style": true,
     "open_in_tab": true
   }
 }
