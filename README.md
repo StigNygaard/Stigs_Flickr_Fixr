@@ -1,3 +1,6 @@
+***THIS BRANCH HOLDS A DEPRECATED "MANIFEST VERSION 2.0" VERSION OF FLICKR FIXR!***
+***Look for more current "Manifest Version 3" version of Flickr Fixr on the [master branch](https://github.com/StigNygaard/Stigs_Flickr_Fixr).***
+
 # Flickr Fixr
 
 A browser extension to enhance the Flickr experience in your desktop web-browser.
