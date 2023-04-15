@@ -1,4 +1,4 @@
-let versionnumber = (function Versionnumber() {  // major.minor.revision
+globalThis.versionnumber = globalThis.versionnumber || (function Versionnumber() {  // major.minor.revision
     function current() {
         if (browser?.runtime) { // webextension versionnumber
             return browser.runtime.getManifest().version;
