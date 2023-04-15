@@ -1,6 +1,6 @@
 globalThis.browser = globalThis.browser || globalThis.chrome;
 
-let versionnumber = (function Versionnumber() {  // major.minor.revision
+globalThis.versionnumber = globalThis.versionnumber || (function Versionnumber() {  // major.minor.revision
     function current() {
         if (browser?.runtime) { // webextension versionnumber
             return browser.runtime.getManifest().version;
@@ -129,7 +129,7 @@ function installHandler({reason, temporary, previousVersion}) {
     switch (reason) {
         case 'update':
             console.log("Updated from details.previousVersion: " + previousVersion);
-            // break; // Show onboarding when updating or not?...
+            break; // Show onboarding when updating or not?...
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
