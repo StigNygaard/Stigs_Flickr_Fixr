@@ -24,6 +24,9 @@
     "128": "icons/fixr128.png",
     "256": "icons/fixr256.png"
   },
+  "action": {
+
+  },
   "applications": {
     "gecko": {
       "strict_min_version": "109.0"

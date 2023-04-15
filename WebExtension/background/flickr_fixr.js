@@ -146,5 +146,12 @@ function installHandler({reason, temporary, previousVersion}) {
     }
 }
 
+// MV3. action.onClicked used with "action":{} in manifest.json...
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/action/onClicked
+browser.action.onClicked.addListener(() => {
+    browser.runtime.openOptionsPage();
+});
+browser.action.setTitle({ title: "Open Options-page" });
+
 browser.runtime.onMessage.addListener(messageHandler);
 browser.runtime.onInstalled.addListener(installHandler);
