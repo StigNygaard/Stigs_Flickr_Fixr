@@ -20,6 +20,9 @@
     "128": "icons/fixr128.png",
     "256": "icons/fixr256.png"
   },
+  "browser_action": {
+
+  },
   "browser_specific_settings": {
     "gecko": {
       "strict_min_version": "102.0"
