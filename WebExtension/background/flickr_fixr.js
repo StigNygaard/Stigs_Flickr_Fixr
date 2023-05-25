@@ -7,14 +7,13 @@ globalThis.versionnumber = globalThis.versionnumber || (function Versionnumber()
         }
         // undefined
     }
-
     function compare(v1, v2) {
         if (typeof v2 === 'undefined') {
             v2 = v1;
             v1 = current();
         }
-        let v1parts = v1.split('.');
-        let v2parts = v2.split('.');
+        const v1parts = v1.split('.');
+        const v2parts = v2.split('.');
         while (v1parts.length < v2parts.length) v1parts.push(0);
         while (v2parts.length < v1parts.length) v2parts.push(0);
         for (let i = 0; i < v1parts.length; ++i) {
@@ -26,51 +25,71 @@ globalThis.versionnumber = globalThis.versionnumber || (function Versionnumber()
         }
         return 0;
     }
-
     function parts(v, n) {
         if (typeof n === 'undefined') {
             n = v;
             v = current();
         }
-        let vparts = v.split('.', n);
+        const vparts = v.split('.', n);
         vparts.map(function (item) {
             return String(parseInt(item.trim(), 10))
         });
         while (vparts.length < n) vparts.push('0');
         return vparts.join('.');
     }
-
     function major(v) {
         if (typeof v === 'undefined') {
             v = current();
         }
         return parts(v, 1);
     }
-
     function minor(v) {
         if (typeof v === 'undefined') {
             v = current();
         }
         return parts(v, 2);
     }
-
     function revision(v) {
         if (typeof v === 'undefined') {
             v = current();
         }
         return parts(v, 3);
     }
+    function validate(v) {
+        if (typeof v === 'string' || v instanceof String) {
+            const vparts = v.split('.');
+            if (vparts.length >= 1 && vparts.length <= 3) {
+                for (const part of vparts) {
+                    const parsed = parseInt(part, 10);
+                    if (isNaN(parsed)) return false;
+                    if (part !== String(parsed)) return false; // This doesn't allow leading 0s like in yyyy.mm.dd versionnumbers (ok?)
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    function validOr(v, alt) {
+        if (validate(v)) {
+            return v;
+        } else {
+            return alt;
+        }
+    }
 
     // API:
     return {
-        current,
-        compare,
-        major,
-        minor,
-        revision
+        current: current,
+        compare: compare,
+        major: major,
+        minor: minor,
+        revision: revision,
+        validate: validate,
+        validOr: validOr
     };
 
 })();
+
 
 function messageHandler(request, sender, sendResponse) {
     if (request.msgtype === "flickrservice") {
