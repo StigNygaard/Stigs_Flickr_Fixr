@@ -685,8 +685,7 @@ function getAlbumlist() {
         _reqAlbumlist.onreadystatechange = function () {
             if (_reqAlbumlist.readyState === 4 && _reqAlbumlist.status === 200) {
                 log('_reqAlbumlist returned status=' + _reqAlbumlist.status); // + ', \ntext:\n' + _reqAlbumlist.responseText);
-                let doc = document.implementation.createHTMLDocument("sizeDoc");
-                doc.documentElement.innerHTML = _reqAlbumlist.responseText; // NOTICE, this is NOT inserted directly into HTML-document! In the following DOM-content of doc is being analyzed...
+                let doc = (new DOMParser).parseFromString(_reqAlbumlist.responseText, 'text/html'); // doc is just created for easier parsing/analyzing
                 albums.ownerId = fixr.context.photographerId;
                 albums.column = new DocumentFragment();
                 albums.count = 0;
