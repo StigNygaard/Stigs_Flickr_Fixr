@@ -709,7 +709,7 @@ function getAlbumlist() {
                             } else {
                                 log('No match on imgPattern');
                             }
-                            var a = e.querySelector('a[href][title]'); // sub-element
+                            let a = e.querySelector('a[href][title]'); // sub-element
                             if (a) {
                                 log('Album title: ' + a.title);
                                 log('Album url: ' + a.getAttribute('href'));
