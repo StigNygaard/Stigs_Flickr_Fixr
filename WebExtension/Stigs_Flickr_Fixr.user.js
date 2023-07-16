@@ -1035,15 +1035,70 @@ function updateTagsDelayed() {
     }
 }
 
-const photoDates_style = '.has-date-info {position:relative} .date-info{z-index:10;padding:0 .5em 0 .5em;display:none;position:absolute;top:30px;left:-40px;width:400px;margin-right:-400px;background-color:rgba(255,250,150,0.9);color:#000;border:1px solid #d4b943;border-radius:4px;} .has-date-info:hover .date-info{display:block;} .date-info label {display:inline-block; min-width: 5em;}';
-
+const photoDates_style = '.has-date-info {position:relative} ' +
+    '.date-info-trigger {z-index:9;padding:.1em;position:absolute;top:0;left:calc(100% + .2em);width:2.2em;height:2.2em;margin:0;} ' +
+    '.date-info-trigger img {display:block;padding:0;width:2em;height:2em;margin:0;opacity:0.3;} ' +
+    '.date-info {z-index:10;padding:0 .1em 0 .6em;display:none;position:absolute;top:1.5em;right:0;width:400px;background-color:rgb(255,255,255);color:rgb(33,33,36);border:1px solid rgb(33,33,36);border-radius:.4em;} ' +
+    '.date-info-trigger:hover img {opacity:0.7;} ' +
+    '.date-info-trigger:hover .date-info {display:block;} ' +
+    '.date-info label {display:inline-block; min-width: 5em;} ' +
+    '.date-info label.labeltaken {color:#000} ' +
+    '.sub-photo-right-view .sub-photo-right-row1 .sub-photo-date-view > .date-posted > span.date-posted-label {font-size:14px;color:rgb(137,137,137);margin:2px 5px 0 0} ' + // uploaded
+    'div.view.sub-photo-date-view > span {display:block;font-size:14px;color:rgb(137,137,137);margin:-9px 0 10px 0;font-style:italic} ' + // replaced
+    '.sub-photo-right-view .sub-photo-right-row1 .sub-photo-date-view > .date-posted .date-taken-container > span.date-taken-label {font-size:17px;color:rgb(33,33,36)} '; // taken
 function photoDates() {
-    let elem = document.querySelector('div.view.sub-photo-date-view');
+    let elem = document.querySelector('div.view.sub-photo-date-view'); // added .date-posted
     if (elem && !elem.classList.contains('has-date-info')) {
         elem.classList.add('has-date-info');
-        elem.insertAdjacentElement('beforeend', createRichElement('div', {class: 'date-info'}, 'Date info!'));
-        wsGetPhotoInfo(); // get dates
+        elem.insertAdjacentElement('beforeend', createRichElement('div', {class: 'date-info-trigger'}, createRichElement('img', {src: 'https://live.staticflickr.com/65535/53049942523_46706c1d76_o.png', width: 'auto', height: 'auto', alt: 'clock'}), createRichElement('div', {class: 'date-info'}, 'Date info!')));
+        wsGetPhotoInfo(); // get upload and taken timestamps
+        getReplaceDate()
+            .then(function(replaceDate){
+                if (replaceDate) {
+                    elem.insertAdjacentElement('beforeend', createRichElement('span', {title: 'Replaced on ' + replaceDate.longdate}, 'Replaced on ' + replaceDate.shortdate));
+                }
+            })
+            .catch(function(e){/* ignore */});
     }
+}
+
+function getReplaceDate() {
+    // https://www.flickr.com/photos/photographerAlias/photoId/meta
+    if (fixr.context.photoId && fixr.context.photographerAlias) {
+        let metaUrl = new URL(`https://www.flickr.com/photos/${fixr.context.photographerAlias}/${fixr.context.photoId}/meta`);
+        return fetch(metaUrl.href, {credentials: 'include'})
+            .then(
+                function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        console.error('Error reading response.text(): ' + response.headers.get('content-type'));
+                        throw new Error('Error reading response.text().');
+                    }
+                }
+            )
+            .then(
+                function(content) {
+                    let retval = null;
+                    let doc = (new DOMParser).parseFromString(content, 'text/html');
+                    let lastDate = doc.querySelector('div.photo-data table:first-of-type tr:last-of-type td');
+                    if (!lastDate.querySelector('a')) { // If lastdate does NOT contain a link <a>, then it is a replaced-date!
+                        let fulldate = lastDate.innerText.trim();
+                        retval = {longdate: fulldate};
+                        const splitters = [' 於 ','일 ',' vào ',' pada ',' às ',' alle ',' à ',' en ',' unter ',' at '];
+                        for(const split of splitters) {
+                            let splittedDate = fulldate.split(split);
+                            if (splittedDate.length > 1) {
+                                retval.shortdate = splittedDate[0];
+                                break;
+                            }
+                        }
+                    }
+                    return retval;
+                }
+            )
+    }
+    return Promise.resolve(null);
 }
 
 function photoDatesDelayed() {
@@ -1170,7 +1225,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
                     debugstr = 'UploadDate: ' + uploadDate.toString();
                 }
                 let dateDetail = createRichElement('p', {'x-ms-format-detection': 'none'});
-                let takenLabel = createRichElement('label', {}, 'Taken:');
+                let takenLabel = createRichElement('label', {class: 'labeltaken'}, 'Taken:');
                 let uploadedLabel = createRichElement('label', {}, 'Uploaded:');
                 let brElem = document.createElement('br');
                 if (obj.photo.dates) {
