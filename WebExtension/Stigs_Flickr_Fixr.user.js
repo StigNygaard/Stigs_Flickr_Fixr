@@ -528,6 +528,11 @@ function topMenuItems() {
                 gid.insertAdjacentElement('afterend', createRichElement('li', {
                     class: 'menuitem',
                     role: 'menuitem',
+                    'aria-label': 'Notifications'
+                }, createRichElement('a', {'data-track': 'gnYouNotificationsClick', href: '/notifications'}, 'Notifications')));
+                gid.insertAdjacentElement('afterend', createRichElement('li', {
+                    class: 'menuitem',
+                    role: 'menuitem',
                     'aria-label': 'Tags'
                 }, createRichElement('a', {'data-track': 'gnYouTagsClick', href: '/photos/me/tags'}, 'Tags')));
                 aad.parentElement.insertAdjacentElement('afterend', createRichElement('li', {
@@ -545,6 +550,10 @@ function topMenuItems() {
                 }, 'Collections')));
             } else if (gid.classList.contains('gn-subnav-item') && !m.querySelector('a[data-track=You-tags]')) {
                 // earlier design
+                gid.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {
+                    'data-track': 'You-notifications',
+                    href: '/notifications'
+                }, 'Notifications')));
                 gid.insertAdjacentElement('afterend', createRichElement('li', {class: 'gn-subnav-item'}, createRichElement('a', {
                     'data-track': 'You-tags',
                     href: '/photos/me/tags'
