@@ -256,6 +256,8 @@ var fixr = fixr || {
             } else {
                 fixr.context.pageType = 'ALBUM';
             }
+        } else if (fixr.content.querySelector('div.gallery-page-view')) {
+            fixr.context.pageType = 'GALLERYPAGE';
         } else if (fixr.content.querySelector('div.cameraroll-page-view')) {
             fixr.context.pageType = 'CAMERAROLL';
         } else if (fixr.content.querySelector('div.explore-page-view')) {
@@ -799,6 +801,25 @@ function albumTeaserDelayed() {
     log('albumTeaserDelayed() running...');
     clearTimeout(_timerAlbumTeaserDelayed);
     _timerAlbumTeaserDelayed = setTimeout(albumTeaser, 1500);
+}
+
+const resizeableCommenting_style_vert= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:vertical;width:100%;min-height:6em;max-width:100%}';
+const resizeableCommenting_style_both= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:both;width:100%;min-height:6em;max-width:100%}';
+function resizeableCommenting() {
+    const selector = '.fluid section.add-comment-section div.text-area-wrapper';
+    if (['PHOTOPAGE','GALLERYPAGE'].includes(fixr.context.pageType)) {
+        let elem = document.querySelector(selector);
+        if (elem) {
+            elem.classList.replace('text-area-wrapper', 'fixr-ta-resizeable');
+        } else {
+            setTimeout(function(){
+                let elem = document.querySelector(selector);
+                if (elem) {
+                    elem.classList.replace('text-area-wrapper', 'fixr-ta-resizeable');
+                }
+            }, 5000);
+        }
+    }
 }
 
 const exploreCalendar_style = '#exploreCalendar {border:none;margin:0;padding:0;position:absolute;top:38px;right:-120px;width:100px} #exploreCalendar div {margin:0 0 .8em 0} #exploreCalendar img.asquare {width:75px;height:59px}';
@@ -1354,6 +1375,14 @@ function handlerInitFixr(options) { // Webextension init
         fixr.style.add(topMenuItems_style);
         onPageHandlers.push(topMenuItems);
         onStandaloneHandlers.push(topMenuItems);
+    }
+    if (options.resizeableCommenting) {
+        if (options.resizeableCommenting_direction === 'resizeableCommenting_vertical') {
+            fixr.style.add(resizeableCommenting_style_vert);
+        } else {
+            fixr.style.add(resizeableCommenting_style_both);
+        }
+        onPageHandlers.push(resizeableCommenting);
     }
     if (options.ctrlClicking) {
         onPageHandlers.push(ctrlClicking);
