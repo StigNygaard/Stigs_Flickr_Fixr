@@ -4,6 +4,8 @@ let defaults = {
     shootingSpaceballs: true,
     orderWarning: true,
     topMenuItems: true,
+    resizeableCommenting: true,
+    resizeableCommenting_direction: 'resizeableCommenting_vertical',
     newsfeedLinks: true,
     photoDates: true,
     ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")), // default enabled for firefox
@@ -25,6 +27,8 @@ function saveOptions(e) {
         shootingSpaceballs: document.querySelector("form#fixroptions #shootingSpaceballs").checked,
         orderWarning: document.querySelector("form#fixroptions #orderWarning").checked,
         topMenuItems: document.querySelector("form#fixroptions #topMenuItems").checked,
+        resizeableCommenting: document.querySelector("form#fixroptions #resizeableCommenting").checked,
+        resizeableCommenting_direction: document.querySelector('form#fixroptions input[name="resizeableCommenting_direction"]:checked').value,
         newsfeedLinks: document.querySelector("form#fixroptions #newsfeedLinks").checked,
         photoDates: document.querySelector("form#fixroptions #photoDates").checked,
         ctrlClicking: document.querySelector("form#fixroptions #ctrlClicking").checked,
@@ -63,6 +67,8 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #shootingSpaceballs").checked = options.shootingSpaceballs;
     document.querySelector("form#fixroptions #orderWarning").checked = options.orderWarning;
     document.querySelector("form#fixroptions #topMenuItems").checked = options.topMenuItems;
+    document.querySelector("form#fixroptions #resizeableCommenting").checked = options.resizeableCommenting;
+    document.getElementById(options.resizeableCommenting_direction).checked = true;
     document.querySelector("form#fixroptions #newsfeedLinks").checked = options.newsfeedLinks;
     document.querySelector("form#fixroptions #photoDates").checked = options.photoDates;
     document.querySelector("form#fixroptions #ctrlClicking").checked= options.ctrlClicking;
