@@ -24,9 +24,12 @@
         #fixroptions fieldset a {font-style: italic}
         #fixroptions fieldset>p {font-style: italic}
         #fixroptions fieldset>div>div #slideshowSpeedControl_value {width: calc(100% - 1em)}
+        #fixroptions .updating.toggle {animation:wink 3s ease 1s 1}
+        @keyframes wink {0% {background-color: revert}  50% {background-color: #fd0} 100% {background-color: revert}}
         @media (prefers-color-scheme: dark) {
-            body {background-color: rgb(42, 42, 46); color: rgb(249, 249, 250);}
+            body {background-color: rgb(42, 42, 46); color: rgb(249, 249, 250)}
             fieldset {border: 1px solid rgb(249, 249, 250)}
+            @keyframes wink {0% {color: revert}  50% {color: #fd0} 100% {color: revert}}
         }
     </style>
 </head>
@@ -140,7 +143,7 @@
                     already granted by an associated license.</em></p>
                 </div>
             </div>
-            <p>You will have to reload any already open Flickr webpages to activate modified settings on these pages.</p>
+            <p class="updating">You will have to reload any already open Flickr webpages to make modified settings take effect on these.</p>
         </fieldset>
     </form>
     <p>Thanks for using Flickr Fixr. Doesn't Flickr Fixr work for you, do you have a question, found an error, have ideas for improvement, or

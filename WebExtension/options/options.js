@@ -43,6 +43,11 @@ function saveOptions(e) {
         slideshowSpeedControl_value: document.querySelector('form#fixroptions input#slideshowSpeedControl_value').value,
         searchresultsCollapsibleSidebar: document.querySelector("form#fixroptions #searchresultsCollapsibleSidebar").checked
     }); // then ( "saved ok" message? )
+
+    let updating = document.querySelector('.updating');
+    if (updating) {
+        updating.classList.toggle('toggle');
+    }
 }
 
 function withOptionsDo(handler) {
