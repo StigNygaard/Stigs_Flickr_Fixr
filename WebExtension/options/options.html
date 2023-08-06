@@ -11,6 +11,8 @@
         div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
         .ffo {display: none}
         .isFirefox .ffo {display: inherit}
+        #fixroptions fieldset>div input {accent-color: rgb(255,0,159)}
+        #fixroptions fieldset>div p img.demo {max-width: calc(100% - 2px); height:auto; border: 1px solid rgb(42, 42, 46)}
         #fixroptions fieldset>div>div>p:first-child {margin-top: .7em}
         #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
         #fixroptions fieldset {position:relative}
@@ -86,16 +88,19 @@
                     <p><label><input type="radio" name="resizeableCommenting_direction" id="resizeableCommenting_both" value="resizeableCommenting_both" /> Height and width</label>
                         &nbsp; <label><input type="radio" name="resizeableCommenting_direction" id="resizeableCommenting_vertical" value="resizeableCommenting_vertical" /> Height only</label>
                     </p>
+                    <p><img src="FixrResize-517x191.gif" alt="" class="demo" /></p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="photoDates" /> Better date &amp; time info on photopages</label>
                 <div>
-                    <p>Make <em>Taken date</em> prominent displayed on page, rather than the <em>Upload date</em>.</p>
+                    <p>Make <em>Taken date</em> <strong>prominent</strong> displayed on page, rather than the
+                        <em>Upload date</em>.</p>
                     <p>Sometimes Flickr Fixr can also detect if a photo has been replaced after the first upload to Flickr, and
                         the <em>Replaced date</em> will be shown on the photopage below the Upload and Taken dates.</p>
                     <p>Moving mouse over <em>clock-icon</em> next to the Upload and Taken dates will show both Taken and Upload
                         <em>time</em> in full details. <em>Taken date</em> will also work as a link to more photos from the
                         same photographer.</p>
+                    <p><img src="FixrDates-572x131.gif" alt="" class="demo" /></p>
                 </div>
             </div>
             <div><label class="browser-style"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
