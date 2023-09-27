@@ -313,8 +313,8 @@ var fixr = fixr || {
         // Now run the page handlers....
         if (fixr.onPageHandlers?.length) {
             log('We have ' + fixr.onPageHandlers.length + ' onPage handlers starting now...');
-            for (let f = 0; f < fixr.onPageHandlers.length; f++) {
-                fixr.onPageHandlers[f]();
+            for (const handler of fixr.onPageHandlers) {
+                handler();
             }
         }
     },
@@ -348,8 +348,8 @@ var fixr = fixr || {
             // Now run the standalone handlers
             if (fixr.onStandaloneHandlers?.length) {
                 log('We have ' + fixr.onStandaloneHandlers.length + ' standalone handlers starting now...');
-                for (let f = 0; f < fixr.onStandaloneHandlers.length; f++) {
-                    fixr.onStandaloneHandlers[f]();
+                for (const handler of fixr.onStandaloneHandlers) {
+                    handler();
                 }
             }
         }
@@ -360,8 +360,8 @@ var fixr = fixr || {
     },
     resizeActions: function () {
         if (fixr.onResizeHandlers?.length) {
-            for (let f = 0; f < fixr.onResizeHandlers.length; f++) {
-                fixr.onResizeHandlers[f]();
+            for (const handler of fixr.onResizeHandlers) {
+                handler();
             }
         }
     },
@@ -371,8 +371,8 @@ var fixr = fixr || {
     },
     focusActions: function () {
         if (fixr.onFocusHandlers?.length) {
-            for (let f = 0; f < fixr.onFocusHandlers.length; f++) {
-                fixr.onFocusHandlers[f]();
+            for (const handler of fixr.onFocusHandlers) {
+                handler();
             }
         }
     },
@@ -426,8 +426,8 @@ var fixr = fixr || {
         console.log(`Flickr Fixr ${browser.runtime.getManifest().version} started at ${(new Date).toLocaleTimeString()} from ${window.location.href}. \nRunning fixr.init() with readyState=${document.readyState}...`);
         if (runNow?.length) {
             log('We have ' + runNow.length + ' early running methods starting now at document.readyState = ' + document.readyState);
-            for (let f = 0; f < runNow.length; f++) {
-                runNow[f]();
+            for (const fun of runNow) {
+                fun();
             }
         }
     }
