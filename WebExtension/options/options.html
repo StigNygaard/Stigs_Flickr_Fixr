@@ -13,7 +13,6 @@
         .isFirefox .ffo {display: inherit}
         #fixroptions fieldset>div input {accent-color: rgb(255,0,159)}
         #fixroptions fieldset>div p img.demo {max-width: calc(100% - 2px); height:auto; border: 1px solid rgb(42, 42, 46)}
-        #fixroptions fieldset>div>div>p:first-child {margin-top: .7em}
         #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
         #fixroptions fieldset {position:relative}
         #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
@@ -41,12 +40,12 @@
     <img src="../icons/fixr256.png" alt="Flickr Fixr" style="width:256px;height:256px;margin:-50px 0 -50px 0" />
     <form id="fixroptions">
         <fieldset style="position:relative"><legend>&nbsp;Toggle features&nbsp;</legend>
-            <div><label class="browser-style"><input type="checkbox" id="albumTeaser" /> Album-teaser column on photostreams</label>
+            <div><label><input type="checkbox" id="albumTeaser" /> Album-teaser column on photostreams</label>
                 <div><p>Puts a column featuring albums on photographer's photostream. The 10 first albums as
                     sorted in Flickr Organizer are shown in the column.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="updateTags" /> Direct tag-links to <em>same</em> photographer's photos</label>
+            <div><label><input type="checkbox" id="updateTags" /> Direct tag-links to <em>same</em> photographer's photos</label>
                 <div><p>Adds an extra direct link in tags, pointing to the same photographer's similar tagged photos.</p>
                     <p>You can choose to see the extra link only when hovering a tag, or you can choose link to be shown
                         persistent on all tags for a less "erratic" experience:</p>
@@ -55,34 +54,34 @@
                     </p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="albumExtras" /> Links to album-map and album-comments</label>
+            <div><label><input type="checkbox" id="albumExtras" /> Links to album-map and album-comments</label>
                 <div><p>Adds two extra links in "album headers". One link pointing to a map with current album's photos, and another
                     link pointing to the old hidden/forgotten page with album comments, which also is a great page for reading
                     (or editing) long album descriptions.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="insertGMapLink" /> Improved map displaying for geotagged photos</label>
+            <div><label><input type="checkbox" id="insertGMapLink" /> Improved map displaying for geotagged photos</label>
                 <div><p>1) Makes sure geoposition of photo is highlighted when following link to Flickr Map from a geotagged photo.
                     <br />2) On the photopage for a geotagged photo, also adds a link to show geoposition of photo directly on <em>Google Maps</em>.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="topPagination" /> Top-pagination for fast an easy navigation</label>
+            <div><label><input type="checkbox" id="topPagination" /> Top-pagination for fast an easy navigation</label>
                 <div><p>Adds a pagination-bar when hovering mouse just in top of the photostreams, albumpages, favorite collections,
                     ("beta experience") group pools and on the Explore page.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="exploreCalendar" /> Explore Calendar and Recent Uploads</label>
+            <div><label><input type="checkbox" id="exploreCalendar" /> Explore Calendar and Recent Uploads</label>
                 <div><p>On the Explore page, add a link to the hidden/forgotten Explore Calendar and to a page showing some of the latest
                     uploads to Flickr.</p>
                     <p>A little warning regarding the latest uploads though; Even though Safe Search is always activated on
                     that page, you risk seeing stuff you might have preferred not to see.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="topMenuItems" /> Extra top menu items</label>
+            <div><label><input type="checkbox" id="topMenuItems" /> Extra top menu items</label>
                 <div><p>Adds <em>Tags</em>, <em>Collections</em>, <em>Map</em> and <em>Notifications</em> items to the user menu ("You" dropdown)
                     - and adds <em>Tags</em>, <em>Collections</em> and <em>Map</em> items to the photographer menus (menu bar).</p></div>
             </div>
-            <div><label class="browser-style new"><input type="checkbox" id="resizeableCommenting" /> Resizeable Comment boxes</label>
+            <div><label class="new"><input type="checkbox" id="resizeableCommenting" /> Resizeable Comment boxes</label>
                 <div><p>Allow comment-boxes to be resizeable on <em>photopages</em>, <em>gallerypages</em> and in
                     <em>group discussions</em>.</p>
                     <p><label><input type="radio" name="resizeableCommenting_direction" id="resizeableCommenting_both" value="resizeableCommenting_both" /> Height and width</label>
@@ -91,7 +90,7 @@
                     <p><img src="FixrResize-517x191.gif" alt="" class="demo" /></p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="photoDates" /> Better date &amp; time info on photopages</label>
+            <div><label><input type="checkbox" id="photoDates" /> Better date &amp; time info on photopages</label>
                 <div>
                     <p>Make <em>Taken date</em> <strong>prominent</strong> displayed on page, rather than the
                         <em>Upload date</em>.</p>
@@ -103,7 +102,7 @@
                     <p><img src="FixrDates-572x131.gif" alt="" class="demo" /></p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
+            <div><label><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
                 <div><p><img src="../icons/feed32.png" alt="" style="width:16px;height:16px;margin:0 0 0 .5em;display:block;float:right" />
                     When a newsfeed is detected on a page, an orange feed-icon is added as link to this. The feed-icons are
                     added in upper right corner of pages. Feeds are detected on the main <a href="https://flickr.com/">flickr.com</a> site,
@@ -113,31 +112,31 @@
                         familiar with newsfeeds, you might not have any reason to have this feature enabled.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="slideshowSpeedControl" /> Slideshow speed control</label>
+            <div><label><input type="checkbox" id="slideshowSpeedControl" /> Slideshow speed control</label>
                 <div><p>Set the speed of Flickr slideshows. How many seconds do you want each image to be shown?</p>
                     <p><label for="slideshowSpeedControl_value"><span id="slideshowSpeed">5</span> seconds pr. image
                         <br /><input type="range" id="slideshowSpeedControl_value" name="slideshowSpeedControl_value" min="1" max="60"></label></p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="searchresultsCollapsibleSidebar" /> Collapsible Search-results sidebar</label>
+            <div><label><input type="checkbox" id="searchresultsCollapsibleSidebar" /> Collapsible Search-results sidebar</label>
                 <div><p>Makes sidebar on search-result pages collapsible. Look for "collapse button" next to the sidebar.</p>
                 <p>Normally the width of search-results should auto-adjust when toggling visibility of the sidebar. But if it doesn't do that automatically,
                     making a tiny adjustment to width of browser window should trigger the search-results to "reflow". Or doing a <em>shift-reload</em> usually also reflows the page.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
+            <div><label><input type="checkbox" id="orderWarning" /> Warn if photostream <em>ain't</em> ordered by upload date</label>
                 <div><p>When browsing a photostream in <em>Date taken</em> order, a subtle visual hint will be shown to warn you that latest added photos
                     might not be on top of the photostream.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="ctrlClicking" /> <em>Open in New Tab</em> fix for Firefox</label>
+            <div><label><input type="checkbox" id="ctrlClicking" /> <em>Open in New Tab</em> fix for Firefox</label>
                 <div><p>If you have your Firefox browser configured to open tabs in the <em>background</em> when ctrl-clicking links, you may have
                     seen Flickr overriding this preference on search result pages (including the Trending Tags pages) and bring
                     immediately focus to new tabs instead. This feature should prevent Flickr overriding your open tabs preferences.
                     I have only seen the problem when using Firefox, so feature is default disabled for other webbrowsers.</p>
                 </div>
             </div>
-            <div><label class="browser-style"><input type="checkbox" id="shootingSpaceballs" /> Fix image context menu on "All sizes" pages</label>
+            <div><label><input type="checkbox" id="shootingSpaceballs" /> Fix image context menu on "All sizes" pages</label>
                 <div><p>Removes layer over images on "All sizes" pages, to prevent missing or malfunctioning actions in browser's (right-click) context-menu.</p>
                     <p>Unless photos are Creative Commons licensed (or your own), Flickr usually adds an invisible layer above photos on the "All Sizes"
                         pages, presumable to prevent image stealing.</p>
