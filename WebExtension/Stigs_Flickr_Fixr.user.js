@@ -714,8 +714,7 @@ function getAlbumlist() {
                             // var result = e.style.backgroundImage.match(imgPattern); // strangely not working in Chrome
                             let result = (e.outerHTML).match(imgPattern); // quick work-around for above (works for now)
                             if (result) {
-                                // imgUrl = result[1].replace(/_[a-z]$/, '') + '_s' + result[2];
-                                imgUrl = result[1].replace(/_[a-z]$/, '') + '_q' + result[2];
+                                imgUrl = result[1] + result[2];
                                 log('imgUrl=' + imgUrl);
                             } else {
                                 log('No match on imgPattern');
@@ -1360,7 +1359,7 @@ function weekNo(dt) {
         - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
-const shared_style = 'img.asquare {width:75px;height:75px;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features
+const shared_style = 'img.asquare {width:75px;height:75px;object-fit:cover;border:none;margin:0;padding:0;transition:all 0.3s ease} a:hover>img.asquare{transform:scale(1.3)}'; // used by multiple features
 
 function handlerInitFixr(options) { // Webextension init
     let runNow = [];
