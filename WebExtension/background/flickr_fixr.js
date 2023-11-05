@@ -151,7 +151,7 @@ function installHandler({reason, temporary, previousVersion}) {
     switch (reason) {
         case 'update':
             console.log("Updated from details.previousVersion: " + previousVersion);
-            // break; // Show onboarding when updating or not?...
+            break; // Show onboarding when updating or not?...
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
