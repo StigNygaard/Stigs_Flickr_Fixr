@@ -472,7 +472,7 @@ function insertGMapLink() {
                         href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon,
                         id: 'googlemapslink'
                     }, 'Show location on Google Maps');
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement('beforeend', createRichElement('div', {class: 'location-data-container'}, gmaplink));
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement('afterbegin', createRichElement('div', {class: 'location-data-container'}, gmaplink));
                 } catch (e) {
                     log('Failed creating Google Maps link: ' + e);
                 }
