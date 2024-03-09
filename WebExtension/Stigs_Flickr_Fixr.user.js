@@ -804,6 +804,7 @@ function albumTeaserDelayed() {
 
 const resizeableCommenting_style_vert= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:vertical;width:100%;min-height:6em;max-width:100%}';
 const resizeableCommenting_style_both= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:both;width:100%;min-height:6em;max-width:100%}';
+// TODO styling "speech bubbles" style?:  https://www.smashingmagazine.com/2024/03/modern-css-tooltips-speech-bubbles-part1/
 function resizeableCommenting() {
     const selector = '.fluid section.add-comment-section div.text-area-wrapper';
     if (['PHOTOPAGE','GALLERYPAGE'].includes(fixr.context.pageType)) {
@@ -1347,6 +1348,12 @@ function runEarly() {
     //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
 }
 
+/**
+ * Calculates the week number for a given date.
+ *
+ * @param {Date} dt - The date. If not provided, the current date is used.
+ * @returns {number} - The week number for the given date.
+ */
 function weekNo(dt) {
     let date = dt || new Date();
     date.setHours(0, 0, 0, 0);
