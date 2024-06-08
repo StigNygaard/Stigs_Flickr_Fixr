@@ -161,7 +161,6 @@ var fixr = fixr || {
             result = elem.src.match(/https:(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
         } else if (elem.style.backgroundImage) {
             log('fixr.initPhotographerId() - elem has style.backgroundImage "' + elem.style.backgroundImage + '", now looking for the attribution id...');
-            // var pattern = /\/buddyicons\/(\d+\@N\d{2})\D+/i;
             result = elem.style.backgroundImage.match(/url[^#\?]+(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
         }
         if (result) {
@@ -232,7 +231,7 @@ var fixr = fixr || {
             }
         } else if (fixr.content.querySelector('div.photo-page-scrappy-view')) {
             fixr.context.pageType = 'PHOTOPAGE';
-            if (fixr.content.querySelector('div.vr-overlay-view') && fixr.content.querySelector('div.vr-overlay-view').hasChildNodes()) {
+            if (fixr.content.querySelector('div.vr-overlay-view')?.hasChildNodes()) {
                 fixr.context.pageSubType = 'VR'; // maybe I can find a better way to detect, not sure how reliable this is?
             } else if (fixr.content.querySelector('div.videoplayer')) {
                 fixr.context.pageSubType = 'VIDEO';
@@ -241,7 +240,7 @@ var fixr = fixr || {
             }
         } else if (fixr.content.querySelector('div.photo-page-lightbox-scrappy-view')) {
             fixr.context.pageType = 'PHOTOPAGE LIGHTBOX';
-            if (fixr.content.querySelector('div.vr-overlay-view') && fixr.content.querySelector('div.vr-overlay-view').hasChildNodes()) {
+            if (fixr.content.querySelector('div.vr-overlay-view')?.hasChildNodes()) {
                 fixr.context.pageSubType = 'VR'; // VR-mode currently not supported in lightbox?
             } else if (fixr.content.querySelector('div.videoplayer')) {
                 fixr.context.pageSubType = 'VIDEO';
@@ -1346,7 +1345,7 @@ function stereotest() {
 }
 
 function runEarly() {
-    //localStorage.setItem('filterFeedEvents', 'people'); // Try to make People feed default.
+    // ...
 }
 
 /**
@@ -1360,7 +1359,7 @@ function weekNo(dt) {
     date.setHours(0, 0, 0, 0);
     // Thursday in current week decides the year.
     date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-    // January 4 is always in week 1.
+    // January 4 is always in week 1 (for weeks starting on mondays)
     let week1 = new Date(date.getFullYear(), 0, 4);
     // Adjust to Thursday in week 1 and count number of weeks from date to week1.
     return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
