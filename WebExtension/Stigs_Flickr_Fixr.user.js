@@ -460,13 +460,14 @@ function insertGMapLink() {
     }
     log('insertGMapLink() running at readystate=' + document.readyState + ' and with photoId=' + fixr.context.photoId);
     if (fixr.context.photoId) {
-        let maplink = fixr.content.querySelector('a.static-maps');
+        const maplink = fixr.content.querySelector('.location-data-container a.location-name-link');
         if (maplink) {
-            if (!document.getElementById('googlemapslink') && maplink.getAttribute('href') && (maplink.getAttribute('href').includes('map/?'))) {
+            const locUrl = new URL(maplink.getAttribute('href'));
+            if (!document.getElementById('googlemapslink') && locUrl.searchParams?.get('lat')) {
                 try {
-                    let lat = maplink.getAttribute('href').match(/Lat=(\-?[\d\.]+)/i)[1];
-                    let lon = maplink.getAttribute('href').match(/Lon=(\-?[\d\.]+)/i)[1];
-                    let gmaplink = createRichElement('a', {
+                    const lat = locUrl.searchParams?.get('lat');
+                    const lon = locUrl.searchParams?.get('lon');
+                    const gmaplink = createRichElement('a', {
                         href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon,
                         id: 'googlemapslink'
                     }, 'Show location on Google Maps');
