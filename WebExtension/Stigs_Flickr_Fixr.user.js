@@ -498,9 +498,7 @@ function insertGMapLinkDelayed() {
 
 function mapInitializer() {
     if (window.location.href.includes('flickr.com/map/?')) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/URL
         const url = new URL(window.location.href);
-        // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
         const imgId = url.searchParams.get('photo');
         if (imgId) {
             const focusImg = document.getElementById('f_img_thumb_' + imgId);

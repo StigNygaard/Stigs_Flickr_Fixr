@@ -25,12 +25,18 @@
     "256": "icons/fixr256.png"
   },
   "action": {
-
   },
-  "minimum_chrome_version": "109.0",
-  "minimum_edge_version": "109.0",
-  "minimum_opera_version": "95.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "128.0",
+      "id": "{266065e3-e12f-4eb1-9ba0-9506ae8f6c9e}"
+    }
+  },
+  "minimum_chrome_version": "121.0",
+  "minimum_opera_version": "107.0",
+  "minimum_edge_version": "121.0",
   "background": {
+    "scripts": ["background/flickr_fixr.js"],
     "service_worker": "background/flickr_fixr.js",
     "type": "module"
   },

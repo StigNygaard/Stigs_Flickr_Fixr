@@ -18,16 +18,8 @@ Most detailed feature description can currently be found in the Flickr Hacks for
 https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
 To create a browser extension from a branch in this repository, simply zip the content of WebExtension folder.
-Normally Flickr Fixr is a "cross-browser compatible" extension with the exact
-[same plug-in (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome
-and Edge. However, in the period of transition from "Manifest version 2"- to "Manifest version 3"-type of webextensions,
-browser extensions for Firefox- and Chromium-based browsers will be created from different branches. There are now a
-[branch for the deprecated "MV2 type" webextension](https://github.com/StigNygaard/Stigs_Flickr_Fixr/tree/manifest2-legacy).
-The [master-branch](https://github.com/StigNygaard/Stigs_Flickr_Fixr) is for "MV3 with background service
-worker" extensions (currently supported by Chromium browsers) and I might also make a branch for "MV3 with background
-page" extensions (supported by Firefox 109+). When Mozilla has implemented
-[support for "background service workers" in Firefox webextensions](https://bugzilla.mozilla.org/show_bug.cgi?id=1573659),
-I expect to go back to make true "cross-browser compatible" releases from the master-branch only again.
+From version 2.5.0 Flickr Fixr is (again) a "cross-browser compatible" extension with the exact
+[same plug-in (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge.
 
 Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
 
