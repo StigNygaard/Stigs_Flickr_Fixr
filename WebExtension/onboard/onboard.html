@@ -31,6 +31,19 @@
     .ffo {
       display: none;
     }
+
+    .hoverimage > .hover {
+      display: none;
+      position: fixed;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .hoverimage:hover > .hover {
+      display: block;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         background-color: rgb(43, 43, 43);
@@ -58,28 +71,24 @@
 
   <p>If you are new to Flickr Fixr, make sure to look through features on the <a href="#" class="settings">Options Page</a>.</p>
 
-  <h2>What's <em>new</em> in this version?!...</h2>
+  <h2>Future minimum requirement...</h2>
 
-  <ul>
-    <li><p>After the
-      <a href="https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/72157721919017547" target="_blank">recent change to dates</a>,
-      Flickr has made another - in my opinion bad for the user experience - change to the website...</p>
-      <p>Modern webbrowsers per default makes it possible to <em>resize</em> multi-line input boxes. A great usability
-        feature. But now Flickr has <em>explicitly disabled</em> that feature for comment-boxes on photopages, gallery
-        pages and in group discussions.</p>
-      <p>Flickr Fixr now "unlocks" these comment-boxes, bringing back the option to resize:</p>
+  <p>Unless Flickr makes breaking changes to their site before I get the next "major" version out, this will likely
+    be the last version of Flickr Fixr to support Firefox versions 115-127. Future minimum requirement will be
+    Firefox 128, <a class="hoverimage">which is also the new "ESR version" of Firefox<img src="firefox-releases-128-short.png" alt="" class="hover" /></a>.
+    If you like most are using the latest version of Firefox, there's no need to care at all. If you are using
+    Firefox ESR 115.x or a browser based upon that (like for example Tor or Waterfox) those will likely also all
+    have been updated to new ESR 128.x by end of Q3/2024.
+    Windows 7 og 8 users cannot upgrade Firefox beyond version 115 and will thus unfortunately not get
+    anymore updates of Flickr Fixr. But I think/hope that is very few users, if any at all these days?</p>
 
-      <img src="../options/FixrResize-517x191.gif" alt="Resizeable commentbox" />
+  <p>The next major version of Flickr Fixr will also be the first "Manifest v3" version made for Firefox. After in a
+    period having made separate versions of Flickr Fixr for Firefox and for "Chromium browsers" (Chrome/Edge),
+    this will once again make it possible for me to make only <em>one</em> version of Flickr Fixr that works in all
+    the browsers. I'm looking forward to my simplified workflow🙂</p>
 
-    </li>
-    <li><p>The "Extra top menu items" feature of Flickr Fixr was already adding links to <em>Tags</em>,
-      <em>Collections</em> and <em>Map</em> in your top-menus. Now also a direct link to your <em>Notifications</em>
-      page are being added to the "You" menu.</p>
-    </li>
-  </ul>
-
-  <p>Remember you can enable and disable features on the <a href="#" class="settings">Options Page</a> if you don't
-    like everything that Flickr Fixr can do. Some features also have extra options to tune the behavior.</p>
+<!--  <p>Remember you can enable and disable features on the <a href="#" class="settings">Options Page</a> if you don't-->
+<!--    like everything that Flickr Fixr can do. Some features also have extra options to tune the behavior.</p>-->
 
   <h2>Help, information, feedback?...</h2>
   <p>Visit the <a href="https://www.flickr.com/groups/flickrhacks/discuss/72157655601688753/" target="_blank">Flickr Fixr thread</a> in Flickr Hacks forum. I regularly watch that thread for new comments.</p>

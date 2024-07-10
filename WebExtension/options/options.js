@@ -8,7 +8,7 @@ let defaults = {
     resizeableCommenting_direction: 'resizeableCommenting_both',
     newsfeedLinks: true,
     photoDates: true,
-    ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")), // default enabled for firefox
+    ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime?.getURL("./").includes("moz-extension://")), // default enabled for firefox
     exploreCalendar: true,
     albumTeaser: true,
     insertGMapLink: true,
@@ -95,7 +95,7 @@ function initializeOptionsPage() {
     if (document.querySelector('div#fixroptionspage form#fixroptions')) { // Only run if Options page
         document.querySelector('div#fixroptionspage #verstr').textContent = browser.runtime.getManifest().version;
         document.getElementById('slideshowSpeedControl_value').addEventListener('input', displaySlideshowSpeed);
-        if ((typeof browser !== 'undefined') && browser.runtime && browser.runtime.getURL("./").includes("moz-extension://")) { // if firefox...
+        if ((typeof browser !== 'undefined') && browser.runtime?.getURL("./").includes("moz-extension://")) { // if firefox...
             document.body.classList.add("isFirefox");
         }
         withOptionsDo(handlerInitOptionsPage);
