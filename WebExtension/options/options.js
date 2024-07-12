@@ -14,6 +14,7 @@ let defaults = {
     exploreCalendar: true,
     albumTeaser: true,
     insertGMapLink: true,
+    insertShowInPhotostream: true,
     updateTags: true,
     updateTags_tagmode: "updateTags_hover",
     slideshowSpeedControl: true,
@@ -37,6 +38,7 @@ function saveOptions(e) {
         exploreCalendar: document.querySelector("form#fixroptions #exploreCalendar").checked,
         albumTeaser: document.querySelector("form#fixroptions #albumTeaser").checked,
         insertGMapLink: document.querySelector("form#fixroptions #insertGMapLink").checked,
+        insertShowInPhotostream: document.querySelector("form#fixroptions #insertShowInPhotostream").checked,
         updateTags: document.querySelector("form#fixroptions #updateTags").checked,
         updateTags_tagmode: document.querySelector('form#fixroptions input[name="updateTags_tagmode"]:checked').value,
         slideshowSpeedControl: document.querySelector("form#fixroptions #slideshowSpeedControl").checked,
@@ -82,6 +84,7 @@ function handlerInitOptionsPage(options) {
     document.querySelector("form#fixroptions #exploreCalendar").checked = options.exploreCalendar;
     document.querySelector("form#fixroptions #albumTeaser").checked = options.albumTeaser;
     document.querySelector("form#fixroptions #insertGMapLink").checked = options.insertGMapLink;
+    document.querySelector("form#fixroptions #insertShowInPhotostream").checked = options.insertShowInPhotostream;
     document.querySelector("form#fixroptions #updateTags").checked = options.updateTags;
     document.getElementById(options.updateTags_tagmode).checked = true;
     document.querySelector("form#fixroptions #slideshowSpeedControl").checked = options.slideshowSpeedControl;

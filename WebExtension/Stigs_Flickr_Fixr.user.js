@@ -455,6 +455,49 @@ function createRichElement(tagName, attributes, ...content) {
     return element;
 }
 
+/**
+ * Url is a Photopage shown in Photostream context?
+ * @param url
+ * @returns {boolean}
+ */
+function photostreamContext(url) {
+    const path = (new URL(url)).pathname;
+    const simple = /^\/photos\/[^/]+\/(with\/)?[^/]+\/?$/iu;
+    const datePosted = /^\/photos\/[^/]+\/(with\/)?[^/]+\/in\/dateposted(-ff)?\/?$/iu;
+    const dateTaken = /^\/photos\/[^/]+\/(with\/)?[^/]+\/in\/datetaken(-ff)?\/?$/iu;
+    return simple.test(path) || datePosted.test(path) || dateTaken.test(path);
+}
+const insertShowInPhotostream_style = '.photo-content-upper-container .photo-well-scrappy-view .height-controller .entry-type .icon.upstream {transform: rotate(45deg)}';
+function insertShowInPhotostream() {
+    if (fixr.context.pageType === 'PHOTOPAGE') {
+        if (fixr.context.photographerAlias === '') {
+            fixr.initPhotoId();
+        }
+        if (fixr.context.photographerId === '') {
+            fixr.initPhotographerId();
+        }
+        if (fixr.context.photographerName === '') {
+            fixr.initPhotographerName();
+        }
+        const et = document.querySelector('div.height-controller a.entry-type');
+        if (et && !photostreamContext(et.href)) {
+            const psHref = `/photos/${fixr.context.photographerAlias || fixr.context.photographerId}/with/${fixr.context.photoId}/`;
+            const psLeft = 20 + (et.offsetLeft || 20) + (et.offsetWidth || 200);
+            const psLink = createRichElement(
+                'a',
+                {
+                    class: 'entry-type do-not-evict',
+                    href: psHref
+                },
+                createRichElement('div', {class: 'icon upstream'}),
+                'Show in photostream'
+            );
+            psLink.style.left = `${psLeft}px`;
+            et.insertAdjacentElement('afterend', psLink);
+        }
+    }
+}
+
 function insertGMapLink() {
     if (fixr.context.pageType !== 'PHOTOPAGE') {
         return; // exit if not photopage
@@ -1430,6 +1473,11 @@ function handlerInitFixr(options) { // Webextension init
         onPageHandlers.push(insertGMapLinkDelayed);
         onStandaloneHandlers.push(mapInitializer);
     }
+    if (options.insertShowInPhotostream) {
+        fixr.style.add(insertShowInPhotostream_style);
+        onPageHandlers.push(insertShowInPhotostream);
+        onResizeHandlers.push(insertShowInPhotostream);
+    }
     if (options.updateTags) {
         if (options.updateTags_tagmode === 'updateTags_persist') {
             fixr.style.add(updateTags_style_persist);
@@ -1450,7 +1498,7 @@ function handlerInitFixr(options) { // Webextension init
     fixr.init(runNow, onPageHandlers, onResizeHandlers, onFocusHandlers, onStandaloneHandlers);
 }
 
-if (window.location.href.includes('flickr.com\/services\/api\/explore\/')) {
+if (window.location.href.includes('flickr.com/services/api/explore/')) {
     // We are on Flickr API Explorer (WAS used for note handling before Flickr returned native note-support) and outside "normal" flickr page flow. fixr wont do here...
 } else {
     log('WebExtension - init with options...');
