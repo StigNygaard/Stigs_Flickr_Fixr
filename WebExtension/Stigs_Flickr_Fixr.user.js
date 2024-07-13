@@ -479,21 +479,24 @@ function insertShowInPhotostream() {
         if (fixr.context.photographerName === '') {
             fixr.initPhotographerName();
         }
-        const et = document.querySelector('div.height-controller a.entry-type');
-        if (et && !photostreamContext(et.href)) {
-            const psHref = `/photos/${fixr.context.photographerAlias || fixr.context.photographerId}/with/${fixr.context.photoId}/`;
-            const psLeft = 20 + (et.offsetLeft || 20) + (et.offsetWidth || 200);
-            const psLink = createRichElement(
-                'a',
-                {
-                    class: 'entry-type do-not-evict',
-                    href: psHref
-                },
-                createRichElement('div', {class: 'icon upstream'}),
-                'Show in photostream'
-            );
-            psLink.style.left = `${psLeft}px`;
-            et.insertAdjacentElement('afterend', psLink);
+        const ets = document.querySelectorAll('div.height-controller a.entry-type');
+        if (ets.length === 1) {
+            const et = ets.item(0);
+            if (!photostreamContext(et.href)) {
+                const psHref = `/photos/${fixr.context.photographerAlias || fixr.context.photographerId}/with/${fixr.context.photoId}/`;
+                const psLeft = 20 + (et.offsetLeft || 20) + (et.offsetWidth || 200);
+                const psLink = createRichElement(
+                    'a',
+                    {
+                        class: 'entry-type do-not-evict',
+                        href: psHref
+                    },
+                    createRichElement('div', {class: 'icon upstream'}),
+                    'Show in photostream'
+                );
+                psLink.style.left = `${psLeft}px`;
+                et.insertAdjacentElement('afterend', psLink);
+            }
         }
     }
 }
