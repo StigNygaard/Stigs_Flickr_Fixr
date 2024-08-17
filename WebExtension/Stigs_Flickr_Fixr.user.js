@@ -972,7 +972,7 @@ function ctrlClickingDelayed() {
     _timerCtrlClicking = setTimeout(ctrlClicking, 1500);
 }
 
-const topPagination_style = '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .album-toolbar-content #topPagination{top:-16px} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block}';
+const topPagination_style = '#topPaginationContainer{width:250px;height:40px;margin:0 auto;position:absolute;top:0;left:0;right:0;border:none} #topPagination{width:720px;margin:0;position:absolute;top:0;left:-235px;text-align:center;z-index:10;display:none;border:none;padding:10px 0 10px 0;overflow:hidden} .group-pool-subheader-view #topPagination{top:-7px} .title-row #topPagination{width:830px;left:-290px;top:-12px} #topPaginationContainer:hover #topPagination{display:block}';
 
 function topPagination() {
     log('topPagination()');
@@ -984,13 +984,11 @@ function topPagination() {
         if (bottomPagination.childElementCount > 0) {
             let topPagination = bottomPagination.cloneNode(true);
             topPagination.id = 'topPagination';
-            let topPaginationContainer = document.createElement('div');
-            topPaginationContainer.id = 'topPaginationContainer';
-            topPaginationContainer.appendChild(topPagination);
-            let topbar = document.querySelector('.fluid-magic-tools-view');
-            if (!topbar) topbar = document.querySelector('.album-toolbar-content');
-            if (!topbar) topbar = document.querySelector('.group-pool-subheader-view');
-            if (!topbar) topbar = document.querySelector('.title-row');
+            let topPaginationContainer = createRichElement('div', {id: 'topPaginationContainer'}, topPagination);
+            let topbar = document.querySelector('.fluid-magic-tools-view')
+                || document.querySelector('.album-toolbar-content')
+                || document.querySelector('.group-pool-subheader-view')
+                || document.querySelector('.title-row');
             if (topbar) {
                 log('topPagination: root found, inserting container');
                 topbar.appendChild(topPaginationContainer);
