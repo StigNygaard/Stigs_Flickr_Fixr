@@ -3,7 +3,7 @@
   "name": "Flickr Fixr",
   "short_name": "Flickr Fixr",
   "description": "Makes Flickr almost awesome - while waiting for SmugMug to fully fix it ;-)",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "author": "Stig Nygaard",
   "homepage_url": "https://github.com/StigNygaard/Stigs_Flickr_Fixr",
   "permissions": [
