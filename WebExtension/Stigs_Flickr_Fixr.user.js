@@ -997,8 +997,6 @@ function topPagination() {
     }
 }
 
-const albumExtras_style = '.album-map-icon{background:url("https://c2.staticflickr.com/6/5654/23426346485_334afa6e8f_o_d.png") no-repeat;height:21px;width:24px;top:6px;left:3px} .album-comments-icon{background:url("https://c1.staticflickr.com/5/4816/46041390622_f8a0cf0148_o.png") -32px -460px no-repeat;height:21px;width:24px;top:6px;left:3px}';
-
 function albumExtras() { // links to album's map and comments
     if (fixr.context.pageType !== 'ALBUM') {
         return; // exit if not albumpage
@@ -1009,42 +1007,30 @@ function albumExtras() { // links to album's map and comments
         log('Exit albumsExtra(). Mangler albumId');
         return;
     }
-    let elist = document.querySelector('div.album-engagement-view');
+    let elist = document.querySelector('.new-album-header-view .stats');
     if (elist && !document.getElementById('albumCommentCount')) {
-        // map-link:
-        let mapdiv = document.createElement('div');
-        mapdiv.className = 'create-book-container';
-        mapdiv.title = 'Album on map';
-        mapdiv.style.textAlign = 'center';
-        let maplink = document.createElement('a');
-        maplink.href = '/photos/' + fixr.context.photographerAlias + '/albums/' + fixr.context.albumId + '/map/';
-        maplink.style.fontSize = '14px';
-        maplink.style.color = '#FFF';
-        let mapicon = document.createElement('span');
-        mapicon.title = 'Album on map';
-        mapicon.className = 'album-map-icon';
-        maplink.appendChild(mapicon);
-        mapdiv.appendChild(maplink);
-        elist.appendChild(mapdiv);
-        // comments-link:
-        let comurl = '/photos/' + fixr.context.photographerAlias + '/sets/' + fixr.context.albumId + '/comments/';  // /sets/* urls works, /albums/* urls currently doesn't work (yet?)
-        // var comurl = '#'; // NEW?!
-        let cmdiv = document.createElement('div');
-        cmdiv.className = 'create-book-container';
-        cmdiv.title = 'Comments';
-        cmdiv.style.textAlign = 'center';
-        let cmlink = document.createElement('a');
-        cmlink.href = comurl;
-        cmlink.style.fontSize = '14px';
-        cmlink.style.color = '#FFF';
-        cmlink.id = 'albumCommentsLink';
-        let cmicon = document.createElement('span');
-        cmicon.title = 'Album comments';
-        cmicon.className = 'album-comments-icon';
-        cmicon.id = 'albumCommentCount';
-        cmlink.appendChild(cmicon);
-        cmdiv.appendChild(cmlink);
-        elist.appendChild(cmdiv);
+
+        let comlink = createRichElement(
+            'a',
+            {
+                class: 'stat album-comments',
+                title: 'Album comments (very old "deprecated" page and feature)',
+                href: `/photos/${fixr.context.photographerAlias}/sets/${fixr.context.albumId}/comments/` // Note, /albums/* links are forwarded to /sets/* URLs.
+            },
+            createRichElement('span', {id: 'albumCommentCount'}),
+            ' album comments');
+        elist.appendChild(createRichElement('span', {class: 'stats-separator'}, '·'));
+        elist.appendChild(comlink);
+
+        let maplink = createRichElement('a',
+            {
+                class: 'stat map-link',
+                title: 'Album on map',
+                href: `/photos/${fixr.context.photographerAlias}/albums/${fixr.context.albumId}/map/`
+            },
+            'map view');
+        elist.appendChild(createRichElement('span', {class: 'stats-separator'}, '·'));
+        elist.appendChild(maplink);
 
         wsGetPhotosetComments();
     }
@@ -1436,7 +1422,6 @@ function handlerInitFixr(options) { // Webextension init
         onPageHandlers.push(ctrlClicking);
     }
     if (options.albumExtras) {
-        fixr.style.add(albumExtras_style);
         onPageHandlers.push(albumExtras);
     }
     if (options.topPagination) {
