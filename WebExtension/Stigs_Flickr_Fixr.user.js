@@ -1007,7 +1007,7 @@ function albumExtras() { // links to album's map and comments
         log('Exit albumsExtra(). Mangler albumId');
         return;
     }
-    let elist = document.querySelector('.new-album-header-view .stats');
+    let elist = document.querySelector('.album-header-view .stats');
     if (elist && !document.getElementById('albumCommentCount')) {
 
         let comlink = createRichElement(
