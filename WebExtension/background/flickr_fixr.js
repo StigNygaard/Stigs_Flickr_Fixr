@@ -148,7 +148,10 @@ function installHandler({reason, temporary, previousVersion}) {
     switch (reason) {
         case 'update':
             console.log("Updated from details.previousVersion: " + previousVersion);
-            // break; // Show onboarding when updating or not?...
+            if (versionnumber.compare(previousVersion, '2.6.0') < 0) {
+                browser.tabs.create({url: "/onboard/onboard.html"});
+            }
+            break;
         case 'install':
             // browser.runtime.openOptionsPage();
             // browser.runtime.getURL()
