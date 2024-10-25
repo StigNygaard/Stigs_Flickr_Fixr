@@ -148,7 +148,7 @@ function installHandler({reason, temporary, previousVersion}) {
     switch (reason) {
         case 'update':
             console.log("Updated from details.previousVersion: " + previousVersion);
-            if (versionnumber.compare(previousVersion, '2.6.0') < 0) {
+            if (versionnumber.compare(previousVersion, '2.5.0') < 0) {
                 browser.tabs.create({url: "/onboard/onboard.html"});
             }
             break;
