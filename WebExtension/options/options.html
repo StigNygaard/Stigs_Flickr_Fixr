@@ -5,26 +5,27 @@
 <!--    <meta name="color-scheme" content="light dark" />-->
     <title>Flickr Fixr Options</title>
     <style>
-        div#fixroptionspage {margin:1em auto 1em auto; max-width: 980px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px}
-        div#fixroptionspage>p {margin-left: 1em; line-height: normal}
+        div#fixroptionspage {margin:1rem auto 1rem auto; max-width: 980px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px}
+        div#fixroptionspage>p {margin-left: 1rem; line-height: normal}
         div#fixroptionspage a:link, div#fixroptionspage a:visited {color: rgb(0,129,240)}
         div#fixroptionspage a:hover, div#fixroptionspage a:active {color: rgb(255,0,159)}
         .ffo {display: none}
         .isFirefox .ffo {display: inherit}
+        .small {font-size: 14px}
         #fixroptions fieldset>div input {accent-color: rgb(255,0,159)}
         #fixroptions fieldset>div p img.demo {max-width: calc(100% - 2px); height:auto; border: 1px solid rgb(42, 42, 46)}
-        #fixroptions fieldset>div>div>p:first-child {margin-top: -.4em}
+        #fixroptions fieldset>div>div>p:first-child {margin-top: -.4rem}
         #fixroptions fieldset {position:relative}
-        #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1em; color: rgb(0,129,240); height:calc(100% - 1em)}
-        #fixroptions fieldset>div>div>p {padding-left:2em;line-height: 1.25em}
+        #fixroptions fieldset>div>div {display:none; width:55%; position:absolute; right:1em; top:1rem; color: rgb(0,129,240); height:calc(100% - 1rem)}
+        #fixroptions fieldset>div>div>p {padding-left:2rem;line-height: 1.25em}
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
         #fixroptions fieldset>div label.new::after {content: url(../icons/new27x14.png);margin-left:3px;vertical-align:bottom}
-        #fixroptions fieldset>div {width:45%; padding-top:.3em; padding-bottom:.25em}
+        #fixroptions fieldset>div {width:45%; padding-top:.3rem; padding-bottom:.25rem}
         #fixroptions fieldset a {font-style: italic}
         #fixroptions fieldset>p {font-style: italic}
-        #fixroptions fieldset>div>div #slideshowSpeedControl_value {width: calc(100% - 1em)}
+        #fixroptions fieldset>div>div #slideshowSpeedControl_value {width: calc(100% - 1rem)}
         #fixroptions .updating.toggle {animation:wink 3s ease 1s 1}
         @keyframes wink {0% {background-color: revert}  50% {background-color: #fd0} 100% {background-color: revert}}
         @media (prefers-color-scheme: dark) {
@@ -65,7 +66,7 @@
                     <br />2) On the photopage for a geotagged photo, also adds a link to show geoposition of photo directly on <em>Google Maps</em>.</p>
                 </div>
             </div>
-            <div><label class="new"><input type="checkbox" id="insertShowInPhotostream" /> Photopage "Show in Photostream" links</label>
+            <div><label><input type="checkbox" id="insertShowInPhotostream" /> Photopage "Show in Photostream" links</label>
                 <div><p>Make it always possible to navigate from Photopage to the Photostream-page it belongs to.</p>
                     <p><img src="PhotostreamLink-326x47.gif" alt="" class="demo" /></p>
                 </div>
@@ -105,6 +106,9 @@
                         <em>time</em> in full details. <em>Taken date</em> will also work as a link to more photos from the
                         same photographer.</p>
                     <p><img src="FixrDates-572x131.gif" alt="" class="demo" /></p>
+                    <p class="small">Note, these features are optimized for wide browser windows and for the version of photopages which
+                        "Pro" Flickr users see. If you use a narrow browser window and/or <em>doesn't</em> have a "Pro"
+                        account, some things might not work or look exactly as shown and described here.</p>
                 </div>
             </div>
             <div><label><input type="checkbox" id="newsfeedLinks" /> Show available newsfeeds</label>
