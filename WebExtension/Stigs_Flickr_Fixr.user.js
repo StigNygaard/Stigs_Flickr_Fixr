@@ -158,10 +158,10 @@ var fixr = fixr || {
         log('fixr.initPhotographerId() - Attribution elem found');
         let result;
         if (elem.tagName.toUpperCase() === 'IMG' && elem.src) {
-            result = elem.src.match(/https:(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
+            result = elem.src.match(/https:(\/\/[^#?]+\.com\/[^#?]+\/buddyicon[^?#]+)[^#]*#(\d+@N\d{2})/i);
         } else if (elem.style.backgroundImage) {
             log('fixr.initPhotographerId() - elem has style.backgroundImage "' + elem.style.backgroundImage + '", now looking for the attribution id...');
-            result = elem.style.backgroundImage.match(/url[^#\?]+(\/\/[^#\?]+\.com\/[^#\?]+\/buddyicon[^\?\#]+)[^#]*#(\d+\@N\d{2})/i);
+            result = elem.style.backgroundImage.match(/url[^#?]+(\/\/[^#?]+\.com\/[^#?]+\/b?buddyicon[^?#]+)[^#]*#(\d+@N\d{2})/i);
         }
         if (result) {
             log('fixr.initPhotographerId() - Attribution pattern match found: ' + result[0]);
@@ -559,7 +559,7 @@ function mapInitializer() {
 const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !important} .subnav-refresh ul.nav-links.extraitems li.sn-navitem a {padding: 13px 10px 12px 10px !important}';
 
 function topMenuItems() {
-    // User dropdown menu
+    // User (You) dropdown menu
     let m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
     if (m) {
         let gid = null;
