@@ -509,6 +509,7 @@ function insertGMapLink() {
     if (fixr.context.photoId) {
         const maplink = fixr.content.querySelector('.location-data-container a.location-name-link');
         if (maplink) {
+            const isSidebar = !!fixr.content.querySelector('.photo-page-sidebar');
             const locUrl = new URL(maplink.getAttribute('href'));
             if (!document.getElementById('googlemapslink') && locUrl.searchParams?.get('lat')) {
                 try {
@@ -518,7 +519,10 @@ function insertGMapLink() {
                         href: 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lon,
                         id: 'googlemapslink'
                     }, 'Show location on Google Maps');
-                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement('afterbegin', createRichElement('div', {class: 'location-data-container'}, gmaplink));
+                    fixr.content.querySelector('li.c-charm-item-location').insertAdjacentElement(
+                        isSidebar ? 'beforeend' : 'afterbegin',
+                        createRichElement('div', {class: 'location-data-container'}, gmaplink)
+                    );
                 } catch (e) {
                     log('Failed creating Google Maps link: ' + e);
                 }
@@ -1103,9 +1107,9 @@ const photoDates_style = '.has-date-info {position:relative} ' +
     '.date-info-trigger:hover .date-info {display:block;} ' +
     '.date-info label {display:inline-block; min-width: 5em;} ' +
     '.date-info label.labeltaken {color:#000} ' +
-    '.sub-photo-right-view .sub-photo-right-row1 .sub-photo-date-view > .date-posted > span.date-posted-label {font-size:14px;color:rgb(137,137,137);margin:2px 5px 0 0} ' + // uploaded
-    'div.view.sub-photo-date-view > span {display:block;font-size:14px;color:rgb(137,137,137);margin:-9px 0 10px 0;font-style:italic} ' + // replaced
-    '.sub-photo-right-view .sub-photo-right-row1 .sub-photo-date-view > .date-posted .date-taken-container > span.date-taken-label {font-size:17px;color:rgb(33,33,36)} '; // taken
+    'div.view.sub-photo-date-view.has-date-info > .date-posted > span.date-posted-label {font-size:14px;color:rgb(137,137,137);margin:2px 5px 0 0} ' + // uploaded
+    'div.view.sub-photo-date-view.has-date-info > span.replaced-date {display:block;font-size:14px;color:rgb(137,137,137);margin:-9px 0 10px 0;font-style:italic} ' + // replaced
+    'div.view.sub-photo-date-view.has-date-info > .date-posted .date-taken-container > span.date-taken-label {font-size:17px;color:rgb(33,33,36)} '; // taken
 function photoDates() {
     let elem = document.querySelector('div.view.sub-photo-date-view'); // added .date-posted
     if (elem && !elem.classList.contains('has-date-info')) {
@@ -1115,7 +1119,7 @@ function photoDates() {
         getReplaceDate()
             .then(function(replaceDate){
                 if (replaceDate) {
-                    elem.insertAdjacentElement('beforeend', createRichElement('span', {title: 'Replaced on ' + replaceDate.longdate}, 'Replaced on ' + replaceDate.shortdate));
+                    elem.insertAdjacentElement('beforeend', createRichElement('span', {title: 'Replaced on ' + replaceDate.longdate, class: 'replaced-date'}, 'Replaced on ' + replaceDate.shortdate));
                 }
             })
             .catch(function(e){/* ignore */});
