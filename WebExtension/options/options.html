@@ -21,7 +21,8 @@
         #fixroptions fieldset>div:hover {color: rgb(0,129,240)}
         #fixroptions fieldset>div label:active{color: rgb(255,0,159)}
         #fixroptions fieldset>div:hover>div {display:block}
-        #fixroptions fieldset>div label.new::after {content: url(../icons/new27x14.png);margin-left:3px;vertical-align:bottom}
+        #fixroptions fieldset .new::after {content: url(../icons/new27x14.png);margin-left:3px;vertical-align:bottom}
+        #fixroptions fieldset .newb::before {content: url(../icons/new27x14.png);margin-right:3px;vertical-align:bottom}
         #fixroptions fieldset>div {width:45%; padding-top:.3rem; padding-bottom:.25rem}
         #fixroptions fieldset a {font-style: italic}
         #fixroptions fieldset>p {font-style: italic}
@@ -94,6 +95,11 @@
                         &nbsp; <label><input type="radio" name="resizeableCommenting_direction" id="resizeableCommenting_vertical" value="resizeableCommenting_vertical" /> Height only</label>
                     </p>
                     <p><img src="FixrResize-517x191.gif" alt="" class="demo" /></p>
+                    <p class="newb"><em>Auto-expand as you write</em> is now <em>also</em> implemented as part of this feature.
+                        However, it is using a browser-feature which - as of January 2025 - only is
+                        <a href="https://caniuse.com/mdn-css_properties_field-sizing_content">supported in Chrome/Chromium based browsers</a>.
+                        But support might also <a href="https://bugzil.la/1832409">be coming to Firefox</a>.
+                    </p>
                 </div>
             </div>
             <div><label><input type="checkbox" id="photoDates" /> Better date &amp; time info on photopages</label>

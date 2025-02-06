@@ -850,8 +850,8 @@ function albumTeaserDelayed() {
     _timerAlbumTeaserDelayed = setTimeout(albumTeaser, 1500);
 }
 
-const resizeableCommenting_style_vert= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:vertical;width:100%;min-height:6em;max-width:100%}';
-const resizeableCommenting_style_both= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:both;width:100%;min-height:6em;max-width:100%}';
+const resizeableCommenting_style_vert= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:vertical;width:100%;min-height:6em;max-width:100%;field-sizing:content}';
+const resizeableCommenting_style_both= '.fixr-ta-resizeable {margin:0;width:100%;font-weight:400} .group-discussion-topic-view .post textarea, section.add-comment-section .fixr-ta-resizeable textarea {resize:both;width:100%;min-height:6em;max-width:100%;field-sizing:content}';
 // TODO styling "speech bubbles" style?:  https://www.smashingmagazine.com/2024/03/modern-css-tooltips-speech-bubbles-part1/
 function resizeableCommenting() {
     const selector = '.fluid section.add-comment-section div.text-area-wrapper';
