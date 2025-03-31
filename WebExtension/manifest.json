@@ -36,7 +36,6 @@
   "minimum_opera_version": "107.0",
   "minimum_edge_version": "121.0",
   "background": {
-    "scripts": ["background/flickr_fixr.js"],
     "service_worker": "background/flickr_fixr.js",
     "type": "module"
   },
