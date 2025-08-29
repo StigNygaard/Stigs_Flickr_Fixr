@@ -1344,7 +1344,7 @@ function wsGetPhotoInfo() { // Call Flickr REST API to get photo info
             }
         } else {
             if (elem) {
-                elem.textContent = 'Cannot fetch detailed date details on private photos';
+                elem.textContent = 'Cannot get detailed date details for private or restricted photos';
             }
             console.error('flickr.photos.getInfo returned an ERROR: obj.stat=' + obj?.stat + ', obj.code=' + obj?.code + ', obj.message=' + obj?.message);
         }
