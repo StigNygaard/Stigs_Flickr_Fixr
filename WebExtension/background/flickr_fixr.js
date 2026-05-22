@@ -1,5 +1,3 @@
-globalThis.browser = globalThis.browser || globalThis.chrome;
-
 globalThis.versionnumber = globalThis.versionnumber || (function Versionnumber() {  // major.minor.revision
     function current() {
         if (browser?.runtime) { // webextension versionnumber
