@@ -18,8 +18,6 @@ Most detailed feature description can currently be found in the Flickr Hacks for
 https://www.flickr.com/groups/96035807@N00/discuss/72157655601688753/
 
 To create a browser extension from a branch in this repository, simply zip the content of WebExtension folder.
-From version 2.5.0 Flickr Fixr is (again) a "cross-browser compatible" extension with the exact
-[same plug-in (zip-file)](https://github.com/StigNygaard/Stigs_Flickr_Fixr/releases) distributed for Firefox, Chrome and Edge.
 
 Enjoy, and find me on Flickr at: https://www.flickr.com/photos/stignygaard/
 
