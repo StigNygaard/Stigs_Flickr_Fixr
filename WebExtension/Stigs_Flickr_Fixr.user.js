@@ -563,7 +563,7 @@ const topMenuItems_style = '.fluid-subnav .extraitems a {padding: 12px 10px !imp
 function topMenuItems() {
     // User (You) dropdown menu
     let m = document.querySelector('li[data-context=you] > ul.gn-submenu') || document.querySelector('li[data-context=you] div#you-panel ul');
-    if (m) {
+    if (m) { // OLD flickr YOU-menus
         let gid = null;
         if (m.querySelector('a[data-track=gnYouGroupsClick]')) {
             gid = m.querySelector('a[data-track=gnYouGroupsClick]').parentElement;
@@ -579,7 +579,10 @@ function topMenuItems() {
                     class: 'menuitem',
                     role: 'menuitem',
                     'aria-label': 'Notifications'
-                }, createRichElement('a', {'data-track': 'gnYouNotificationsClick', href: '/notifications'}, 'Notifications')));
+                }, createRichElement('a', {
+                    'data-track': 'gnYouNotificationsClick',
+                    href: '/notifications'
+                }, 'Notifications')));
                 gid.insertAdjacentElement('afterend', createRichElement('li', {
                     class: 'menuitem',
                     role: 'menuitem',
@@ -616,6 +619,21 @@ function topMenuItems() {
                     'data-track': 'You-collections',
                     href: '/photos/me/collections'
                 }, 'Collections')));
+            }
+        }
+    } else { // New flickr YOU-menu
+        m = document.querySelector('#gnav-menu-you');
+        let coll = m.querySelector('a.gnav-row[href$="/collections" i]'); // already inserted?
+        if (m && !coll) {
+            let alb = m.querySelector('a.gnav-row[href$="/albums" i]');
+            let grp = m.querySelector('a.gnav-row[href$="/groups" i]');
+            if (alb) {
+                alb.insertAdjacentElement('afterend', createRichElement('a', {class: 'gnav-row', href: '/photos/me/map'}, 'Map'));
+                alb.insertAdjacentElement('afterend', createRichElement('a', {class: 'gnav-row', href: '/photos/me/collections'}, 'Collections'));
+            }
+            if (grp) {
+                grp.insertAdjacentElement('afterend', createRichElement('a', {class: 'gnav-row', href: '/photos/me/tags'}, 'Tags'));
+                grp.insertAdjacentElement('afterend', createRichElement('a', {class: 'gnav-row', href: '/notifications'}, 'Notifications'));
             }
         }
     }
