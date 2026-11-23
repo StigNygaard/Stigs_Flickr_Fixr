@@ -623,7 +623,7 @@ function topMenuItems() {
         }
     } else { // New flickr YOU-menu
         m = document.querySelector('#gnav-menu-you');
-        let coll = m.querySelector('a.gnav-row[href$="/collections" i]'); // already inserted?
+        let coll = m?.querySelector('a.gnav-row[href$="/collections" i]'); // already inserted?
         if (m && !coll) {
             let alb = m.querySelector('a.gnav-row[href$="/albums" i]');
             let grp = m.querySelector('a.gnav-row[href$="/groups" i]');
