@@ -1226,8 +1226,8 @@ function orderWarning() {
     }
 }
 
-const newsfeedLinks_style =
-    'div#feedlinks {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px} ul.gn-tools>div#feedlinks {right:-120px} div#gn-wrap>div#feedlinks, div.header-wrap>div#feedlinks, header#branding>div#feedlinks {right:-120px} div#feedlinks>a {display:block;float:left;margin:10px 8px 0 0;width:16px} div#feedlinks>a>img {display:block;width:16px;height:16px} ul.gn-tools>div#feedlinks>a {margin-top:2px} div.global-nav-content>#feedlinks {padding-top: 6px}';
+const newsfeedLinks_style = 'div.header-wrap {position: relative} ' + 'div#gn-wrap>div#feedlinks, div.header-wrap>div#feedlinks, header#branding>div#feedlinks {right:-120px} ' +
+    ' div#feedlinks {border:none;margin:0;padding:0;position:absolute;top:0;right:10px;width:100px} div#feedlinks>a {display:block;float:left;margin:10px 8px 0 0;width:16px} div#feedlinks>a>img {display:block;width:16px;height:16px} div.global-nav-content>#feedlinks {padding-top: 6px}';
 
 function newsfeedLinks() {
     let elem = document.getElementById('feedlinks');
@@ -1241,15 +1241,14 @@ function updateNewsfeedLinks() {
     let feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
     log('Number of feed links found: ' + feedlinks.length);
     let dgnc = document.querySelector('div.global-nav-content') // modern flickr.com
-        || document.querySelector('div.global-nav-container ul.gn-tools') // ? not used anymore ?
         || document.querySelector('div#gn-wrap') // old flickr.com - www.flickr.com/services/ www.flickr.com/photosof/contacts/
-        || document.querySelector('div#global-nav') // ? not used anymore ?
         || document.querySelector('div.header-wrap') // blog.flickr.net
         || document.querySelector('header#branding') // code.flickr.net
+        || document.querySelector('div#global-nav') // ? not used anymore ?
+        || document.querySelector('div.global-nav-container ul.gn-tools') // ? not used anymore ?
         || document.querySelector('div.custom-header-container>div>div'); // ? not used anymore ?
     if (dgnc) {
         if (!document.getElementById('feedlinks')) {
-            dgnc.style.position = "relative";
             dgnc.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'feedlinks'}));
         }
         let elem = document.getElementById('feedlinks');
