@@ -1239,14 +1239,14 @@ function newsfeedLinks() {
 
 function updateNewsfeedLinks() {
     let feedlinks = document.querySelectorAll('head > link[rel="alternate"][type="application/rss+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/atom+xml"], head > link[rel="alternate"][type="application/json"]');
-    log('Number of feed links found: ' + feedlinks.length);
     let dgnc = document.querySelector('div.global-nav-content') // modern flickr.com
         || document.querySelector('div#gn-wrap') // old flickr.com - www.flickr.com/services/ www.flickr.com/photosof/contacts/
         || document.querySelector('div.header-wrap') // blog.flickr.net
         || document.querySelector('header#branding') // code.flickr.net
+        || document.querySelector('div.custom-header-container>div>div') // status.flickr.net
         || document.querySelector('div#global-nav') // ? not used anymore ?
-        || document.querySelector('div.global-nav-container ul.gn-tools') // ? not used anymore ?
-        || document.querySelector('div.custom-header-container>div>div'); // ? not used anymore ?
+        || document.querySelector('div.global-nav-container ul.gn-tools'); // ? not used anymore ?
+
     if (dgnc) {
         if (!document.getElementById('feedlinks')) {
             dgnc.insertAdjacentElement('afterbegin', createRichElement('div', {id: 'feedlinks'}));

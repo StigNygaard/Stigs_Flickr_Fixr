@@ -5,7 +5,7 @@ let defaults = {
     orderWarning: true,
     topMenuItems: true,
     resizeableCommenting: true,
-    resizeableCommenting_direction: 'resizeableCommenting_both',
+    resizeableCommenting_direction: 'resizeableCommenting_vertical',
     newsfeedLinks: true,
     photoDates: true,
     ctrlClicking: ((typeof browser !== 'undefined') && browser.runtime?.getURL("./").includes("moz-extension://")), // default enabled for firefox
